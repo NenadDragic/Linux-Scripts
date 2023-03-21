@@ -2,9 +2,10 @@
 # Get Devices Firmware Information Script
 
 # Check if the user has root privileges
-if [ $EUID -ne "0" ]; then
-  echo -e "Please run as root.\n"
-  exit
+if [ "$(whoami)" != "root" ]
+  then
+    echo "Please run as root.\n"
+    exit
 fi
 
 # Execute fwupdmgr get-devices command
