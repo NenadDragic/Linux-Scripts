@@ -21,7 +21,7 @@ The script uses the find command to search for empty files. The command's syntax
 find . -type f -empty
 ```
 * `find` : This is the command used to search for files and directories in a directory hierarchy.
-* `.´ : This argument specifies the starting directory for the search. In this case, it is the current directory.
-* `-type f´ : This flag filters the search results, only returning files (not directories).
-* `-empty´ : This flag further filters the search results, only returning empty files.
+* `.` : This argument specifies the starting directory for the search. In this case, it is the current directory.
+* `-type f` : This flag filters the search results, only returning files (not directories).
+* `-empty` : This flag further filters the search results, only returning empty files.
 When the script is executed, the find command searches the current directory and its subdirectories for empty files, printing the paths of the found files to the console.
