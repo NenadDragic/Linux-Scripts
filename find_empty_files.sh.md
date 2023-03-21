@@ -20,7 +20,7 @@ The script uses the find command to search for empty files. The command's syntax
 ```console
 find . -type f -empty
 ```
-* `find´ : This is the command used to search for files and directories in a directory hierarchy.
+* `find` : This is the command used to search for files and directories in a directory hierarchy.
 * `.´ : This argument specifies the starting directory for the search. In this case, it is the current directory.
 * `-type f´ : This flag filters the search results, only returning files (not directories).
 * `-empty´ : This flag further filters the search results, only returning empty files.
