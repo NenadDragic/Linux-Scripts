@@ -3,7 +3,13 @@ This script (update_maintenance.sh) is designed to update and maintain a Debian-
 
 ## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
-
-´´console
+```console
 chmod +x update_maintenance.sh
-´´´
+```
+
+2. Execute the script by running the following command:
+```console
+sudo ./update_maintenance.sh
+```
+
+The script will update APT packages and the file location database on your Debian-based Linux system.
