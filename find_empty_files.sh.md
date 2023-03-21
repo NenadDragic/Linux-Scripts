@@ -1,7 +1,7 @@
 # Find Empty Files Script
 This script (find_empty_files.sh) is designed to find all empty files in the current directory and its subdirectories.
 
-##Usage
+## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
 ```console
