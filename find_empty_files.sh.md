@@ -24,4 +24,4 @@ find . -type f -empty
 * `.` : This argument specifies the starting directory for the search. In this case, it is the current directory.
 * `-type f` : This flag filters the search results, only returning files (not directories).
 * `-empty` : This flag further filters the search results, only returning empty files.
-When the script is executed, the find command searches the current directory and its subdirectories for empty files, printing the paths of the found files to the console.
+When the script is executed, the `find` command searches the current directory and its subdirectories for empty files, printing the paths of the found files to the console.
