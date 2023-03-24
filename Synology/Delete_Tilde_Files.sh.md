@@ -21,6 +21,3 @@ The script uses the `find` command to search for files in the `/volume1/Dragic` 
 
 * `find /volume1/Dragic -name "~*.*" -type f -delete 2>/dev/null`: This command finds all files in the `/volume1/Dragic` directory and any subdirectories that have names starting with a tilde (~) and containing a period (.) and deletes them. The `2>/dev/null` part of the command redirects any error messages to the null device, effectively discarding them.
 You can copy and paste this markdown text into a README file in your GitHub repository, and it should display correctly with proper formatting.
-
-
-
