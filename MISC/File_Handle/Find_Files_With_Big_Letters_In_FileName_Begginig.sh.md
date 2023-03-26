@@ -5,7 +5,7 @@ This command (`find . -type f -regex './[A-Z]*'`) is designed to find all files 
 ## Explanation
 The command uses the `find` command to search for files in the directory hierarchy. The command's syntax is as follows:
 
-```console
+```bash
 find . -type f -regex './[A-Z]*'
 ```
 

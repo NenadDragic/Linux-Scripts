@@ -4,12 +4,12 @@ This script (find_empty_files.sh) is designed to find all empty files in the cur
 ## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-```console
+```bash
 chmod +x find_empty_files.sh
 ```
 
 2. Execute the script by running the following command:
-```console
+```bash
 ./find_empty_files.sh
 ```
 The script will output the paths of all empty files in the current directory and its subdirectories.
@@ -17,7 +17,7 @@ The script will output the paths of all empty files in the current directory and
 ## Explanation
  
 The script uses the find command to search for empty files. The command's syntax is as follows:
-```console
+```bash
 find . -type f -empty
 ```
 * `find` : This is the command used to search for files and directories in a directory hierarchy.
