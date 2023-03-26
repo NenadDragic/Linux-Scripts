@@ -5,13 +5,13 @@ This script (delete_tmp_files.sh) finds and deletes all files with the ".tmp" ex
 ## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-```console
+```bash
 chmod +x delete_tmp_files.sh
 ```
 
 2. Execute the script by running the following command:
 
-```console
+```bash
 ./delete_tmp_files.sh
 ```
 

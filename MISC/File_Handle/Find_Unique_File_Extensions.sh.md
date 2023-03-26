@@ -4,13 +4,13 @@ This script (find_unique_extensions.sh) is designed to find all unique file exte
 ## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-```console
+```bash
 chmod +x find_unique_extensions.sh
 ```
 
 2. Execute the script by running the following command:
 
-```console
+```bash
 ./find_unique_extensions.sh
 ```
 
@@ -19,7 +19,7 @@ The script will output the unique file extensions found in the current directory
 ## Explanation
 The script uses a combination of find, sed, and sort commands to find unique file extensions. The commands' syntax is as follows:
 
-```console
+```bash
 find . -type f | sed -e 's/.*\.//' | sort -u
 ```
 

@@ -5,13 +5,13 @@ This script (find_files_by_extension.sh) is designed to search for files in the 
 ## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-```console
+```bash
 chmod +x find_files_by_extension.sh
 ```
 
 2. Execute the script by running the following command:
 
-```console
+```bash
 ./find_files_by_extension.sh
 ```
 

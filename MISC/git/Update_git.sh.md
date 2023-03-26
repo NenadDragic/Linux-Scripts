@@ -4,12 +4,12 @@ This bash script (`commit_changes.sh`) is designed to add, commit, and push chan
 ## Usage
 Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-```console
+```bash
 chmod +x commit_changes.sh
 ```
 Execute the script by running the following command:
 
-```console
+```bash
 ./commit_changes.sh
 ```
 

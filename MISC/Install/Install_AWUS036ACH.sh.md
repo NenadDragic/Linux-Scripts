@@ -8,13 +8,13 @@ To use the script, follow these steps:
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 console
 
-```console
+```bash
 chmod +x wifi_adapter_config.sh
 ```
 
 2. Execute the script by running the following command:
 
-```console
+```bash
 sudo ./wifi_adapter_config.sh
 ```
 
