@@ -8,7 +8,7 @@ if [ "$(whoami)" != "root" ]
 fi
 
 # Define the backup directory
-backup_dir="../../media/nenad/2F90E98B5A2F4030/Backup - Debian Laptop"
+backup_dir="../../media/nenad/2108A519534DBF7F/Backup - Debian Laptop"
 
 # Define the current date in the format YYYY-MM-DD
 date="$(date +%Y-%m-%d)"
