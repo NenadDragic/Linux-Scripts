@@ -17,5 +17,5 @@ apt autoremove
 apt autoclean
 
 # Update file location database
-echo "\nUpdating file location database...\n"
-updatedb 
+echo "Updating file location database..."
+updatedb
