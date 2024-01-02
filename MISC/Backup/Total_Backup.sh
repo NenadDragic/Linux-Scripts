@@ -8,7 +8,7 @@ if [ "$(whoami)" != "root" ]
 fi
 
 # Define the backup directory
-backup_dir="../../media/nenad/Dragic_Backup"
+backup_dir="../../media/nenad/3CA79D5F2053D934"
 
 # Define the current date in the format YYYY-MM-DD
 date="$(date +%Y-%m-%d)"
@@ -31,10 +31,9 @@ drive_type=$(lsblk -no parttypename /dev/nvme0n1p3)
 pv -tpreb /dev/nvme0n1p3 | dd of="$backup_dir/$drive_type $date.img" bs=4M
 dd if=/dev/nvme0n1p3 of="$backup_dir/$drive_type $date.img" bs=4M status=progress
 
-echo "Backing up drive"
-drive_type=$(lsblk -no parttypename /dev/nvme0n1p3)
-pv -tpreb /dev/nvme0n1p3 | dd of="$backup_dir/$drive_type $date.img" bs=4M
-dd if=/dev/nvme0n1p3 of="$backup_dir/$drive_type $date.img" bs=4M status=progress
-
+#echo "Backing up drive"
+#drive_type=$(lsblk -no parttypename /dev/nvme0n1p3)
+#pv -tpreb /dev/nvme0n1p3 | dd of="$backup_dir/$drive_type $date.img" bs=4M
+#dd if=/dev/nvme0n1p3 of="$backup_dir/$drive_type $date.img" bs=4M status=progress
 
 echo "Backup complete!"
