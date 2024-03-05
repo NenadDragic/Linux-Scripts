@@ -23,4 +23,5 @@ By running this script, you can easily clone all these repositories to your loca
 4. Execute the script by running the following command:
 
 ```bash
-./github_repo_cloner.sh
+./Init_Git.sh
+```
