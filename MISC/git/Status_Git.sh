@@ -3,6 +3,9 @@
 # Validate status of all of NenadDragic's repositories
 # https://github.com/NenadDragic
 
+# Clear
+clear
+
 # Define the base directory
 base_dir=~/git
 
