@@ -18,18 +18,19 @@ for f in *.HEIC; do
     heif-convert -q 100 "$f" "${f%.HEIC}.JPG"
 done
 
+# Big letters in extension
+rename 'y/a-z/A-Z/' *
+
 # Move files to the corresponding folders
 mv -t MOV *.MOV
 mv -t MP4 *.MP4
 mv -t CR2 *.CR2
 mv -t HEIC *.HEIC
 
-
 # Copy JPEG files to ORG
 cp -t ORG *.JPG *.JPEG
 
 # Delete empty directories
 find . -type d -empty -delete
-
 
 echo All tasks completed.

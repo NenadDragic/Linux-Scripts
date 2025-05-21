@@ -7,7 +7,7 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 # Backup the data
-sudo rsync -av /home/. -e "ssh -l Debian_Backup" 192.168.1.50::NetBackup/BackupData/Debian_Laptop/$(date +%Y-%m-%d)
+sudo rsync -av /home/. -e "ssh -l Debian_Backup" 192.168.1.50::NetBackup/Debian_Laptop/$(date +%Y-%m-%d)
 
 # Exit
 exit
