@@ -20,10 +20,10 @@ for dir in */; do
     # Fjern den afsluttende skråstreg
     folder_name="${dir%/}"
     
-    echo "Komprimerer mappen '$folder_name'..."
+    echo "Komprimerer indholdet af mappen '$folder_name'..."
     
-    # Opret en krypteret 7z-fil med samme navn som mappen
-    7z a -p"$password" -mhe -t7z "$folder_name.7z" "$dir"
+    # Skift til mappen og komprimer kun dens indhold
+    (cd "$folder_name" && 7zz a -p"$password" -mhe -t7z "../$folder_name.7z" ./*)
     
     if [ $? -eq 0 ]; then
         echo "Komprimering af '$folder_name' er færdig."
