@@ -29,15 +29,18 @@ case "$SHARE_NAME" in
         # Den komplette creds-filsti
         CRED_FILE="/home/nenad/.smbcredentials_DashCam"
         # Ekstra CIFS-indstilling fra din oprindelige fstab (tilføjes til options)
-        EXTRA_OPTS="_DashCam"
+        #EXTRA_OPTS="_DashCam"
+        EXTRA_OPTS=""
         ;;
     Dragic)
         CRED_FILE="/home/nenad/.smbcredentials_Dragic"
-        EXTRA_OPTS="_Dragic"
-        ;;
+	#EXTRA_OPTS="_Dragic"
+        EXTRA_OPTS=""
+	;;
     NetBackup)
         CRED_FILE="/home/nenad/.smbcredentials_NetBackup"
-        EXTRA_OPTS="_NetBackup"
+        #EXTRA_OPTS="_NetBackup"
+        EXTRA_OPTS=""
         ;;
     *)
         echo "❌ Fejl: Ugyldigt share-navn '$SHARE_NAME'."

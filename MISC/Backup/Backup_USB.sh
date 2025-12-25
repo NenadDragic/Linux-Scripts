@@ -36,7 +36,8 @@ if [ -z "$HOSTNAME_FROM_CFG" ]; then
     exit 1
 fi
 
-DEST_BASE="/mnt/NetBackup/${HOSTNAME_FROM_CFG}"
+# DEST_BASE="/mnt/NetBackup/${HOSTNAME_FROM_CFG}"
+DEST_BASE="/media/nenad/Dragic/${HOSTNAME_FROM_CFG}"
 
 EXCLUDES=(
     "/dev"
@@ -102,7 +103,7 @@ DATE=$(date +%Y-%m-%d)
 DEST_PATH="$DEST_BASE/$DATE"
 
 # NFS logmappe: /mnt/NetBackup/Log/<HOSTNAME>/
-LOG_DIR_NFS="/mnt/NetBackup/Log/${HOSTNAME_FROM_CFG}"
+LOG_DIR_NFS="/media/nenad/Dragic/Log/${HOSTNAME_FROM_CFG}"
 mkdir -p "$LOG_DIR_NFS" 2>/dev/null || true
 LOG_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.log"
 STATUS_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.status"
