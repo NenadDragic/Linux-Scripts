@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script finds all files in the /volume1/Ftp/DashCam/File-Delete/ directory that were modified today and opens them with the default text editor.
+# This script finds all files in the /volume1/NetBackup/DashCam/File-Delete/ directory that were modified today and opens them with the default text editor.
 
 # The current date is obtained in the format YYYYMMDD.
 # Temporary marker files with specific timestamps are created to represent the start and end of the day.
@@ -14,8 +14,8 @@
 # If no files were modified today, a message is printed to the console.
 
 # Usage:
-# Run this script to find all files in the /volume1/Ftp/DashCam/File-Delete/ directory that were modified today and open them with the default text editor.
-# Make sure to replace /volume1/Ftp/DashCam/File-Delete/ with the actual directory path if necessary.
+# Run this script to find all files in the /volume1/NetBackup/DashCam/File-Delete/ directory that were modified today and open them with the default text editor.
+# Make sure to replace /volume1/NetBackup/DashCam/File-Delete/ with the actual directory path if necessary.
 
 current_date=$(date '+%Y%m%d')
 start_timestamp=$(date -d "$current_date" '+%Y%m%d%H%M.%S')
@@ -24,13 +24,15 @@ end_timestamp=$(date -d "$current_date + 1 day" '+%Y%m%d%H%M.%S')
 touch -t "$start_timestamp" /tmp/start_marker
 touch -t "$end_timestamp" /tmp/end_marker
 
-files_modified_today=$(find /volume1/Ftp/DashCam/File-Delete/ -maxdepth 1 -type f -newer /tmp/start_marker ! -newer /tmp/end_marker -exec basename {} \;)
+# files_modified_today=$(find /volume1/NetBackup/DashCam/File-Delete/ -maxdepth 1 -type f -newer /tmp/start_marker ! -newer /tmp/end_marker -exec basename {} \;)
+files_modified_today=$(find /volume1/DashCam/File-Delete/ -maxdepth 1 -type f -newer /tmp/start_marker ! -newer /tmp/end_marker -exec basename {} \;)
 
 rm -f /tmp/start_marker /tmp/end_marker
 
 if [ -n "$files_modified_today" ]; then
     for file in $files_modified_today; do
-        more "/volume1/Ftp/DashCam/File-Delete/$file"  
+        # more "/volume1/NetBackup/DashCam/File-Delete/$file"  
+        more "/volume1/DashCam/File-Delete/$file"
     done
 else
     echo "No files modified today."

@@ -1,0 +1,1 @@
+find /volume1/Dragic -name "*CORRUPT*.*" -type f
