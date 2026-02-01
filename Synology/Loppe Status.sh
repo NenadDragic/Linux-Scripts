@@ -1,0 +1,1 @@
+cat /volume1/Dragic/Rap/Loppe/status.txt

@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 # This script finds all files in the /volume1/Ftp/DashCam/File-Count-DashCam/ directory that were modified today and opens them with the default text editor.
 

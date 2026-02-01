@@ -1,0 +1,1 @@
+curl -s -L "https://dragic.com/cpanelwebcall/###"
