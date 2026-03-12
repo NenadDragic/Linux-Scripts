@@ -20,7 +20,7 @@ SOURCE_DIR="/media/nenad/rootfs/"
 
 # Find scriptdir og configfil
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-CFG_FILE="$SCRIPT_DIR/Backup.cfg"
+CFG_FILE="$SCRIPT_DIR/Backup_SD.cfg"
 if [ ! -f "$CFG_FILE" ]; then
     CFG_FILE="/etc/Backup_SD.cfg"
 fi
