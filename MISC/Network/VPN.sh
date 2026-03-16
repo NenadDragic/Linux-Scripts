@@ -40,6 +40,8 @@ case "$COMMAND" in
 
         echo "Gyldige kommandoer er: up, show, down"
 
+	echo "fx. sh VPN.sh up Dragic"
+
         exit 1
 
         ;;
