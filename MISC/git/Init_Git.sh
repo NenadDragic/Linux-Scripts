@@ -12,6 +12,9 @@ git clone git@github.com:NenadDragic/Learning.git
 # z-os
 git clone git@github.com:NenadDragic/z-os.git
 
+# z-os
+git clone git@github.com:NenadDragic/z-os_JB.git
+
 # bat
 git clone git@github.com:NenadDragic/bat.git
 
@@ -32,3 +35,6 @@ git clone git@github.com:NenadDragic/Python.git
 
 # C# scripts
 git clone git@github.com:NenadDragic/c-Sharp.git
+
+# JB Scripts
+git clone git@github.com:NenadDragic/JB-Scripts.git
