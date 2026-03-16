@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Pull of all of NenadDragic's repositories
+# https://github.com/NenadDragic
+
+# Clear
+clear
+
+# Define the base directory
+base_dir=~/git
+
+# Iterate over all subdirectories
+for dir in "$base_dir"/*; do
+    # Check if it's a directory
+    if [ -d "$dir" ]; then
+        # Change to the directory
+        cd "$dir"
+        
+        # Check if it's a git repository
+        if [ -d ".git" ]; then
+            # Run git pull
+            echo "Running git pull in $dir"
+            git pull
+        fi
+    fi
+done
