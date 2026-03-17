@@ -38,3 +38,6 @@ git clone git@github.com:NenadDragic/c-Sharp.git
 
 # JB Scripts
 git clone git@github.com:NenadDragic/JB-Scripts.git
+
+# Linux Learning
+git clone git@github.com:NenadDragic/Linux_Learning.git
