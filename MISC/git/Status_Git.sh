@@ -21,6 +21,7 @@ for dir in "$base_dir"/*; do
             # Run git status
             echo "Running git status in $dir"
             git status
+            echo
         fi
     fi
 done
