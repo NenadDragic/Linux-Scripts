@@ -6,15 +6,6 @@ IFS=$'\n\t'
 # Læser Hostname fra Backup.cfg, kører rsync og logger lokalt,
 # forsøger robust append/merge/cp til NFS-daglog og skriver status på NFS (med lokal fallback).
 #
-# Ændring i v6: Erstatter ustabil process substitution (>(stdbuf ...)) med synkron
-# sed | tee -a pipeline, så logfilen er fuldt skrevet inden append til NFS-daglog.
-# Derved undgås race condition der medførte tom/ufuldstændig logfil ved første kørsel.
-#
-# Brug: gem som Backup_NAS_Complete_v6.sh ; dos2unix Backup_NAS_Complete_v6.sh ; chmod +x Backup_NAS_Complete_v6.sh
-# Kør som root: sudo ./Backup_NAS_Complete_v6.sh [dry-run]
-
-# -----------------------
-# Konfiguration
 # -----------------------
 SOURCE_DIR="/media/nenad/rootfs/"
 
@@ -46,7 +37,7 @@ if [ -z "$HOSTNAME_FROM_CFG" ]; then
 fi
 
 # DEST_BASE="/mnt/NetBackup/${HOSTNAME_FROM_CFG}"
-DEST_BASE="/media/nenad/Dragic/${HOSTNAME_FROM_CFG}"
+DEST_BASE="/mnt/usb/Backup/${HOSTNAME_FROM_CFG}"
 
 EXCLUDES=(
     "/dev"
@@ -100,7 +91,7 @@ if [ "${1:-}" = "dry-run" ]; then
 fi
 
 # Tjek at rodmount eksisterer (bekræfter at USB-disken er monteret)
-MOUNT_ROOT="/media/nenad/Dragic"
+MOUNT_ROOT="/mnt/usb/Backup"
 if [ ! -d "$MOUNT_ROOT" ]; then
     echo "FEJL: Mountpunkt $MOUNT_ROOT eksisterer ikke — er USB-disken monteret?"
     exit 1
@@ -122,8 +113,8 @@ fi
 DATE=$(date +%Y-%m-%d)
 DEST_PATH="$DEST_BASE/$DATE"
 
-# NFS logmappe: /media/nenad/Dragic/Log/<HOSTNAME>/
-LOG_DIR_NFS="/media/nenad/Dragic/Log/${HOSTNAME_FROM_CFG}"
+# NFS logmappe: /mnt/usb/Backup/Log/<HOSTNAME>/
+LOG_DIR_NFS="/mnt/usb/Backup/Log/${HOSTNAME_FROM_CFG}"
 mkdir -p "$LOG_DIR_NFS" 2>/dev/null || true
 LOG_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.log"
 STATUS_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.status"
