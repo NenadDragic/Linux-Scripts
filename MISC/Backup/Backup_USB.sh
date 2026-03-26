@@ -46,7 +46,7 @@ if [ -z "$HOSTNAME_FROM_CFG" ]; then
 fi
 
 # DEST_BASE="/mnt/NetBackup/${HOSTNAME_FROM_CFG}"
-DEST_BASE="/media/nenad/Dragic/${HOSTNAME_FROM_CFG}"
+DEST_BASE="/mnt/usb/Backup/${HOSTNAME_FROM_CFG}"
 
 EXCLUDES=(
     "/dev"
@@ -100,7 +100,7 @@ if [ "${1:-}" = "dry-run" ]; then
 fi
 
 # Tjek at rodmount eksisterer (bekræfter at USB-disken er monteret)
-MOUNT_ROOT="/media/nenad/Dragic"
+MOUNT_ROOT="/mnt/usb/Backup"
 if [ ! -d "$MOUNT_ROOT" ]; then
     echo "FEJL: Mountpunkt $MOUNT_ROOT eksisterer ikke — er USB-disken monteret?"
     exit 1
@@ -122,8 +122,8 @@ fi
 DATE=$(date +%Y-%m-%d)
 DEST_PATH="$DEST_BASE/$DATE"
 
-# NFS logmappe: /media/nenad/Dragic/Log/<HOSTNAME>/
-LOG_DIR_NFS="/media/nenad/Dragic/Log/${HOSTNAME_FROM_CFG}"
+# NFS logmappe: /mnt/usb/Backup/Log/<HOSTNAME>/
+LOG_DIR_NFS="/mnt/usb/Backup/Log/${HOSTNAME_FROM_CFG}"
 mkdir -p "$LOG_DIR_NFS" 2>/dev/null || true
 LOG_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.log"
 STATUS_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.status"
