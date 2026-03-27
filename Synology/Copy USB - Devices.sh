@@ -1,0 +1,10 @@
+#!/bin/bash
+# Version 1.0
+# Date: 2026-03-26
+# Developper: Nenad(a)dragic(.)com
+
+sudo rsync -av --progress --remove-source-files \
+  /volumeUSB1/usbshare/ \
+  /volume1/NetBackup/
+
+sudo rm -rf /volumeUSB1/usbshare/
