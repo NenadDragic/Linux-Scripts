@@ -1,19 +1,27 @@
-# Delete FTP DashCam 30 over days.sh
+# Delete FTP DashCam 30 over days
 
-This script finds and deletes all files in the `/volume1/Ftp/DashCam` directory that were last modified more than 30 days ago.
+Deletes all files in `/volume1/DashCam` that were last modified more than 30 days ago, skipping the recycle bin.
 
-## How it works
+## Command
 
-The `find` command is used to search for files in the specified directory.
+```bash
+find /volume1/DashCam -path "/volume1/DashCam/#recycle" -prune -o -type f -mtime +30 -print0 | xargs -0 rm -f
+```
 
-- The `-type f` option ensures that only regular files (not directories) are matched.
-- The `-mtime +30` option specifies that only files that were last modified more than 30 days ago should be matched.
-- The matched files are then piped to the `xargs` command, which uses the `rm -f` command to delete each file.
+## Options
+
+| Option | Description |
+| ------ | ----------- |
+| `-path "/volume1/DashCam/#recycle" -prune` | Skip the Synology recycle bin directory |
+| `-type f` | Match regular files only (excludes directories) |
+| `-mtime +30` | Match files last modified more than 30 days ago |
+| `-print0` | Output filenames null-delimited (safe for filenames with spaces) |
+| `xargs -0 rm -f` | Delete each matched file (null-delimited input) |
 
 ## Usage
 
-Run these commands to find and delete all files in the `/volume1/Ftp/DashCam` directory that were last modified more than 30 days ago. Make sure to replace `/volume1/Ftp/DashCam` with the actual directory path if necessary.
+```bash
+bash "Delete FTP DashCam 30 over days.sh"
+```
 
-```shellscript
-find /volume1/Ftp/DashCam -type f -mtime +30
-find /volume1/Ftp/DashCam -type f -mtime +30  | xargs rm -f
+Replace `/volume1/DashCam` with the target directory path if needed.
