@@ -18,7 +18,7 @@ ls -al /volume1/Dragic/Rap/GPS_log/csv
 | `admina@10.0.0.149` | Remote user and host IP |
 | `/home/admina/gps_monitor/logs/csv/` | Source directory on remote host |
 | `/volume1/Dragic/Rap/GPS_log` | Destination directory on NAS |
-| `ls -al` | List destination contents with details |
+| `ls -alh` | List destination contents with details in human-readable format |
 
 ## Usage
 
