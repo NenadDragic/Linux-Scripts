@@ -1,7 +1,7 @@
 #!/bin/bash
 # Version:      1.0
-# Dae Run:      2026-03-29
 # Date:         2026-03-26
-# Developper:   Nenad(a)dragic(.)com
+# Test Run:     2026-03-29
+# Developper: Nenad(a)dragic(.)com
 
 find /volume1/Dragic -name "Thumbs.db" -type f -delete 2>/dev/null
