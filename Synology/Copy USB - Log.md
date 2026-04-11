@@ -5,11 +5,11 @@ Copies log files from a USB drive to `/volume1/NetBackup/Log/`, removing the sou
 ## Commands
 
 ```bash
-rsync -av --progress --remove-source-files \
+sudo rsync -av --progress --remove-source-files \
   /volumeUSB1/usbshare/Log/ \
   /volume1/NetBackup/Log/
 
-rm -rf /volumeUSB1/usbshare/Log/
+sudo rm -rf /volumeUSB1/usbshare/Log/
 ```
 
 ## Options
@@ -20,12 +20,12 @@ rm -rf /volumeUSB1/usbshare/Log/
 | `-v` | Verbose output |
 | `--progress` | Show transfer progress |
 | `--remove-source-files` | Delete source files after successful transfer |
-| `rm -rf` | Remove the now-empty source directory |
+| `sudo rm -rf` | Remove the now-empty source directory |
 
 ## Usage
 
 ```bash
-bash "Copy USB - Log.sh"
+sudo bash "Copy USB - Log.sh"
 ```
 
 Ensure the USB drive is mounted at `/volumeUSB1/usbshare/` before running.
