@@ -8,6 +8,6 @@ sudo rsync -avL --progress --remove-source-files \
   /volumeUSB1/usbshare/Log/ \
   /volume1/NetBackup/Log/
 
-sudo find /volumeUSB1/usbshare/ -type d -empty -delete
+sudo find /volumeUSB1/usbshare/Log/ -type d -empty -delete
 
 sudo rm -rf /volumeUSB1/usbshare/Log/
