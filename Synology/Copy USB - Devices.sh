@@ -4,7 +4,7 @@
 # Test Run:     2026-04-13
 # Developper: Nenad(a)dragic(.)com
 
-sudo rsync -avL --progress --remove-source-files \
+sudo rsync -av --progress --remove-source-files \
   /volumeUSB1/usbshare/ \
   /volume1/NetBackup/
 
