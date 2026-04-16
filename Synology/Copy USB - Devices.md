@@ -5,7 +5,7 @@ Copies all files from a USB drive to `/volume1/NetBackup/`, removing source file
 ## Commands
 
 ```bash
-sudo rsync -avL --progress --remove-source-files \
+sudo rsync -av --progress --remove-source-files \
   /volumeUSB1/usbshare/ \
   /volume1/NetBackup/
 
@@ -20,7 +20,6 @@ sudo rm -rf /volumeUSB1/usbshare/NetBackup/
 | ------ | ----------- |
 | `-a` | Archive mode — preserves permissions, timestamps, symlinks, etc. |
 | `-v` | Verbose output |
-| `-L` | Follow symlinks — copies the file/directory the symlink points to |
 | `--progress` | Show transfer progress |
 | `--remove-source-files` | Delete source files after successful transfer |
 | `sudo find -type d -empty -delete` | Delete empty directories left after transfer |
