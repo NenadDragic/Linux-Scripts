@@ -1,6 +1,7 @@
 #!/bin/bash
-# Version 1.0
-# Date: 2026-03-26
+# Version:      1.0
+# Date:         2026-04-16
+# Test Run:     2026-04-16
 # Developper: Nenad(a)dragic(.)com
 
 # This script deletes all files in the /volume1/Dragic directory that are named "*.bak".
