@@ -2,7 +2,7 @@
 # Version:      1.0
 # Date:         2026-03-26
 # Test Run:     2026-03-29
-# Developper: Nenad(a)dragic(.)com
+# Developper:   Nenad(a)dragic(.)com
 
 current_date=$(date '+%Y%m%d')
 start_timestamp=$(date -d "$current_date" '+%Y%m%d%H%M.%S')

@@ -1,7 +1,5 @@
 # Two or more spaces in filename - Delete
 
-> **Note:** Despite the "Delete" name, this script **renames** files — it does not delete them.
-
 Finds all files under `/volume1/Dragic` that have two or more consecutive spaces in their names and renames them by replacing the double spaces with a single space.
 
 ## Command

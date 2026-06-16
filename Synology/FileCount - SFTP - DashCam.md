@@ -2,20 +2,23 @@
 
 Counts the number of files in each DashCam directory and prints the results to the console.
 
-## Directories
+## Command
 
-| Label | Path |
-| ----- | ---- |
-| Photos | `/volume1/DashCam/Photo` |
-| Movie | `/volume1/DashCam/Movie` |
-| Movie RO | `/volume1/DashCam/Movie/RO` |
-| Movie Parking | `/volume1/DashCam/Movie/Parking` |
+```bash
+files_count=0
 
-## How it works
+files_count=$(ls -l /volume1/DashCam/Photo | wc -l)
+echo "Photos: $files_count"
 
-Uses `ls -l | wc -l` for each directory to count entries, then prints the count with a labeled header and footer.
+files_count=$(ls -l /volume1/DashCam/Movie | wc -l)
+echo "Movie: $files_count"
 
-> **Note:** `ls -l | wc -l` includes the `total` line in the count, so the actual file count is one less than reported.
+files_count=$(ls -l /volume1/DashCam/Movie/RO | wc -l)
+echo "Movie RO: $files_count"
+
+files_count=$(ls -l /volume1/DashCam/Movie/Parking | wc -l)
+echo "Movie Parking: $files_count"
+```
 
 ## Usage
 
@@ -23,4 +26,4 @@ Uses `ls -l | wc -l` for each directory to count entries, then prints the count 
 bash "FileCount - SFTP - DashCam.sh"
 ```
 
-Replace directory paths with the actual paths if needed.
+> **Note:** `ls -l | wc -l` includes the `total` line in the count, so the actual file count is one less than reported.

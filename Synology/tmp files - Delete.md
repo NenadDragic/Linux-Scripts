@@ -1,11 +1,11 @@
 # tmp files - Delete
 
-Deletes all `.tmp` files under `/volume1/Dragic`.
+Deletes all `.tmp` files under `/volume2/Dragic`.
 
 ## Command
 
 ```bash
-find /volume1/Dragic -name "*.tmp" -type f -delete 2>/dev/null
+find /volume2/Dragic -name "*.tmp" -type f -delete 2>/dev/null
 ```
 
 ## Options
@@ -23,4 +23,4 @@ find /volume1/Dragic -name "*.tmp" -type f -delete 2>/dev/null
 bash "tmp files - Delete.sh"
 ```
 
-Replace `/volume1/Dragic` with the target directory path if needed.
+Replace `/volume2/Dragic` with the target directory path if needed.

@@ -2,8 +2,8 @@
 # Version:      1.1
 # Date:         2026-04-10
 # Test Run:     2026-04-10
-# Developper: Nenad(a)dragic(.)com
+# Developper:   Nenad(a)dragic(.)com
 
-scp -r admina@10.0.0.149:/home/admina/gps_monitor/logs/csv/ /volume1/Dragic/Rap/GPS_log
+scp -r admina@10.0.0.149:/home/admina/gps_monitor/logs/ /volume1/Dragic/Rap/GPS_log
 
-ls -alh /volume1/Dragic/Rap/GPS_log/csv
+ls -alh /volume1/Dragic/Rap/GPS_log/logs/csv/

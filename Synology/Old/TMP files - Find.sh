@@ -2,7 +2,7 @@
 # Version:      1.0
 # Date:         2026-04-16
 # Test Run:     2026-04-16
-# Developper: Nenad(a)dragic(.)com
+# Developper:   Nenad(a)dragic(.)com
 
 # This script finds all files in the /volume1/Dragic directory that end with the .tmp extension.
 

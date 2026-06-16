@@ -1,25 +1,34 @@
 # FileCount - Router - SD
 
-Finds all files in `/volume1/DashCam/File-Count-SD/` modified today and displays their contents using `more`.
-
-## How it works
-
-1. Gets today's date in `YYYYMMDD` format
-2. Creates temporary marker files at start and end of the day in `/tmp/`
-3. Uses `find` to locate files modified within today's time range
-4. Removes the temporary marker files
-5. Displays each matched file with `more`, or prints a message if none are found
+Finds all files in `/volume1/DashCam/File-Count-SD/` modified today and displays their contents.
 
 ## Command
 
 ```bash
-find /volume1/DashCam/File-Count-SD/ -maxdepth 1 -type f -newer /tmp/start_marker ! -newer /tmp/end_marker -exec basename {} \;
+current_date=$(date '+%Y%m%d')
+start_timestamp=$(date -d "$current_date" '+%Y%m%d%H%M.%S')
+end_timestamp=$(date -d "$current_date + 1 day" '+%Y%m%d%H%M.%S')
+
+touch -t "$start_timestamp" /tmp/start_marker
+touch -t "$end_timestamp" /tmp/end_marker
+
+files_modified_today=$(find /volume1/DashCam/File-Count-SD/ -maxdepth 1 -type f -newer /tmp/start_marker ! -newer /tmp/end_marker -exec basename {} \;)
+
+rm -f /tmp/start_marker /tmp/end_marker
+
+if [ -n "$files_modified_today" ]; then
+    for file in $files_modified_today; do
+        more "/volume1/DashCam/File-Count-SD/$file"
+    done
+else
+    echo "No files modified today."
+fi
 ```
 
 ## Options
 
-| Option/Variable | Description |
-| --------------- | ----------- |
+| Option | Description |
+| ------ | ----------- |
 | `-maxdepth 1` | Search only the specified directory, not subdirectories |
 | `-type f` | Match regular files only (excludes directories) |
 | `-newer /tmp/start_marker` | Match files modified after start of today |

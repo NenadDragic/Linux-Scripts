@@ -2,14 +2,6 @@
 
 Finds all files in `/volume1/DashCam/File-Delete/` modified today and displays their contents using `more`.
 
-## How it works
-
-1. Gets today's date in `YYYYMMDD` format
-2. Creates temporary marker files at start and end of the day in `/tmp/`
-3. Uses `find` to locate files modified within today's time range
-4. Removes the temporary marker files
-5. Displays each matched file with `more`, or prints a message if none are found
-
 ## Command
 
 ```bash
@@ -23,12 +15,20 @@ touch -t "$end_timestamp" /tmp/end_marker
 files_modified_today=$(find /volume1/DashCam/File-Delete/ -maxdepth 1 -type f -newer /tmp/start_marker ! -newer /tmp/end_marker -exec basename {} \;)
 
 rm -f /tmp/start_marker /tmp/end_marker
+
+if [ -n "$files_modified_today" ]; then
+    for file in $files_modified_today; do
+        more "/volume1/DashCam/File-Delete/$file"
+    done
+else
+    echo "No files modified today."
+fi
 ```
 
 ## Options
 
-| Option/Variable | Description |
-| --------------- | ----------- |
+| Option | Description |
+| ------ | ----------- |
 | `-maxdepth 1` | Search only the specified directory, not subdirectories |
 | `-type f` | Match regular files only (excludes directories) |
 | `-newer /tmp/start_marker` | Match files modified after start of today |

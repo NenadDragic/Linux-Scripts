@@ -1,4 +1,4 @@
-# Find Corrupt files
+# Find Corrup files
 
 Finds all files under `/volume1/Dragic` that contain `CORRUPT` in their filename.
 

@@ -1,8 +1,8 @@
-# Copy Loppe files
+# Loppe files Copy
 
 Copies the `Loppe` directory from a remote host to the NAS, then lists the destination contents.
 
-## Commands
+## Command
 
 ```bash
 scp -r admina@10.0.0.215:/home/admina/Loppe/ /volume1/Dragic/Rap
@@ -23,7 +23,7 @@ ls -al /volume1/Dragic/Rap/Loppe
 ## Usage
 
 ```bash
-bash "Copy Loppe files.sh"
+bash "Loppe files Copy.sh"
 ```
 
 Ensure SSH access to `10.0.0.215` is available before running.

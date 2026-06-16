@@ -1,19 +1,24 @@
-# Bak files - Find.sh
+# Bak files - Find
 
 This script finds all files in the `/volume1/Dragic` directory that are named `*.bak`.
 
-## How it works
+## Command
 
-The `find` command is used to search for files in the specified directory.
+```bash
+find /volume1/Dragic -name "*.bak" -type f
+```
 
-- The `-name "*.bak"` option specifies the pattern to match the filenames.
-- The `-type f` option ensures that only regular files (not directories) are matched.
+## Options
+
+| Option | Description |
+| ------ | ----------- |
+| `-name "*.bak"` | Specifies the pattern to match the filenames |
+| `-type f` | Ensures that only regular files (not directories) are matched |
 
 ## Usage
 
-Run this script to find all files in the `/volume1/Dragic` directory that are named `*.bak`.
+```bash
+bash "Bak files - Find.sh"
+```
 
-Make sure to replace `/volume1/Dragic` with the actual directory path if necessary.
-
-```shellscript
-find /volume1/Dragic -name "*.bak" -type f
+Replace `/volume1/Dragic` with the actual directory path if necessary.
