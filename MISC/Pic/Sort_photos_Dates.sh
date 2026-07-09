@@ -3,10 +3,17 @@
 # ─────────────────────────────────────────────
 # STEP 1: Check dependencies
 # ─────────────────────────────────────────────
+missing=""
 if ! dpkg -l | grep -q libheif-examples; then
-    echo "libheif-examples is not installed. Installing..."
+    missing="$missing libheif-examples"
+fi
+if ! command -v exiftool >/dev/null 2>&1; then
+    missing="$missing libimage-exiftool-perl"
+fi
+if [ -n "$missing" ]; then
+    echo "Installerer manglende pakker:$missing"
     sudo apt-get update
-    sudo apt-get install -y libheif-examples
+    sudo apt-get install -y $missing
 fi
 
 # ─────────────────────────────────────────────
@@ -92,46 +99,35 @@ done
 shopt -u nocaseglob
 
 # ─────────────────────────────────────────────
-# STEP 5: Sort standalone MOV, MP4 and PNG files
+# STEP 5: Sort standalone MOV and MP4 files
 #         that have no matching JPG/JPEG anchor
+#         (PNG is already handled as its own anchor in Step 4)
 # ─────────────────────────────────────────────
-for filename in *.MOV *.MP4 *.PNG; do
+for filename in *.MOV *.MP4; do
     [ -e "$filename" ] || continue
 
     baseFilename=$(basename "$filename" .MOV)
     baseFilename=$(basename "$baseFilename" .MP4)
-    baseFilename=$(basename "$baseFilename" .PNG)
 
     # Skip if a matching JPG/JPEG exists – already handled in Step 4
     if [ -e "${baseFilename}.JPG" ] || [ -e "${baseFilename}.JPEG" ]; then
         continue
     fi
 
-    ext="${filename##*.}"
+    # Read metadata from video via QuickTime
+    cameraModel=$(exiftool -b -n -s -M -QuickTime:Model "$filename" \
+        | tr -d '[:space:]' \
+        | sed 's/[^a-zA-Z0-9]/_/g')
 
-    if [ "$ext" = "PNG" ]; then
-        # Read metadata from PNG via EXIF
-        cameraModel=$(exiftool -b -n -s -M -EXIF:Model "$filename" \
+    # Fallback to Make if Model is empty
+    if [ -z "$cameraModel" ]; then
+        cameraModel=$(exiftool -b -n -s -M -QuickTime:Make "$filename" \
             | tr -d '[:space:]' \
             | sed 's/[^a-zA-Z0-9]/_/g')
-        creationDate=$(exiftool -b -n -s -M -EXIF:createdate "$filename" \
-            | cut -d' ' -f1 | tr ':' '-')
-    else
-        # Read metadata from video via QuickTime
-        cameraModel=$(exiftool -b -n -s -M -QuickTime:Model "$filename" \
-            | tr -d '[:space:]' \
-            | sed 's/[^a-zA-Z0-9]/_/g')
-
-        # Fallback to Make if Model is empty
-        if [ -z "$cameraModel" ]; then
-            cameraModel=$(exiftool -b -n -s -M -QuickTime:Make "$filename" \
-                | tr -d '[:space:]' \
-                | sed 's/[^a-zA-Z0-9]/_/g')
-        fi
-
-        creationDate=$(exiftool -b -n -s -M -QuickTime:CreateDate "$filename" \
-            | cut -d' ' -f1 | tr ':' '-')
     fi
+
+    creationDate=$(exiftool -b -n -s -M -QuickTime:CreateDate "$filename" \
+        | cut -d' ' -f1 | tr ':' '-')
 
     if [ -z "$cameraModel" ] || [ -z "$creationDate" ]; then
         echo "Warning: Could not extract metadata from $filename – skipping"

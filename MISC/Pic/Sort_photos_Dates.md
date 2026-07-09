@@ -44,7 +44,7 @@ The script will process all supported files in the current directory and sort th
 The script runs in six steps:
 
 ### Step 1 – Check Dependencies
-Checks whether `libheif-examples` is installed. If not, it is installed automatically via `apt-get`.
+Checks whether `libheif-examples` is installed (via `dpkg`) and whether `exiftool` is available (via `command -v`). Any missing packages are collected and installed in a single `apt-get install` call.
 
 ### Step 2 – Normalize File Extensions to Uppercase
 All supported files are renamed so their extension is uppercase (e.g. `.jpg` → `.JPG`, `.png` → `.PNG`). Only the following file types are processed — all other files in the folder are left untouched:
@@ -76,19 +76,17 @@ For each `.JPG`, `.JPEG`, or `.PNG` image file:
     └── IMG_5678.HEIC
 ```
 
-### Step 5 – Sort Standalone MOV, MP4, and PNG Files
-Handles files that have no matching `.JPG`/`.JPEG` anchor. For each standalone MOV, MP4, or PNG:
+### Step 5 – Sort Standalone MOV and MP4 Files
+Handles files that have no matching `.JPG`/`.JPEG` anchor. PNG files are not handled here — every PNG is already its own anchor in Step 4, since Step 4's file glob includes PNG. For each standalone MOV or MP4:
 - Files already handled in Step 4 are skipped
-- **PNG files** – camera model and date are read from EXIF metadata (`EXIF:Model`, `EXIF:createdate`)
-- **MOV/MP4 files** – camera model is read from `QuickTime:Model`, with a fallback to `QuickTime:Make` if `Model` is empty. Date is read from `QuickTime:CreateDate`
+- Camera model is read from `QuickTime:Model`, with a fallback to `QuickTime:Make` if `Model` is empty. Date is read from `QuickTime:CreateDate`
 - The file is copied into the same `YYYY-MM-DD/CameraModel/` folder structure
 
 **Example:**
 ```
 2024-03-15/
 └── Apple_iPhone_14_Pro/
-    ├── IMG_7971.MOV
-    └── IMG_7972.PNG
+    └── IMG_7971.MOV
 ```
 
 ### Step 6 – Remove Empty Directories
