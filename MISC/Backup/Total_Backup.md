@@ -20,7 +20,7 @@ This block of code checks if the script is being run as the root user by compari
 
 ```bash
 # Define the backup directory
-backup_dir="../../media/nenad/2F90E98B5A2F4030/Backup - Debian Laptop"
+backup_dir="../../media/nenad/3CA79D5F2053D934"
 ```
 This line defines the backup directory where the image file backups will be stored. The directory is specified using a relative path to the user's home directory.
 

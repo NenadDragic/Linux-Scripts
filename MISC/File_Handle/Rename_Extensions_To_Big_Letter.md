@@ -1,23 +1,41 @@
-# Find and Rename Command: Find Files with Lowercase Extensions and Rename to Uppercase
+# Rename Command: Convert Filenames to Uppercase
 
-This command `(find . -type f -iname '*.[a-z]*' -execdir rename 's/\.([a-z]+)/.\U$1/' {} \;)` is designed to find all files in the current directory and its subdirectories whose names have lowercase file extensions and rename them to have uppercase file extensions.
+This script (`Rename_Extensions_To_Big_Letter.sh`) renames every file in the **current directory** by transliterating all lowercase letters in the filename to uppercase.
 
-## Explanation
-The command uses the `find` command to search for files in the directory hierarchy. The command's syntax is as follows:
+## What the Script Does
+The active command in the script is:
 
 ```bash
-find . -type f -iname '*.[a-z]*' -execdir rename -n 's/\.([a-z]+)/.\U$1/' {} \;
+rename 'y/a-z/A-Z/' *
 ```
-__To apply the changes, remove the -n flag from the rename command:__
 
-Here's an explanation of each element of the command:
+* `rename` : the Perl-based rename utility.
+* `'y/a-z/A-Z/'` : a transliteration expression (like `tr`) that converts every lowercase letter `a-z` anywhere in the filename to its uppercase equivalent `A-Z`.
+* `*` : the shell glob that expands to every file (and directory entry) in the current working directory.
 
-* `find`: This is the command used to search for files and directories in a directory hierarchy.
-* `.`: This argument specifies the starting directory for the search. In this case, it is the current directory.
-* `-type f`: This flag filters the search results, only returning files (not directories).
-* `-iname '*.[a-z]*'`: This option specifies a case-insensitive match for filenames that end with a lowercase file extension.
-* `-execdir rename 's/\.([a-z]+)/.\U$1/' {} \;`: This option executes the rename command in the directory where each file is located. The `rename` command uses a regular expression to match and convert the lowercase file extension to uppercase.
+Important details about the real behavior:
+* It operates only on the **current directory** — it does **not** recurse into subdirectories, despite the introductory comment in the script mentioning "and its subdirectories."
+* It uppercases the **entire filename**, not just the extension. For example, `report.txt` becomes `REPORT.TXT`, and `MyFile.txt` becomes `MYFILE.TXT`.
+* There is **no dry-run / preview option** — running the script renames files immediately and unconditionally (subject to whatever the `rename` command matches via `*`).
 
-When the command is executed, the `find` command searches the current directory and its subdirectories for files whose names have lowercase file extensions, and renames them to have uppercase file extensions.
+## Usage
+1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-Overall, this command is useful for users who want to quickly find and rename files in a directory and its subdirectories with lowercase file extensions to have uppercase file extensions.
+```bash
+chmod +x Rename_Extensions_To_Big_Letter.sh
+```
+
+2. Execute the script from inside the directory whose files you want to rename:
+
+```bash
+./Rename_Extensions_To_Big_Letter.sh
+```
+
+All files in the current directory will immediately be renamed with their names fully uppercased. There is no confirmation prompt and no way to preview the changes beforehand — back up or test in a scratch directory first if you are unsure.
+
+## Notes
+* The script contains a second, commented-out line:
+  ```bash
+  #find . -type f -iname '*.[a-z]*' -execdir rename -n 's/\.([a-z]+)/.\U$1/' {} \;
+  ```
+  This more conservative alternative would recurse into subdirectories, uppercase only the file **extension** (not the whole filename), and supports a `-n` dry-run flag (preview only, remove `-n` to apply). However, this line is currently commented out with `#` and is **not active** — it has no effect when the script runs.

@@ -9,13 +9,13 @@ To use the script, follow these steps:
 console
 
 ```bash
-chmod +x wifi_adapter_config.sh
+chmod +x Install_AWUS036ACH.sh
 ```
 
 2. Execute the script by running the following command:
 
 ```bash
-sudo ./wifi_adapter_config.sh
+sudo ./Install_AWUS036ACH.sh
 ```
 
 The script will update and upgrade existing packages, install necessary packages, install the driver for the Realtek RTL88xxAU wireless chipset, and provide instructions to configure the adapter for monitor mode.

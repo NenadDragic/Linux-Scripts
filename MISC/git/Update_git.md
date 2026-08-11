@@ -1,16 +1,16 @@
 ## Bash Script: Add, Commit, and Push Changes to a Git Repository
-This bash script (`commit_changes.sh`) is designed to add, commit, and push changes to a Git repository. The script prompts the user for a commit message and uses that message in the commit.
+This bash script (`Update_git.sh`) is designed to add, commit, and push changes to a Git repository. The script prompts the user for a commit message and uses that message in the commit.
 
 ## Usage
 Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
 ```bash
-chmod +x commit_changes.sh
+chmod +x Update_git.sh
 ```
 Execute the script by running the following command:
 
 ```bash
-./commit_changes.sh
+./Update_git.sh
 ```
 
 The script will prompt the user for a commit message, add all changes to the staging area, commit the changes with the provided commit message, and push the changes to the remote repository.

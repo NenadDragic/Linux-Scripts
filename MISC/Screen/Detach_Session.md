@@ -1,10 +1,10 @@
 # Bash script for detaching from a screen session
 
-This Bash script sends the `CTRL+A` and `d` keys to detach from a running screen session. It can be useful when you need to detach from a screen session and return control to the terminal without closing the session.
+This Bash script uses `screen -X detach` to detach from a running screen session. It can be useful when you need to detach from a screen session and return control to the terminal without closing the session.
 
 ## Usage
 
-To use this script, simply run it in a Bash terminal. It will display a list of all running screen sessions with their IDs and names (if any). You can then enter the ID of the session you want to detach from, and the script will send the `CTRL+A` and `d` keys to detach from the session.
+To use this script, simply run it in a Bash terminal. It will display a list of all running screen sessions with their IDs and names (if any). You can then enter the ID of the session you want to detach from, and the script will run `screen -X detach` to detach from the session.
 
 ## Script
 
@@ -41,13 +41,13 @@ The script consists of three parts:
 
    This command prompts the user to enter the ID of the screen session they want to detach from. The entered ID is stored in the `session_id` variable.
 
-3. Send CTRL+A and d to detach from the selected session:
+3. Detach the selected session using screen's command mode:
 
    ```bash
    screen -S $session_id -X detach
    ```
 
-   This command sends the `CTRL+A` and `d` keys to the screen session with the ID stored in the `session_id` variable. This causes the session to detach and return control to the terminal.
+   This command tells the screen session with the ID stored in the `session_id` variable to detach, using the `-X detach` command-mode option. This achieves the same practical result as manually pressing `Ctrl+A` `d` inside the session, but via screen's command-mode API rather than sending literal keystrokes.
 
 ## Note
 

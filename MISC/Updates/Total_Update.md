@@ -1,15 +1,15 @@
 # Update and Maintenance Script
-This script (update_maintenance.sh) is designed to update and maintain a Debian-based Linux system. It checks for root privileges, updates the APT packages, and updates the file location database.
+This script (Total_Update.sh) is designed to update and maintain a Debian-based Linux system. It checks for root privileges, updates the APT packages, and updates the file location database.
 
 ## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 ```bash
-chmod +x update_maintenance.sh
+chmod +x Total_Update.sh
 ```
 
 2. Execute the script by running the following command:
 ```bash
-sudo ./update_maintenance.sh
+sudo ./Total_Update.sh
 ```
 
 The script will update APT packages and the file location database on your Debian-based Linux system.
@@ -17,9 +17,9 @@ The script will update APT packages and the file location database on your Debia
 ## Explanation
 The script uses a combination of `if` statement, APT package management commands, and the `updatedb` command to perform the update and maintenance tasks.
 
-* `if [ $EUID -ne "0" ]; then`: This line checks if the Effective User ID (EUID) is not equal to 0. The root user has an EUID of 0.
+* `if [ "$(whoami)" != "root" ]; then`: This line checks if the current username is not "root".
 
-`echo -e "Please run as root.\n"`: If the user is not root, the script displays a message asking to run the script as root.
+`echo "Please run as root.\n"`: If the user is not root, the script displays a message asking to run the script as root. Note there is no `-e` flag, so the `\n` is printed literally rather than as a newline.
 
 `exit`: If the user is not root, the script exits.
 

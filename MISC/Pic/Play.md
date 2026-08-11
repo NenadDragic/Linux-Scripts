@@ -21,7 +21,7 @@ chmod +x Play.sh
 1. Place the script in the directory containing your photos
 2. Run the script using:
 ```bash
-./photo-organizer.sh
+./Play.sh
 ```
 
 ## Script Explanation

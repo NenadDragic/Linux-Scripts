@@ -9,7 +9,7 @@ If a Git repository is found, it runs git status to show the status of the repos
 Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
 ```bash
-chmod +x validate_git_status.sh
+chmod +x Status_Git.sh
 ```
 
 Run the script with the following command:

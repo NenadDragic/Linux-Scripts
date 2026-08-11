@@ -24,13 +24,13 @@ sudo apt-get install libimage-exiftool-perl
 **1.** Make the script executable:
 
 ```console
-chmod +x sort_photos.sh
+chmod +x Sort_photos_Dates.sh
 ```
 
 **2.** Copy the script into the folder containing your image and video files and run it:
 
 ```console
-bash sort_photos.sh
+bash Sort_photos_Dates.sh
 ```
 
 > **Note:** The script must be run with `bash`, not `sh`, as it uses bash-specific commands (`shopt`).

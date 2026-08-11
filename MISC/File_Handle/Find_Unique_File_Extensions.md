@@ -1,17 +1,17 @@
 # Find Unique File Extensions Script
-This script (find_unique_extensions.sh) is designed to find all unique file extensions in the current directory and its subdirectories.
+This script (Find_Unique_File_Extensions.sh) is designed to find all unique file extensions in the current directory and its subdirectories.
 
 ## Usage
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
 ```bash
-chmod +x find_unique_extensions.sh
+chmod +x Find_Unique_File_Extensions.sh
 ```
 
 2. Execute the script by running the following command:
 
 ```bash
-./find_unique_extensions.sh
+./Find_Unique_File_Extensions.sh
 ```
 
 The script will output the unique file extensions found in the current directory and its subdirectories.

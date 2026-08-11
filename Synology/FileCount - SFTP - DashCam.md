@@ -7,6 +7,11 @@ Counts the number of files in each DashCam directory and prints the results to t
 ```bash
 files_count=0
 
+echo '********************************************'
+echo '** NAS - NAS ** NAS - NAS ** NAS - NAS **'
+echo '********************************************'
+echo ""
+
 files_count=$(ls -l /volume1/DashCam/Photo | wc -l)
 echo "Photos: $files_count"
 
@@ -18,6 +23,11 @@ echo "Movie RO: $files_count"
 
 files_count=$(ls -l /volume1/DashCam/Movie/Parking | wc -l)
 echo "Movie Parking: $files_count"
+
+echo ""
+echo '********************************************'
+echo '** NAS - NAS ** NAS - NAS ** NAS - NAS **'
+echo '********************************************'
 ```
 
 ## Usage
