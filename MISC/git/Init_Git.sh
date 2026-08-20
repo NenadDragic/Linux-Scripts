@@ -18,6 +18,9 @@ git clone git@github.com:NenadDragic/cpp.git
 # Cyber Security resources
 git clone git@github.com:NenadDragic/Cyber-Sec.git
 
+# Edora
+git clone git@github.com:NenadDragic/Edora.git
+
 # JB Scripts
 git clone git@github.com:NenadDragic/JB-Scripts.git
 
@@ -38,6 +41,9 @@ git clone git@github.com:NenadDragic/Python.git
 
 # Website Source
 git clone git@github.com:NenadDragic/Web-Source.git
+
+# Website Source (hosting)
+git clone git@github.com:NenadDragic/Web_source.git
 
 # z-os
 git clone git@github.com:NenadDragic/z-os.git

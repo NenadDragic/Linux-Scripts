@@ -12,6 +12,8 @@ This Bash script is designed to clone all of NenadDragic's repositories on GitHu
 
 - [Cyber Security Resources](https://github.com/NenadDragic/Cyber-Sec)
 
+- [Edora](https://github.com/NenadDragic/Edora)
+
 - [JB-Scripts](https://github.com/NenadDragic/JB-Scripts)
 
 - [Learning Resources](https://github.com/NenadDragic/Learning)
@@ -25,6 +27,8 @@ This Bash script is designed to clone all of NenadDragic's repositories on GitHu
 - [Python Scripts](https://github.com/NenadDragic/Python)
 
 - [Web-Source](https://github.com/NenadDragic/Web-Source)
+
+- [Web_source](https://github.com/NenadDragic/Web_source)
 
 - [z-os](https://github.com/NenadDragic/z-os)
 
