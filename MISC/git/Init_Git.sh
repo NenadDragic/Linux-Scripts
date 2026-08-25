@@ -18,6 +18,9 @@ git clone git@github.com:NenadDragic/cpp.git
 # Cyber Security resources
 git clone git@github.com:NenadDragic/Cyber-Sec.git
 
+# Devices
+git clone git@github.com:NenadDragic/Devices.git
+
 # Edora
 git clone git@github.com:NenadDragic/Edora.git
 
