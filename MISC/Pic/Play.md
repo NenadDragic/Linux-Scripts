@@ -1,90 +1,58 @@
-# Photo Organization Script
-This Bash script organizes photos into folders based on their creation date and camera model using EXIF metadata.
+# Play
 
-## Prerequisites
-Before running this script, make sure you have the following prerequisites installed on your system:
-- `exiftool`: A tool for reading and writing EXIF metadata.
-- Basic Unix/Linux command line tools.
+This script organizes JPG/JPEG photos in the current directory into a `YYYY-MM-DD/CameraModel` folder structure, reading the creation date and camera model from each photo's EXIF metadata.
 
-## Installation
-1. Install ExifTool if not already installed:
-```bash
-sudo apt-get install exiftool
-```
-
-2. Download the script and make it executable:
-```bash
-chmod +x Play.sh
-```
+---
 
 ## Usage
-1. Place the script in the directory containing your photos
-2. Run the script using:
-```bash
-./Play.sh
+
+```console
+chmod +x Play.sh
+bash Play.sh
 ```
 
-## Script Explanation
+Run it from the folder containing the JPG/JPEG photos you want to organize.
 
-### 1. File Detection
-- The script searches for files with `.JPG` and `.JPEG` extensions (case-insensitive)
-- Uses bash's `nocaseglob` option to ensure case-insensitive matching
+Prerequisites:
 
-### 2. Metadata Extraction
-The script extracts the following metadata from each image:
-- Creation date (YYYY-MM-DD format)
-- Camera model name
-- Original filename
+- `exiftool` must already be installed — the script does not check for or install it.
+- Write access to the current directory (to create the date/camera-model subfolders and copy files into them).
 
-### 3. Directory Structure Creation
-- Creates a hierarchical folder structure: `YYYY-MM-DD/CAMERA_MODEL/`
-- Example: `2024-01-15/Canon_EOS_R6/`
-- Special characters in camera model names are replaced with underscores
+---
 
-### 4. File Organization
-- Copies each photo to its corresponding date/camera model directory
-- Maintains the original filename
-- Preserves the original files in their source location
+## What the Script Does
 
-### 5. Error Handling
-The script includes several safety features:
-- Checks for existence of files before processing
-- Validates extracted metadata
-- Provides feedback for successful copies and errors
-- Skips files with missing or invalid metadata
+### Step 1 – Enable case-insensitive matching and find candidate files
 
-## Example Output
-```
-Successfully copied IMG_1234.JPG to 2024-01-15/Canon_EOS_R6/IMG_1234.JPG
-Successfully copied IMG_1235.JPG to 2024-01-15/Canon_EOS_R6/IMG_1235.JPG
-Warning: Could not extract metadata from IMG_1236.JPG
-```
+`shopt -s nocaseglob` is set so that `*.JPG` and `*.JPEG` match regardless of case (e.g. `.jpg`, `.Jpeg`). The script then loops over every matching file, skipping the loop body entirely if no files are found (`[ -e "$filename" ] || continue`).
 
-## Directory Structure Example
-```
-.
-├── 2024-01-15
-│   └── Canon_EOS_R6
-│       ├── IMG_1234.JPG
-│       └── IMG_1235.JPG
-└── 2024-01-16
-    └── Nikon_D850
-        └── DSC_0001.JPG
-```
+### Step 2 – Extract EXIF metadata
+
+For each file, the script runs `exiftool` twice: once to read `EXIF:Model` (the camera model) and once to read `EXIF:createdate`. The camera model is stripped of whitespace and any non-alphanumeric character is replaced with an underscore. The creation date/time string is cut down to just the date portion (`YYYY-MM-DD`) using `cut -d' ' -f1`.
+
+### Step 3 – Skip files with missing metadata
+
+If either the camera model or the creation date came back empty, the script prints `Warning: Could not extract metadata from $filename` and moves on to the next file without copying anything.
+
+### Step 4 – Build and create the target directory
+
+The target path is assembled as `${creationDate}/${cameraModel}` (e.g. `2024-01-15/Canon_EOS_R6`) and created with `mkdir -p`, so nested and pre-existing directories are handled without error.
+
+### Step 5 – Copy the file into place
+
+The file is copied (not moved) into the target directory under its original filename via `cp`. On success the script prints `Successfully copied ... to ...`; on failure it prints `Error: Failed to copy $filename`. The source file is left untouched in the original directory either way.
+
+### Step 6 – Restore shell globbing behavior
+
+After the loop finishes, `shopt -u nocaseglob` resets case-insensitive globbing back to bash's default so it doesn't affect anything run afterward in the same shell.
+
+---
 
 ## Notes
-- The script copies rather than moves files to prevent accidental data loss
-- Empty folders will be created only when needed
-- Files without valid EXIF data will be skipped with a warning
-- The script maintains the original files in their source location
 
-## Troubleshooting
-1. **Missing ExifTool**: If you see "command not found" errors, ensure ExifTool is installed
-2. **Permission Issues**: Make sure you have write permissions in the target directories
-3. **No Files Processed**: Check that your JPG/JPEG files are in the same directory as the script
-
-## Contributing
-Feel free to submit issues and enhancement requests!
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+- Non-destructive: files are copied, never moved or deleted, so the originals always remain in the source folder.
+- Only `*.JPG` and `*.JPEG` files are considered; other image formats (PNG, HEIC, CR2, etc.) are ignored entirely.
+- Files without a readable `EXIF:Model` or `EXIF:createdate` tag are silently skipped (aside from the printed warning) — no fallback naming is used.
+- Re-running the script will simply re-copy files into the same date/camera-model folders, overwriting any file already there with the same name (default `cp` behavior).
+- The camera-model folder name is derived purely from EXIF data with non-alphanumeric characters collapsed to underscores, so two different camera models that sanitize to the same string would land in the same folder.
+- All paths are relative to the current working directory — the script must be run from inside the folder containing the photos.

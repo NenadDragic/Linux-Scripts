@@ -1,38 +1,53 @@
-## Bash Script: Validate Status for Git Repositories
+# Status_Git
 
-This bash script (`Status_Git.sh`) is designed to validate the status of all Git repositories in a user-defined directory. 
-The script iterates through subdirectories in the directory and checks if they contain a Git repository (.git directory). 
-If a Git repository is found, it runs git status to show the status of the repository.
+Runs `git status` in every Git repository found directly under `~/git`. It exists to give a quick overview of the working-tree state (uncommitted changes, ahead/behind remote, etc.) across all of NenadDragic's locally cloned repositories at once.
+
+---
 
 ## Usage
 
-Make sure you have permission to execute the script. If not, run the following command to grant permission:
-
-```bash
+```console
 chmod +x Status_Git.sh
+bash Status_Git.sh
 ```
 
-Run the script with the following command:
+Run it from anywhere; it does not use the directory it is launched from — it operates on the fixed `~/git` folder (see Configuration below).
 
-```bash
-./Status_Git.sh
-```
-The script will check all subdirectories in the defined base directory, and for Git repositories, it will show the output of git status.
+Prerequisites:
 
-## Explanation
+- `git` installed.
+- Read access to `~/git` and to each repository inside it.
 
-The script uses the following structure to iterate through directories and check for Git repositories:
+### Configuration (top of script)
 
-base_dir=~/git  # Defines the base directory to search for Git repositories. Change this to your own directory if you store Git projects elsewhere.
+| Variable | Default | Meaning |
+|---|---|---|
+| `base_dir` | `~/git` | The directory whose immediate subdirectories are scanned for Git repositories to check. |
 
-for dir in "$base_dir"/*; do
-  if [ -d "$dir" ]; then
-    cd "$dir"
-    if [ -d ".git" ]; then
-      echo "Running git status in $dir"
-      git status
-    fi
-  fi
-done
+---
 
-This script is useful for getting a quick overview of the status of Git repositories in a specific directory. You can easily change the base_dir to the directory that contains your Git projects.
+## What the Script Does
+
+### Step 1 – Clear the terminal
+The script starts with `clear`, wiping the terminal screen before printing any output.
+
+### Step 2 – Iterate over each entry in `~/git`
+It loops over every entry directly inside `base_dir` (`~/git` by default).
+
+### Step 3 – Filter to directories only
+For each entry, it checks `[ -d "$dir" ]` and skips anything that isn't a directory.
+
+### Step 4 – Filter to Git repositories
+It `cd`s into the directory and checks whether it contains a `.git` subdirectory; non-Git directories are skipped.
+
+### Step 5 – Print status
+For each directory that is a Git repository, it prints `Running git status in $dir`, runs `git status`, and then prints a blank line as a separator before moving to the next repository.
+
+---
+
+## Notes
+
+- Read-only: `git status` makes no changes, so this script is always safe to re-run.
+- Only scans one level deep under `base_dir`; a Git repository nested inside a non-repository folder under `~/git` would not be found.
+- `cd "$dir"` changes the shell's working directory on every iteration but it is never restored afterward; this has no practical effect here since the loop re-derives `dir` from `base_dir` each time.
+- Companion script to `Pull_Git.sh` and `Init_Git.sh`; assumes the same `~/git` layout. Change `base_dir` if repositories are stored elsewhere.

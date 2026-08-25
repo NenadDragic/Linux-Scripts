@@ -1,27 +1,41 @@
-# Get Devices Firmware Information Script
-This script (IBM_Firmware_Update.sh) retrieves and updates firmware information for devices on a Linux system using a command-line tool called `fwupdmgr`.
+# IBM Firmware Update
+
+This script checks for and applies device firmware updates on a Linux system using `fwupdmgr` (fwupd's command-line manager). It must be run as root, and it only checks for/applies updates — it does not enumerate connected devices despite the script's header comment.
+
+---
 
 ## Usage
-1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-``` console
-chmod +x get_devices_firmware_info.sh
+```console
+chmod +x IBM_Firmware_Update.sh
+sudo bash IBM_Firmware_Update.sh
 ```
 
-2. Execute the script with root privileges by running the following command:
+Run it as root on the machine whose device firmware you want to check and update. It does not depend on any input files or working directory.
 
-``` console
-sudo ./get_devices_firmware_info.sh
-```
+Prerequisites:
 
-The script will check for available firmware updates for devices on the system and then perform the updates, if any.
+- `fwupdmgr` (from the `fwupd` package) must be installed.
+- Must be run as root — the script checks `whoami` and exits otherwise.
 
-## Explanation
+---
 
-The script checks for root privileges, runs the `fwupdmgr get-updates` command to fetch available firmware updates, and then runs the `fwupdmgr update` command to perform the updates.
+## What the Script Does
 
-* `if [ "$(whoami)" != "root" ]; then`: This line checks if the user running the script has root privileges by comparing the current username to "root". If not, the script prints a message and exits.
-* `echo "Please run as root.\n"`: This line prints an error message, indicating that the script should be run as root. Note there is no `-e` flag, so the `\n` is printed literally rather than as a newline.
-* `exit`: This line exits the script if the user does not have root privileges.
-* `fwupdmgr get-updates`: This command fetches available firmware updates for devices on the system.
-* `fwupdmgr update`: This command applies the fetched firmware updates to the devices.
+### Step 1 – Verify root privileges
+The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits without doing anything.
+
+### Step 2 – Check for available firmware updates
+It runs `fwupdmgr get-updates`, which queries fwupd for any firmware updates available for devices already known to the system.
+
+### Step 3 – Apply firmware updates
+It runs `fwupdmgr update`, which downloads and applies any updates found in Step 2 to the affected devices.
+
+---
+
+## Notes
+
+- **Firmware flashing is irreversible/risky**: `fwupdmgr update` can flash device firmware (e.g. BIOS/UEFI, disk controllers, peripherals). A failed or interrupted flash can render a device unusable; some updates require a reboot to take effect, which the script does not perform or prompt for.
+- The script's header comment ("Get Devices Firmware Information Script") and the code disagree: the script never runs `fwupdmgr get-devices` (which would just list devices) — it runs `fwupdmgr get-updates` followed by `fwupdmgr update`, which actually checks for and installs updates.
+- The `echo "Please run as root.\n"` call does not use `echo -e`, so `\n` is printed literally instead of as a newline.
+- No confirmation prompt is shown before updates are applied beyond whatever `fwupdmgr update` itself asks (fwupd may prompt per-device depending on version/policy).

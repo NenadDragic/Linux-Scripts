@@ -1,27 +1,41 @@
-# Find Empty Files Script
-This script (Find_Empty_Files.sh) is designed to find all empty files in the current directory and its subdirectories.
+# Find Empty Files
+
+This script searches the current directory and all of its subdirectories for regular files that are exactly zero bytes in size, and prints their paths to standard output.
+
+---
 
 ## Usage
-1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-```bash
+```console
 chmod +x Find_Empty_Files.sh
+bash Find_Empty_Files.sh
 ```
 
-2. Execute the script by running the following command:
-```bash
-./Find_Empty_Files.sh
-```
-The script will output the paths of all empty files in the current directory and its subdirectories.
+Run it from the directory tree you want to scan — the search always starts at `.` (the current working directory) and recurses into every subdirectory.
 
-## Explanation
- 
-The script uses the find command to search for empty files. The command's syntax is as follows:
+Prerequisites:
+
+- Standard `find` (GNU findutils) — no other tools required.
+- Read access to the directory tree being scanned.
+
+---
+
+## What the Script Does
+
+### Step 1 – Recursive search for zero-byte files
+The script runs a single command:
+
 ```bash
 find . -type f -empty
 ```
-* `find` : This is the command used to search for files and directories in a directory hierarchy.
-* `.` : This argument specifies the starting directory for the search. In this case, it is the current directory.
-* `-type f` : This flag filters the search results, only returning files (not directories).
-* `-empty` : This flag further filters the search results, only returning empty files.
-When the script is executed, the `find` command searches the current directory and its subdirectories for empty files, printing the paths of the found files to the console.
+
+`find` walks the current directory tree, `-type f` restricts matches to regular files (directories, symlinks, etc. are excluded), and `-empty` further restricts matches to files whose size is zero bytes. Every matching path is printed to stdout, one per line, in the order `find` encounters them.
+
+---
+
+## Notes
+
+- Read-only: the script never modifies, moves, or deletes anything, so it is always safe to re-run.
+- Only regular files are considered — empty directories and empty special files (sockets, devices, etc.) are not reported because of `-type f`.
+- No exclude patterns are applied (e.g. `.git`, `node_modules`), so on large trees every file is visited; performance is bound by disk I/O.
+- No hardcoded paths — it always operates on the current working directory.

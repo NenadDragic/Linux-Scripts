@@ -1,22 +1,43 @@
-# Find Command: Find All Files Without Extensions
+# Find Files With No Extension
 
-This command (`find . -type f ! -name '*.*'`) is designed to find all files in the current directory and its subdirectories that do not have a file extension.
+This script prints a banner and then recursively searches the current directory tree for regular files whose basename contains no dot at all, printing their paths.
 
-## Explanation
-The command uses the `find` command to search for files in the directory hierarchy. The command's syntax is as follows:
+---
+
+## Usage
+
+```console
+chmod +x Find_Files_With_No_Extension.sh
+bash Find_Files_With_No_Extension.sh
+```
+
+Run it from the directory tree you want to scan.
+
+Prerequisites:
+
+- Standard `find` (GNU findutils) — no other tools required.
+- Read access to the directory tree being scanned.
+
+---
+
+## What the Script Does
+
+### Step 1 – Print banner
+The script echoes `Files without extensions:`.
+
+### Step 2 – Search for dot-less filenames
+It then runs:
 
 ```bash
 find . -type f ! -name '*.*'
 ```
 
-Here's an explanation of each element of the command:
+`find` recurses from `.`, `-type f` restricts results to regular files, and `-name '*.*'` matches any basename that contains at least one dot. The leading `!` negates that test, so only files whose basename has **zero** dots anywhere in it are printed.
 
-* `find`: This is the command used to search for files and directories in a directory hierarchy.
-* `.`: This argument specifies the starting directory for the search. In this case, it is the current directory.
-* ``-type f`: This flag filters the search results, only returning files (not directories).
-* `!`: This operator negates the condition that follows, returning only files that do not meet the condition.
-* `-name '*.*'`: This condition specifies files with a period (i.e., files with extensions). By using ! -name '*.*', we exclude files with extensions, returning only files without extensions.
+---
 
-When the command is executed, the find command searches the current directory and its subdirectories for files without extensions, printing the paths of the found files to the console.
+## Notes
 
-Overall, this command is useful for users who want to quickly find all files in a directory and its subdirectories that do not have a file extension.
+- `-name` only inspects the dot character, not "extension" semantics: a hidden dotfile such as `.bashrc`, or a multi-dot name such as `archive.tar.gz`, is treated as having an extension and is excluded, even though `.bashrc` has no real filename extension.
+- Read-only: the script never modifies the filesystem, so it is safe to re-run at any time.
+- No hardcoded paths — it always operates on the current working directory.

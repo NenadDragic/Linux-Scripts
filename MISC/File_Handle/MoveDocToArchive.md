@@ -1,205 +1,65 @@
-# MoveDocToArchive.sh — Eksempler på brug
+# Move Doc To Archive
 
-## Scenarie 1: Fotos fra 2008 → arkivmappe (samme disk)
-
-**Situation:** Du har et rod af fotos i `~/Billeder` og vil flytte alle 2008-fotos til et arkiv.
-
-Ret stier i scriptet:
-```bash
-fra_folder="/home/nenad/Billeder"
-til_folder="/home/nenad/Billeder/Arkiv/2008"
-```
-
-Preview:
-```bash
-./MoveDocToArchive.sh find
-```
-```
-Følgende filer matcher mønsteret:
-/home/nenad/Billeder/foto_2008-07-14.jpg
-/home/nenad/Billeder/ferie_2008-12-24.jpg
-/home/nenad/Billeder/DSC_2008-03-01.jpg
-```
-
-Dryrun:
-```bash
-./MoveDocToArchive.sh dryrun
-```
-```
-[DRYRUN] Samme filsystem — checksum ville blive sprunget over.
-
-Følgende handlinger ville blive udført:
----
-  → FLYTTES: foto_2008-07-14.jpg
-       Fra: /home/nenad/Billeder/foto_2008-07-14.jpg
-       Til: /home/nenad/Billeder/Arkiv/2008/foto_2008-07-14.jpg
-  → FLYTTES: ferie_2008-12-24.jpg
-       Fra: /home/nenad/Billeder/ferie_2008-12-24.jpg
-       Til: /home/nenad/Billeder/Arkiv/2008/ferie_2008-12-24.jpg
-  → FLYTTES: DSC_2008-03-01.jpg
-       Fra: /home/nenad/Billeder/DSC_2008-03-01.jpg
-       Til: /home/nenad/Billeder/Arkiv/2008/DSC_2008-03-01.jpg
----
-Opsummering: 3 ville blive flyttet, 0 ville blive sprunget over.
-[DRYRUN] Ingen filer blev rørt.
-```
-
-Udfør flytning:
-```bash
-./MoveDocToArchive.sh run
-```
-```
-Flytning gennemført:
-  ✔ Flyttet:          3
-  ✘ mv-fejl:          0
-  ✘ Checksum-fejl:    0
-  ⊘ Sprunget over:    0
-
-Log gemt i: /home/nenad/Billeder/Arkiv/2008/flyttede_filer_20260413_143022.log
-```
-
-Log-indhold (samme filsystem — ingen checksum):
-```
-Start flytning: Mon Apr 13 14:30:22 2026
-Filsystem: kilde og mål er ens — checksum-validering sprunget over.
----
-Flyttet: foto_2008-07-14.jpg
-Flyttet: ferie_2008-12-24.jpg
-Flyttet: DSC_2008-03-01.jpg
----
-Resultat: 3 OK, 0 mv-fejl, 0 checksum-fejl, 0 sprunget over.
-Færdig: Mon Apr 13 14:30:22 2026
-```
+This script finds files whose names contain a 2008-dated pattern (`2008-??-??`) in a source folder and moves them into an archive folder, with three modes: preview matches (`find`), simulate the whole run without touching anything (`dryrun`), or actually move the files and write a timestamped log (`run`). All of the script's own messages (echo output and log entries) are written in Danish.
 
 ---
 
-## Scenarie 2: Dokumenter → NAS/ekstern disk (forskelligt filsystem)
+## Usage
 
-**Situation:** Du vil flytte 2008-dokumenter fra din lokale disk til en NAS-mount.
-
-Ret stier i scriptet:
-```bash
-fra_folder="/home/nenad/Dokumenter"
-til_folder="/mnt/nas/Arkiv/2008"
+```console
+chmod +x MoveDocToArchive.sh
+bash MoveDocToArchive.sh [find|dryrun|run]
 ```
 
-Dryrun:
-```bash
-./MoveDocToArchive.sh dryrun
-```
-```
-[DRYRUN] Forskellige filsystemer — checksum ville blive aktiveret.
+Run it after editing the `fra_folder` (source) and `til_folder` (destination) variables at the top of the script — the working directory it's launched from doesn't matter since both paths are absolute. It must be called with exactly one of `find`, `dryrun`, or `run`; any other argument (including none) prints a usage message and exits with status 1.
 
-Følgende handlinger ville blive udført:
----
-  → FLYTTES: rapport_2008-03-01.pdf
-       Fra: /home/nenad/Dokumenter/rapport_2008-03-01.pdf
-       Til: /mnt/nas/Arkiv/2008/rapport_2008-03-01.pdf
-  → FLYTTES: budget_2008-11-15.xlsx
-       Fra: /home/nenad/Dokumenter/budget_2008-11-15.xlsx
-       Til: /mnt/nas/Arkiv/2008/budget_2008-11-15.xlsx
----
-Opsummering: 2 ville blive flyttet, 0 ville blive sprunget over.
-[DRYRUN] Ingen filer blev rørt.
-```
+Prerequisites:
 
-Udfør flytning:
-```bash
-./MoveDocToArchive.sh run
-```
-```
-Flytning gennemført:
-  ✔ Flyttet:          2
-  ✘ mv-fejl:          0
-  ✘ Checksum-fejl:    0
-  ⊘ Sprunget over:    0
+- Bash (the script uses `mapfile` and `[[ ]]`, so it is not POSIX-`sh` portable).
+- Standard coreutils/findutils: `find`, `stat`, `sha256sum`, `mv`, `mkdir`, `date`, `awk`, `basename`.
+- Write access to `til_folder` (to create it, write the log, and receive moved files) and read/write access to `fra_folder` (files are moved out of it).
 
-Log gemt i: /mnt/nas/Arkiv/2008/flyttede_filer_20260413_144500.log
-```
+### Configuration (top of script)
 
-Log-indhold (forskelligt filsystem — checksum aktiveret):
-```
-Start flytning: Mon Apr 13 14:45:00 2026
-Filsystem: kilde og mål er forskellige — checksum-validering aktiveret.
----
-OK:            rapport_2008-03-01.pdf  [a3f1c2d4e5b6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2]
-OK:            budget_2008-11-15.xlsx  [9b8e7f6a5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8]
----
-Resultat: 2 OK, 0 mv-fejl, 0 checksum-fejl, 0 sprunget over.
-Færdig: Mon Apr 13 14:45:02 2026
-```
+| Variable | Default | Meaning |
+|---|---|---|
+| `fra_folder` | `/sti/til/fra_folder` (placeholder) | Source directory scanned non-recursively (`-maxdepth 1`) for files matching `*2008-??-??*` |
+| `til_folder` | `/sti/til/til_folder` (placeholder) | Destination directory files are moved into; created with `mkdir -p` in `dryrun` and `run` modes if missing |
+| `logfil` | `$til_folder/flyttede_filer_<timestamp>.log` | Path of the log file written during `run`, timestamped per invocation |
+
+Both `fra_folder` and `til_folder` are shipped as obvious placeholder paths and must be edited before the script is usable.
 
 ---
 
-## Scenarie 3: Fil findes allerede i målet
+## What the Script Does
 
-**Situation:** Du kører scriptet to gange — anden gang eksisterer filerne allerede.
+### Step 1 – Validate the argument
+If `$1` is not `run`, `find`, or `dryrun`, it prints a usage line (`Brug: <script> [run|find|dryrun]`) and exits with status 1.
 
-Dryrun viser hvad der ville ske:
-```bash
-./MoveDocToArchive.sh dryrun
-```
-```
-[DRYRUN] Forskellige filsystemer — checksum ville blive aktiveret.
+### Step 2 – Verify the source folder exists
+If `fra_folder` is not a directory, it prints an error and exits with status 1.
 
-Følgende handlinger ville blive udført:
----
-  ⊘ SPRING OVER (findes allerede): foto_2008-07-14.jpg
-  ⊘ SPRING OVER (findes allerede): ferie_2008-12-24.jpg
-  ⊘ SPRING OVER (findes allerede): DSC_2008-03-01.jpg
----
-Opsummering: 0 ville blive flyttet, 3 ville blive sprunget over.
-[DRYRUN] Ingen filer blev rørt.
-```
+### Step 3 – Collect matching files
+`mapfile -d '' filer < <(find "$fra_folder" -maxdepth 1 -type f -name "*2008-??-??*" -print0)` gathers, non-recursively, every regular file directly inside `fra_folder` whose name contains the literal substring `2008-` followed by two digits, a dash, and two more digits.
 
----
+### Step 4 – `find` mode: preview
+If no files matched, it prints that nothing matches; otherwise it prints each matching path. No files are touched, and the script exits 0.
 
-## Scenarie 4: Ingen filer matcher
+### Step 5 – `dryrun` mode: simulate
+Creates `til_folder` with `mkdir -p` if it doesn't exist (this is a real side effect even though the mode is called "dry"). It compares the device IDs of `fra_folder` and `til_folder` (`stat -c %d`) to report whether checksum validation would be used, then loops over the matched files reporting, for each, whether it would be skipped (a same-named file already exists at the destination) or moved — printing running counts of both. No files are actually moved or copied.
 
-**Situation:** Der er ingen filer med 2008-dato i kildemappen.
-
-```bash
-./MoveDocToArchive.sh find
-```
-```
-Ingen filer matcher mønsteret.
-```
-
-```bash
-./MoveDocToArchive.sh dryrun
-```
-```
-Ingen filer matcher mønsteret.
-```
+### Step 6 – `run` mode: perform the move
+Creates `til_folder` if missing, determines whether source and destination are on the same filesystem (skip checksums) or different filesystems (use checksums), and opens `logfil` with a header. For each matched file: if a same-named file already exists at the destination it is skipped and logged; otherwise, if checksumming is active, a SHA-256 checksum is taken before the move. The file is moved with `mv`; on success, if checksumming is active, a new SHA-256 checksum is taken after the move and compared to the pre-move checksum, logging `OK` or `CHECKSUM FEJL` accordingly (with no rollback on mismatch — the file has already been moved either way); if `mv` itself fails, a `FEJL ved flytning` line is logged. After the loop, a summary line and completion timestamp are appended to the log, and a matching summary is printed to the console along with the log's path.
 
 ---
 
-## Scenarie 5: Kildemappen findes ikke
+## Notes
 
-**Situation:** Stien er forkert eller disken er ikke mountet.
-
-```bash
-./MoveDocToArchive.sh run
-```
-```
-Fejl: Kildemappen findes ikke: /home/nenad/Dokumenter
-```
-
----
-
-## Hurtig reference
-
-| Kommando                    | Hvad sker der                                          |
-|-----------------------------|--------------------------------------------------------|
-| `./MoveDocToArchive.sh find`      | Vis matchende filer — intet flyttes                    |
-| `./MoveDocToArchive.sh dryrun`    | Simuler hele forløbet — vis hvad der ville ske         |
-| `./MoveDocToArchive.sh run`       | Flyt filer og gem log                                  |
-| `./MoveDocToArchive.sh`           | Printer hjælpetekst og afslutter                       |
-
-### Anbefalet arbejdsgang
-
-```
-find → dryrun → run
-```
-
-`find` giver et hurtigt overblik, `dryrun` bekræfter præcist hvad der sker inkl. spring-over og checksum-valg, og `run` udfører det.
+- Destructive: `run` mode **moves** (not copies) matching files out of `fra_folder`. A checksum mismatch is logged as an error but the file is not moved back — there is no rollback.
+- Files that already exist under the same name at the destination are skipped rather than overwritten, in both `dryrun` and `run` — so re-running after a partial run will not re-move already-moved files. A different file that happens to share the same name would still be silently skipped rather than merged or renamed.
+- `dryrun` still has a side effect: it creates `til_folder` via `mkdir -p` if absent, despite the mode's name and its own "no files were touched" message.
+- Checksum verification only happens when `fra_folder` and `til_folder` are on different filesystems (per `stat -c %d`); on the same filesystem the script relies solely on `mv`'s atomic rename and skips checksumming.
+- The match pattern is hardcoded to the literal year `2008` (`*2008-??-??*`); a different year requires editing the script.
+- The search is non-recursive (`-maxdepth 1`) — files in subfolders of `fra_folder` are never considered.
+- All echo and log output is in Danish (e.g. "Fejl", "Ingen filer matcher mønsteret", "Flytning gennemført", "SPRING OVER").
+- `fra_folder` and `til_folder` are hardcoded placeholder paths (`/sti/til/...`) that must be edited before first use.

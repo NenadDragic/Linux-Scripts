@@ -1,29 +1,42 @@
-# Find Unique File Extensions Script
-This script (Find_Unique_File_Extensions.sh) is designed to find all unique file extensions in the current directory and its subdirectories.
+# Find Unique File Extensions
+
+This script recursively lists every file under the current directory, strips each path down to the text after the last dot using `sed`, and prints the sorted, deduplicated list of resulting values.
+
+---
 
 ## Usage
-1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
-```bash
+```console
 chmod +x Find_Unique_File_Extensions.sh
+bash Find_Unique_File_Extensions.sh
 ```
 
-2. Execute the script by running the following command:
+Run it from the directory tree you want to scan.
 
-```bash
-./Find_Unique_File_Extensions.sh
-```
+Prerequisites:
 
-The script will output the unique file extensions found in the current directory and its subdirectories.
+- Standard `find`, `sed`, and `sort` — all part of a normal Linux base install (findutils, GNU sed, GNU coreutils).
+- Read access to the directory tree being scanned.
 
-## Explanation
-The script uses a combination of find, sed, and sort commands to find unique file extensions. The commands' syntax is as follows:
+---
 
-```bash
-find . -type f | sed -e 's/.*\.//' | sort -u
-```
+## What the Script Does
 
-* `find . -type f` : This command searches the current directory (.) and its subdirectories for files only (excluding directories), outputting the file paths.
-* `sed -e 's/.*\.//'` : This command is a stream editor (sed) that uses a regular expression to remove the file path and keep only the file extension.
-* `sort -u` : This command sorts the input lines and removes duplicates, leaving only unique file extensions.
-When the script is executed, the `find` command retrieves all the files, the `sed` command extracts the file extensions, and the `sort` command filters out duplicates, printing the unique file extensions to the console.
+### Step 1 – Enumerate all files
+`find . -type f` recursively lists every regular file under the current directory as a full relative path (e.g. `./photos/img.JPG`).
+
+### Step 2 – Strip everything up to the last dot
+Each path is piped through `sed -e 's/.*\.//'`. The greedy pattern `.*\.` consumes everything up to and including the *last* dot on the line, leaving only the text after it (in the typical case, the file extension).
+
+### Step 3 – Sort and deduplicate
+`sort -u` sorts the remaining lines alphabetically and removes duplicates, so the final output is the set of unique values found in Step 2, printed to stdout.
+
+---
+
+## Notes
+
+- For a file path that contains **no dot at all**, the `sed` substitution has nothing to match, so the entire original path is passed through unchanged and appears mixed into the "extensions" list — the script does not filter these out.
+- The substitution operates on the whole path string, not just the basename, so a dot inside a *directory* name (e.g. `./v1.2-backup/notes`) can also be picked up as the "extension" if it happens to be the last dot in the line, even though the file itself has none.
+- Extensions are compared case-sensitively, so `jpg` and `JPG` are reported as two distinct entries.
+- Read-only: the script never modifies the filesystem, so it is safe to re-run at any time.
+- No hardcoded paths — it always operates on the current working directory.

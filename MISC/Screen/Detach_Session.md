@@ -1,54 +1,42 @@
-# Bash script for detaching from a screen session
+# Detach_Session
 
-This Bash script uses `screen -X detach` to detach from a running screen session. It can be useful when you need to detach from a screen session and return control to the terminal without closing the session.
+This script lists all running GNU `screen` sessions, prompts for a session ID, and detaches that session using `screen`'s command-mode API rather than sending literal `Ctrl+A d` keystrokes.
+
+---
 
 ## Usage
 
-To use this script, simply run it in a Bash terminal. It will display a list of all running screen sessions with their IDs and names (if any). You can then enter the ID of the session you want to detach from, and the script will run `screen -X detach` to detach from the session.
-
-## Script
-
-```bash
-#!/bin/bash
-
-# List all screen sessions
-screen -ls
-
-# Prompt user to select a session to detach from
-read -p "Enter the session ID to detach from: " session_id
-
-# Send CTRL+A and d to detach from the selected session
-screen -S $session_id -X detach
+```console
+chmod +x Detach_Session.sh
+bash Detach_Session.sh
 ```
 
-## Explanation
+Run it from any directory — it operates on `screen` sessions, not files.
 
-The script consists of three parts:
+Prerequisites:
 
-1. List all screen sessions:
+- GNU `screen` must be installed, with at least one session already running to detach from.
 
-   ```bash
-   screen -ls
-   ```
+---
 
-   This command lists all currently running screen sessions along with their IDs and names (if any).
+## What the Script Does
 
-2. Prompt user to select a session to detach from:
+### Step 1 – List running sessions
 
-   ```bash
-   read -p "Enter the session ID to detach from: " session_id
-   ```
+`screen -ls` prints all currently running `screen` sessions along with their IDs/PIDs and names (if any), so the user can see what's available.
 
-   This command prompts the user to enter the ID of the screen session they want to detach from. The entered ID is stored in the `session_id` variable.
+### Step 2 – Prompt for a session ID
 
-3. Detach the selected session using screen's command mode:
+`read -p "Enter the session ID to detach from: " session_id` prompts the user and stores their input in `session_id`.
 
-   ```bash
-   screen -S $session_id -X detach
-   ```
+### Step 3 – Detach the selected session
 
-   This command tells the screen session with the ID stored in the `session_id` variable to detach, using the `-X detach` command-mode option. This achieves the same practical result as manually pressing `Ctrl+A` `d` inside the session, but via screen's command-mode API rather than sending literal keystrokes.
+`screen -S $session_id -X detach` tells the named session to detach via `screen`'s `-X` command-mode option, achieving the same result as pressing `Ctrl+A d` inside it.
 
-## Note
+---
 
-The user needs to know the session ID in order to detach from a screen session using this script. If you want to provide a more user-friendly interface, you could modify the script to display a list of available sessions with a numbered menu, or allow the user to search for sessions by name or other criteria.
+## Notes
+
+- `$session_id` is used unquoted in the final command, so an ID containing spaces would be split into multiple arguments; this is normally not an issue since `screen -ls` IDs/names don't contain spaces.
+- No validation is performed on the entered ID — if it doesn't match a running session, `screen` will print its own error (e.g. "No screen session found").
+- This only detaches the session; it keeps running in the background and can be reattached later (e.g. with `screen -r`).

@@ -1,55 +1,63 @@
-# File Type Organization
+# Sort_photos_Types
 
-This Bash script organizes files into specific folders by type (`ORG`, `MOV`, `MP4`, `CR2`, `HEIC`). HEIC-to-JPG conversion code exists in the script but is currently commented out, so HEIC files are moved as-is rather than converted.
+This script sorts mixed media files in the current directory into type-specific subfolders (`ORG`, `MOV`, `MP4`, `CR2`, `HEIC`), then removes any resulting empty directories.
 
-## Prerequisites
-
-Before running this script, make sure you have the following prerequisites installed on your system:
-
-- `sudo`: Superuser privileges for installing packages.
-
-Note: the script still checks for and installs `libheif-examples` (via `dpkg`/`apt-get`) as if HEIC conversion were about to run, but the actual `heif-convert` call is currently commented out in the script (see "HEIC Handling" below), so this install step is effectively vestigial — it installs a package the script no longer uses.
+---
 
 ## Usage
 
-Follow these steps to use the script:
+```console
+chmod +x Sort_photos_Types.sh
+bash Sort_photos_Types.sh
+```
 
-1. Ensure you have the necessary prerequisites installed on your system.
+Run it from the folder containing the mixed media files you want to sort.
 
-2. Modify the script as needed.
+Prerequisites:
 
-3. Run the script using the following command:
+- A Debian/Ubuntu-based system with `apt-get` and `dpkg` available.
+- `sudo` privileges — the script runs `sudo apt-get update` and `sudo apt-get install -y libheif-examples` if that package isn't already installed.
+- Write access to the current directory (to create subfolders and move/copy files).
 
-   ```bash
-   bash script_name.sh
+---
 
-## Script Explanation
-1. Package Check and Installation:
+## What the Script Does
 
-The script starts by checking if the `libheif-examples` package is installed on the system using the `dpkg` command.
-If the package is not found, the script installs it using `apt-get`. Note: this check is currently vestigial — it was originally there to support HEIC-to-JPG conversion, but that conversion step is commented out in the script (see below), so nothing in the script actually uses `libheif-examples` right now.
+### Step 1 – Check for and install `libheif-examples`
 
-2. Folder Creation:
+The script checks `dpkg -l | grep -q libheif-examples`; if the package isn't found, it runs `sudo apt-get update` followed by `sudo apt-get install -y libheif-examples`.
 
-The script creates the following folders in the current directory: `ORG`, `MOV`, `MP4`, `CR2`, and `HEIC`. These folders will be used to organize different types of files.
+### Step 2 – Create destination folders
 
-3. HEIC Handling (no conversion):
+`mkdir -p ORG MOV MP4 CR2 HEIC` creates all five destination folders in the current directory (no error if they already exist).
 
-HEIC files are **not** converted to JPG. The HEIC-to-JPG conversion code (using `heif-convert`) is present in the script only as a commented-out block and does not run. Instead, `.HEIC` files are simply moved as-is into the `HEIC` folder, the same way `.MOV`, `.MP4`, and `.CR2` files are moved into their respective folders.
+### Step 3 – (Disabled) uppercase renaming and HEIC conversion
 
-4. File Organization:
+The script contains commented-out lines for renaming all filenames to uppercase (`rename 'y/a-z/A-Z/' *`) and converting `.HEIC` files to `.JPG` via `heif-convert`. Neither runs — they are left in the file as inactive reference code.
 
-Files are organized into their respective folders based on their file extensions. Files with extensions `.mov` are moved to the `MOV` folder, `.mp4` to the `MP4` folder, `.CR2` to the `CR2` folder, and `.HEIC` to the `HEIC` folder.
+### Step 4 – Move video/RAW/HEIC files into their folders
 
-5. Copying JPG Files:
+`mv -t MOV *.MOV`, `mv -t MP4 *.MP4`, `mv -t CR2 *.CR2`, and `mv -t HEIC *.HEIC` move matching files out of the current directory and into their respective subfolders. Matching is case-sensitive and only matches the exact uppercase extension shown.
 
-`JPG` and `JPEG` files are copied to the `ORG` folder. This folder serves as a central location for storing these image files.
+### Step 5 – Copy JPEG files into `ORG`
 
-6. Empty Directory Cleanup:
+`cp -t ORG *.JPG *.JPEG` copies (does not move) matching files into the `ORG` folder; the originals remain in the current directory.
 
-The script utilizes the `find` command to locate and delete any empty directories within the current working directory. This step helps maintain a tidy directory structure.
+### Step 6 – Delete empty directories
 
-7. Completion Message:
+`find . -type d -empty -delete` removes any directory under the current path that ended up empty — including any of the five folders just created if no matching files existed for that type.
 
-The script concludes by displaying an "All tasks completed" message to indicate the successful execution of all operations.
-Note: Ensure that you run the script with appropriate permissions, especially when using `sudo` for package installation, to avoid any permission-related issues.
+### Step 7 – Print completion message
+
+The script prints `All tasks completed.` once all the above steps have run.
+
+---
+
+## Notes
+
+- Destructive for videos/RAW/HEIC: `.MOV`, `.MP4`, `.CR2`, and `.HEIC` files are **moved** out of the current directory (originals no longer exist there). JPG/JPEG files are only **copied** into `ORG`, so their originals remain in the current directory (not moved into any folder).
+- Matching is case-sensitive and only covers the exact extensions `*.MOV`, `*.MP4`, `*.CR2`, `*.HEIC`, `*.JPG`, `*.JPEG` — lowercase variants (e.g. `.mov`, `.jpg`) will not be matched or moved/copied.
+- The `libheif-examples` install step is vestigial: it exists to support the HEIC-to-JPG conversion via `heif-convert`, but that conversion code is commented out, so the package is installed but never actually used by this script.
+- No `set -e` is used, so if a glob like `*.MOV` matches nothing, bash passes the literal string `*.MOV` to `mv`, which will print its own "No such file or directory" error and the script continues regardless.
+- Because folders are created up front with `mkdir -p` and then swept for emptiness at the end, any of the five folders (including `ORG`) will be deleted again if no files of that type existed in the source directory.
+- Assumes an apt-based Linux distribution; will fail on non-Debian/Ubuntu systems.

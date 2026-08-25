@@ -1,50 +1,41 @@
-# GitHub Repository: NenadDragic's GitHub Repo Cloner
+# Init_Git
 
-This Bash script is designed to clone all of NenadDragic's repositories on GitHub. It simplifies the process of obtaining the source code for the following repositories hosted on [NenadDragic's GitHub profile](https://github.com/NenadDragic):
+Clones every one of NenadDragic's GitHub repositories, one `git clone` per repository, into the current working directory. It exists as a one-shot way to set up a fresh machine with all of the author's repos already checked out.
 
-- [Bash Scripts](https://github.com/NenadDragic/Bash)
-
-- [bat](https://github.com/NenadDragic/bat)
-
-- [C# Scripts](https://github.com/NenadDragic/c-Sharp)
-
-- [C++](https://github.com/NenadDragic/cpp)
-
-- [Cyber Security Resources](https://github.com/NenadDragic/Cyber-Sec)
-
-- [Edora](https://github.com/NenadDragic/Edora)
-
-- [JB-Scripts](https://github.com/NenadDragic/JB-Scripts)
-
-- [Learning Resources](https://github.com/NenadDragic/Learning)
-
-- [Linux Scripts](https://github.com/NenadDragic/Linux-Scripts)
-
-- [Linux_Learning](https://github.com/NenadDragic/Linux_Learning)
-
-- [PowerShell Scripts](https://github.com/NenadDragic/PowerShell)
-
-- [Python Scripts](https://github.com/NenadDragic/Python)
-
-- [RaspberryPi](https://github.com/NenadDragic/RaspberryPi)
-
-- [Web-Source](https://github.com/NenadDragic/Web-Source)
-
-- [Web_source](https://github.com/NenadDragic/Web_source)
-
-- [z-os](https://github.com/NenadDragic/z-os)
-
-- [z-os_JB](https://github.com/NenadDragic/z-os_JB)
-
-By running this script, you can easily clone all these repositories to your local machine, making it convenient to explore or work with their source code.
+---
 
 ## Usage
 
-1. Make sure you have Git installed on your system.
-2. Open your terminal.
-3. Navigate to the directory where you want to clone the repositories.
-4. Execute the script by running the following command:
-
-```bash
-./Init_Git.sh
+```console
+chmod +x Init_Git.sh
+bash Init_Git.sh
 ```
+
+Run it from the parent folder under which you want all the repositories to be cloned (e.g. `~/git`) — each repository is cloned into a new subfolder named after it, created in the current directory.
+
+Prerequisites:
+
+- `git`, with SSH access configured for GitHub (all clone URLs use the `git@github.com:...` SSH form, so a working SSH key registered with the `NenadDragic` GitHub account is required).
+- Write permission in the current directory.
+- Network access to GitHub.
+
+---
+
+## What the Script Does
+
+### Step 1 – Clone each repository in a fixed list
+
+The script runs one `git clone` per repository, back to back, with no looping or configuration — the list of repositories is hardcoded in the script itself:
+
+- `Bash`, `bat`, `c-Sharp`, `cpp`, `Cyber-Sec`, `Devices`, `Edora`, `JB-Scripts`, `Learning`, `Linux_Learning`, `Linux-Scripts`, `PowerShell`, `Python`, `RaspberryPi`, `Web-Source`, `Web_source`, `z-os`, `z-os_JB`
+
+Each is cloned from `git@github.com:NenadDragic/<repo>.git` into a subdirectory of the same name under the current directory.
+
+---
+
+## Notes
+
+- Not idempotent: `git clone` fails (and prints an error) for any repository that already exists as a directory in the current path, but the script keeps running the remaining `git clone` commands regardless — it does not check for existing folders or `git pull` instead.
+- The repository list is hardcoded; adding, renaming, or removing one of NenadDragic's GitHub repos requires editing the script directly, there is no configuration variable.
+- All clone URLs use SSH (`git@github.com:...`), not HTTPS, so it will fail outright on a machine without an SSH key registered to the `NenadDragic` GitHub account.
+- No error handling: if one clone fails (e.g. no network, repo renamed/deleted), the script does not stop or report a summary — it just continues to the next `git clone`.

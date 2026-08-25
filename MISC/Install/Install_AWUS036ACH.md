@@ -1,50 +1,51 @@
-# Install Alfa awus036ach
+# Install_AWUS036ACH
 
-The `Install_AWUS036ACH.sh` script is designed to configure a Wi-Fi adapter on a Kali Linux system. It updates and upgrades existing packages, installs necessary packages, and installs the driver for the Realtek RTL88xxAU wireless chipset. Additionally, it provides instructions to configure the adapter for monitor mode.
+Sets up the Realtek RTL88xxAU Wi-Fi driver needed for the Alfa AWUS036ACH USB adapter on a Debian/Kali-based system: it updates the system, installs the driver package and build tooling, builds/installs the driver from source, and prints the commands needed to put the adapter into monitor mode afterward.
+
+---
 
 ## Usage
-To use the script, follow these steps:
 
-1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
-console
-
-```bash
+```console
 chmod +x Install_AWUS036ACH.sh
+sudo bash Install_AWUS036ACH.sh
 ```
 
-2. Execute the script by running the following command:
+Run it from any writable directory — the script `git clone`s the driver source into an `rtl8812au` subfolder of the current directory and builds it there.
 
-```bash
-sudo ./Install_AWUS036ACH.sh
-```
+Prerequisites:
 
-The script will update and upgrade existing packages, install necessary packages, install the driver for the Realtek RTL88xxAU wireless chipset, and provide instructions to configure the adapter for monitor mode.
+- A Debian/Kali-based system with `apt-get` and internet access.
+- Root privileges (the package management and driver install commands use `sudo`, so the script should be run with `sudo` or as root).
+- Build tooling implied by `make` (a C compiler / kernel headers), which is expected to already be present or pulled in as a dependency of `dkms`/`realtek-rtl88xxau-dkms`.
+- `git`, `dkms`, and `realtek-rtl88xxau-dkms` — the script installs these itself via `apt-get` if missing.
 
-## Explanation
-The script uses a combination of `sudo apt-get` commands, `git` commands, and `make` commands to update and upgrade existing packages, install necessary packages, and install the driver for the Realtek RTL88xxAU wireless chipset.
+---
 
-* `sudo apt-get update`: This command updates the package list from the repositories.
+## What the Script Does
 
-* `sudo apt-get upgrade -y`: This command upgrades all installed packages to their latest available versions.
+### Step 1 – Update and upgrade the system
+Runs `sudo apt-get update`, `sudo apt-get upgrade -y`, and `sudo apt-get dist-upgrade -y` to refresh the package index and bring all installed packages up to date.
 
-* `sudo apt-get dist-upgrade -y`: This command performs an intelligent upgrade, handling changes in package dependencies, and installing new packages if necessary.
+### Step 2 – Install required packages
+Runs `sudo apt-get install -y dkms git realtek-rtl88xxau-dkms` to install the DKMS framework, Git, and the Realtek RTL88xxAU DKMS driver package.
 
-* `sudo apt-get install -y dkms git realtek-rtl88xxau-dkms`: This command installs the necessary packages for the driver to work properly. `dkms` is a package that provides support for building and installing kernel modules, while `git` is a version control system used to download the driver source code from the repository. `realtek-rtl88xxau-dkms` is the package that contains the driver code for the Realtek RTL88xxAU wireless chipset.
+### Step 3 – Clone the driver source
+Runs `git clone https://github.com/aircrack-ng/rtl8812au.git` and `cd rtl8812au`, checking out the aircrack-ng project's RTL8812AU driver source into a new subfolder of the current directory.
 
-* `git clone https://github.com/aircrack-ng/rtl8812au.git`: This command clones the driver source code repository from GitHub.
+### Step 4 – Build and install the driver
+Runs `make` to build the driver from source, then `sudo make install` to install it.
 
-* `cd rtl8812au`: This command changes the current working directory to the newly created rtl8812au directory.
+### Step 5 – Print monitor-mode setup instructions
+Echoes the three commands needed to put the `wlan1` interface into monitor mode (`sudo ip link set wlan1 down`, `sudo iw dev wlan1 set type monitor`, `sudo ip link set wlan1 up`) and a link to a Hackernoon article on configuring the AWUS036ACH on Kali Linux. These commands are only printed, not executed.
 
-* `make`: This command builds the driver from the source code.
+---
 
-* `sudo make install`: This command installs the built driver to the appropriate location on the system.
+## Notes
 
-Additionally, the script provides instructions to configure the adapter for monitor mode by displaying the following commands:
-
-`sudo ip link set wlan1 down`: This command brings down the Wi-Fi adapter.
-
-`sudo iw dev wlan1 set type monitor`: This command sets the Wi-Fi adapter to monitor mode.
-
-`sudo ip link set wlan1 up`: This command brings up the Wi-Fi adapter in monitor mode.
-
-Finally, the script displays a link to the article "Configuring the Alpha AWUS036ACH Wi-Fi Adapter on Kali Linux" on Hackernoon, which provides additional information on configuring the Wi-Fi adapter.
+- Not idempotent: re-running it re-runs the full system upgrade and re-clones into `rtl8812au`, which will fail with a "destination path already exists" error if that folder is still present from a previous run.
+- System-wide effects: `apt-get upgrade`/`dist-upgrade` can upgrade or change any installed package on the machine, not just Wi-Fi-related ones — this is a broad, potentially disruptive operation on a system already in use.
+- Hardcoded interface name: the printed monitor-mode instructions assume the adapter shows up as `wlan1`; on a given machine it could be named differently (`wlan0`, `wlx...`, etc.), and the script does not detect or verify this.
+- The monitor-mode commands are only echoed to the terminal as a reminder — the script does not put the adapter into monitor mode itself.
+- Installs `realtek-rtl88xxau-dkms` from `apt-get` and *also* builds a second copy of a similar driver from source (`aircrack-ng/rtl8812au`) via DKMS/`make install`; having both present could lead to driver/module conflicts, which the script does not check for.
+- Assumes a `dkms`/`apt-get`-based distribution (Debian/Kali); it will not work as-is on non-Debian-based Linux distributions.

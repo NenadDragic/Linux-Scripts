@@ -1,43 +1,39 @@
-# Bash script for starting a new screen session
+# Create_New_Session
 
-This Bash script starts a new screen session and prompts the user to enter a name for the session. It can be useful when you need to start a new screen session and want to give it a descriptive name for easier identification.
+This script prompts for a name and starts a new named GNU `screen` session with it, attaching the current terminal to that session.
+
+---
 
 ## Usage
 
-To use this script, simply run it in a Bash terminal. It will prompt you to enter a name for the new screen session. Once you enter a name, the script will start a new screen session with the specified name.
-
-## Script
-
-```bash
-#!/bin/bash
-
-# Prompt user to enter a name for the new session
-read -p "Enter a name for the new session: " session_name
-
-# Start a new screen session with the specified name
-screen -S "$session_name"
+```console
+chmod +x Create_New_Session.sh
+bash Create_New_Session.sh
 ```
 
-## Explanation
+Run it from any directory — it does not operate on files and has no working-directory dependency.
 
-The script consists of two parts:
+Prerequisites:
 
-1. Prompt user to enter a name for the new session:
+- GNU `screen` must be installed.
 
-   ```bash
-   read -p "Enter a name for the new session: " session_name
-   ```
+---
 
-   This command prompts the user to enter a name for the new screen session. The entered name is stored in the `session_name` variable.
+## What the Script Does
 
-2. Start a new screen session with the specified name:
+### Step 1 – Prompt for a session name
 
-   ```bash
-   screen -S "$session_name"
-   ```
+`read -p "Enter a name for the new session: " session_name` prompts the user and stores whatever they type in `session_name`.
 
-   This command starts a new screen session with the name stored in the `session_name` variable. The `-S` option is used to specify the session name, and the name is enclosed in double quotes to ensure that any spaces or special characters in the name are handled correctly.
+### Step 2 – Start the named session
 
-## Note
+`screen -S "$session_name"` starts a new `screen` session using that name and attaches the current terminal to it in the foreground — the user is dropped straight into the new session.
 
-The user needs to enter a name for the new screen session in order to use this script. If you want to provide a more user-friendly interface, you could modify the script to suggest a default name or provide a menu of pre-defined session names.
+---
+
+## Notes
+
+- No validation is performed on the entered name — an empty or unusual value is passed straight through to `screen -S`, which will apply its own defaults/errors.
+- The session name is not sanitized, but it is double-quoted when passed to `screen`, so spaces and most special characters in the name are handled safely.
+- The script does not check whether `screen` is installed before calling it; if it's missing, the shell will report a "command not found" error.
+- The new session is started attached (in the foreground), not detached — the invoking shell is effectively replaced by the screen session until the user detaches from it.

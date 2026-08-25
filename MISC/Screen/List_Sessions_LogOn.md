@@ -1,54 +1,42 @@
-# Bash script for displaying and connecting to screen sessions
+# List_Sessions_LogOn
 
-This Bash script displays a list of all running screen sessions and prompts the user to select one to connect to. It can be useful when you have multiple screen sessions running and need to switch between them quickly.
+This script lists all running GNU `screen` sessions, prompts for a session ID, and reattaches the current terminal to that session.
+
+---
 
 ## Usage
 
-To use this script, simply run it in a Bash terminal. It will display a list of all running screen sessions with their IDs and names (if any). You can then enter the ID of the session you want to connect to, and the script will connect you to that session.
-
-## Script
-
-```bash
-#!/bin/bash
-
-# List all screen sessions
-screen -ls
-
-# Prompt user to select a session to connect to
-read -p "Enter the session ID to connect to: " session_id
-
-# Connect to the selected session
-screen -r $session_id
+```console
+chmod +x List_Sessions_LogOn.sh
+bash List_Sessions_LogOn.sh
 ```
 
-## Explanation
+Run it from any directory — it operates on `screen` sessions, not files.
 
-The script consists of three parts:
+Prerequisites:
 
-1. List all screen sessions:
+- GNU `screen` must be installed, with at least one session already running to connect to.
 
-   ```bash
-   screen -ls
-   ```
+---
 
-   This command lists all currently running screen sessions along with their IDs and names (if any).
+## What the Script Does
 
-2. Prompt user to select a session to connect to:
+### Step 1 – List running sessions
 
-   ```bash
-   read -p "Enter the session ID to connect to: " session_id
-   ```
+`screen -ls` prints all currently running `screen` sessions along with their IDs/PIDs and names (if any).
 
-   This command prompts the user to enter the ID of the screen session they want to connect to. The entered ID is stored in the `session_id` variable.
+### Step 2 – Prompt for a session ID
 
-3. Connect to the selected session:
+`read -p "Enter the session ID to connect to: " session_id` prompts the user and stores their input in `session_id`.
 
-   ```bash
-   screen -r $session_id
-   ```
+### Step 3 – Reattach to the selected session
 
-   This command connects to the screen session with the ID stored in the `session_id` variable.
+`screen -r $session_id` reattaches the current terminal to the specified session.
 
-## Note
+---
 
-The user needs to know the session ID in order to connect to a screen session using this script. If you want to provide a more user-friendly interface, you could modify the script to display a list of available sessions with a numbered menu, or allow the user to search for sessions by name or other criteria.
+## Notes
+
+- `$session_id` is used unquoted in the final command, so an ID containing spaces would be split into multiple arguments; this is normally not an issue since `screen -ls` IDs/names don't contain spaces.
+- No validation is performed on the entered ID — if it doesn't match a running session, `screen` will print its own error.
+- The script uses plain `screen -r`, not `screen -d -r`: if the target session is already attached elsewhere, `screen` will refuse to attach and suggest using `-d -r` instead — this script does not handle that case for the user.
