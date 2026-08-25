@@ -26,6 +26,8 @@ This Bash script is designed to clone all of NenadDragic's repositories on GitHu
 
 - [Python Scripts](https://github.com/NenadDragic/Python)
 
+- [RaspberryPi](https://github.com/NenadDragic/RaspberryPi)
+
 - [Web-Source](https://github.com/NenadDragic/Web-Source)
 
 - [Web_source](https://github.com/NenadDragic/Web_source)
