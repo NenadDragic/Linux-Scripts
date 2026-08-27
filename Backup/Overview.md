@@ -13,6 +13,12 @@ An index of the scripts in this folder and their documentation. Each script has 
 | `Backup_USB.sh` | [Backup_USB.md](Backup_USB.md) | The USB-destination counterpart to `Backup_NAS.sh` — mirrors the local root filesystem to a dated folder on a locally mounted USB backup drive, carrying additional "v6" reliability fixes to the logging pipeline and stats extraction. |
 | `Total_Backup.sh` | [Total_Backup.md](Total_Backup.md) | Backs up three drives (`nvme0n1p1`/`p2`/`p3`) as raw `dd` disk images, named by drive type and date, into a backup directory; requires root. |
 
+## System Backup Jobs
+
+| Script | Doc | Summary |
+|---|---|---|
+| `Backup_crontabs.sh` | [Backup_crontabs.md](Backup_crontabs.md) | Saves every user's crontab to its own dated file (restorable with `crontab -u`), with optional system-cron inclusion, dry-run, and age-based cleanup of old backup files. |
+
 ## USB Mount Management
 
 | Script | Doc | Summary |
