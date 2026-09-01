@@ -45,9 +45,6 @@ git clone git@github.com:NenadDragic/Python.git
 # Raspberry Pi projects
 git clone git@github.com:NenadDragic/RaspberryPi.git
 
-# Website Source
-git clone git@github.com:NenadDragic/Web-Source.git
-
 # Website Source (hosting)
 git clone git@github.com:NenadDragic/Web_source.git
 
