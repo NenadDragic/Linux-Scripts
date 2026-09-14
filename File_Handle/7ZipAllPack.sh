@@ -1,4 +1,15 @@
 #!/bin/bash
+# --- Dependency check (auto-inserted) ---
+_d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done
+if [ ! -f "$_d/lib/require_tools.sh" ]; then
+    echo "FEJL: Kunne ikke finde lib/require_tools.sh (delt dependency-checker)." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$_d/lib/require_tools.sh"
+unset _d
+require_tools "7zz:7zip"
 
 # MD5-summen for den korrekte adgangskode
 EXPECTED_MD5="e0baa6edf1482789a19a5e1380bb4132"

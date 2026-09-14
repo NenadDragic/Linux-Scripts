@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+# --- Dependency check (auto-inserted) ---
+_d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done
+if [ ! -f "$_d/lib/require_tools.sh" ]; then
+    echo "FEJL: Kunne ikke finde lib/require_tools.sh (delt dependency-checker)." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$_d/lib/require_tools.sh"
+unset _d
+require_tools rsync "runuser:util-linux"
+
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -66,16 +78,6 @@ if [ "$(id -u)" -ne 0 ]; then
     echo "FEJL: Dette script skal køres som root."
     exit 1
 fi
-
-# -----------------------
-# Krævede binærer
-# -----------------------
-for cmd in rsync tee sed flock mktemp stat runuser cp mv; do
-    if ! command -v "$cmd" &>/dev/null; then
-        echo "FEJL: Kræver '$cmd' men det er ikke installeret."
-        exit 1
-    fi
-done
 
 # stdbuf valgfri
 USE_STDBUF=true

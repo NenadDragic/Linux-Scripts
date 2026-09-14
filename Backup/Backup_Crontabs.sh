@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+# --- Dependency check (auto-inserted) ---
+_d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done
+if [ ! -f "$_d/lib/require_tools.sh" ]; then
+    echo "FEJL: Kunne ikke finde lib/require_tools.sh (delt dependency-checker)." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$_d/lib/require_tools.sh"
+unset _d
+require_tools "crontab:cron"
 #
 # backup_crontabs.sh — gemmer hver brugers crontab i sin egen fil.
 #
@@ -51,7 +62,6 @@ while getopts ":d:u:k:snqh" opt; do
 done
 
 [[ "$KEEP_DAYS" =~ ^[0-9]+$ ]] || { err "-k skal være et helt tal"; exit 2; }
-command -v crontab >/dev/null || { err "crontab-kommandoen blev ikke fundet"; exit 3; }
 
 # Brugerliste: getent fanger både lokale og evt. AD/LDAP-brugere
 if (( ${#USERS[@]} == 0 )); then

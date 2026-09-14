@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Check if libheif-examples package is installed
-if ! dpkg -l | grep -q libheif-examples; then
-    echo "libheif-examples package is not installed. Installing..."
-    sudo apt-get update
-    sudo apt-get install -y libheif-examples
-fi
-
 # Create the folders
 mkdir -p ORG MOV MP4 CR2 HEIC
 

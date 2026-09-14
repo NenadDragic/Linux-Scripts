@@ -1,20 +1,15 @@
 #!/bin/bash
-
-# Funktion til at tjekke og installere wkhtmltopdf
-install_wkhtmltopdf() {
-  command -v wkhtmltopdf >/dev/null 2>&1 || {
-    echo >&2 "wkhtmltopdf er ikke installeret. Forsøger at installere..."
-    # Tilpas installationskommandoen til dit system
-    # For eksempel:
-    #   sudo apt install wkhtmltopdf -y  # For Debian/Ubuntu
-    #   sudo yum install wkhtmltopdf -y  # For Fedora/CentOS
-    sudo apt install wkhtmltopdf -y
-    echo
-  }
-}
-
-# Kald funktionen for at tjekke og installere
-install_wkhtmltopdf
+# --- Dependency check (auto-inserted) ---
+_d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done
+if [ ! -f "$_d/lib/require_tools.sh" ]; then
+    echo "FEJL: Kunne ikke finde lib/require_tools.sh (delt dependency-checker)." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$_d/lib/require_tools.sh"
+unset _d
+require_tools wkhtmltopdf
 
 # Få dagens dato i ønsket format
 date_today=$(date +%Y-%m-%d)

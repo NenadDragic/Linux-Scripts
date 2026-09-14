@@ -1,4 +1,15 @@
 #!/bin/bash
+# --- Dependency check (auto-inserted) ---
+_d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done
+if [ ! -f "$_d/lib/require_tools.sh" ]; then
+    echo "FEJL: Kunne ikke finde lib/require_tools.sh (delt dependency-checker)." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$_d/lib/require_tools.sh"
+unset _d
+require_tools git cmake make sudo
 
 # Exit on error
 set -e
@@ -7,20 +18,6 @@ set -e
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
 }
-
-# Function to check if command exists
-check_command() {
-    if ! command -v "$1" &> /dev/null; then
-        log "Error: $1 is required but not installed."
-        log "Please install $1 and try again."
-        exit 1
-    fi
-}
-
-# Check for required commands
-check_command git
-check_command cmake
-check_command make
 
 # Function to remove old versions
 remove_old_version() {

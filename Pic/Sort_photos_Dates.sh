@@ -1,20 +1,15 @@
 #!/bin/bash
-
-# ─────────────────────────────────────────────
-# STEP 1: Check dependencies
-# ─────────────────────────────────────────────
-missing=""
-if ! dpkg -l | grep -q libheif-examples; then
-    missing="$missing libheif-examples"
+# --- Dependency check (auto-inserted) ---
+_d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done
+if [ ! -f "$_d/lib/require_tools.sh" ]; then
+    echo "FEJL: Kunne ikke finde lib/require_tools.sh (delt dependency-checker)." >&2
+    exit 1
 fi
-if ! command -v exiftool >/dev/null 2>&1; then
-    missing="$missing libimage-exiftool-perl"
-fi
-if [ -n "$missing" ]; then
-    echo "Installerer manglende pakker:$missing"
-    sudo apt-get update
-    sudo apt-get install -y $missing
-fi
+# shellcheck source=/dev/null
+source "$_d/lib/require_tools.sh"
+unset _d
+require_tools "heif-convert:libheif-examples" "exiftool:libimage-exiftool-perl"
 
 # ─────────────────────────────────────────────
 # STEP 2: Normalize file extensions to uppercase

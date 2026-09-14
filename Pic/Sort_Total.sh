@@ -1,4 +1,15 @@
 #!/bin/bash
+# --- Dependency check (auto-inserted) ---
+_d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done
+if [ ! -f "$_d/lib/require_tools.sh" ]; then
+    echo "FEJL: Kunne ikke finde lib/require_tools.sh (delt dependency-checker)." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$_d/lib/require_tools.sh"
+unset _d
+require_tools "darktable-cli:darktable" "exiftool:libimage-exiftool-perl"
 
 # Converts DNG files to JPG in best quality (darktable-cli), then runs
 # Sort_photos_Dates.sh (sort into YYYY-MM-DD/CameraModel/), places DNG
@@ -38,30 +49,6 @@ DNG_TIL_PLACERING=()
 if [ ${#DNG_FILER[@]} -eq 0 ]; then
     echo "No DNG files found - skipping."
 else
-    # --- Tjek og installer noedvendige tools inden koersel ---
-    MANGLENDE_PAKKER=()
-    command -v darktable-cli >/dev/null 2>&1 || MANGLENDE_PAKKER+=("darktable")
-    command -v exiftool      >/dev/null 2>&1 || MANGLENDE_PAKKER+=("libimage-exiftool-perl")
-
-    if [ ${#MANGLENDE_PAKKER[@]} -gt 0 ]; then
-        echo "Missing packages: ${MANGLENDE_PAKKER[*]}"
-        if ! command -v apt-get >/dev/null 2>&1; then
-            echo "ERROR: apt-get not found - install manually: ${MANGLENDE_PAKKER[*]}" >&2
-            exit 1
-        fi
-        if [ "$(id -u)" -eq 0 ]; then
-            SUDO=""
-        elif command -v sudo >/dev/null 2>&1; then
-            SUDO="sudo"
-        else
-            echo "ERROR: Neither root nor sudo available - cannot install." >&2
-            exit 1
-        fi
-        $SUDO apt-get update -qq
-        $SUDO apt-get install -y "${MANGLENDE_PAKKER[@]}"
-        echo "Installation completed."
-    fi
-
     for f in "${DNG_FILER[@]}"; do
         jpg="${f%.*}.jpg"
 
