@@ -32,6 +32,12 @@ git clone git@github.com:NenadDragic/Cyber-Sec.git
 # Devices
 git clone git@github.com:NenadDragic/Devices.git
 
+# Docs Downloads (e-Boks, mit.dk, Jyske Bank og Nykredit netbank)
+git clone git@github.com:NenadDragic/Docs_Downloads.git
+
+# e-Boks downloader
+git clone git@github.com:NenadDragic/eboks-downloader.git
+
 # Edora
 git clone git@github.com:NenadDragic/Edora.git
 
@@ -49,6 +55,9 @@ git clone git@github.com:NenadDragic/Linux_Learning.git
 
 # Linux Scripts
 git clone git@github.com:NenadDragic/Linux-Scripts.git
+
+# mit.dk downloader
+git clone git@github.com:NenadDragic/mit.dk-downloader.git
 
 # PowerShell scripts
 git clone git@github.com:NenadDragic/PowerShell.git
