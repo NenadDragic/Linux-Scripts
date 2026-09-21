@@ -91,18 +91,19 @@ Prints a table of job / status / time, the total time, the free space on the dri
 ### Step 9 – Optional close (`--luk`)
 If the script mounted the drive itself, it syncs, unmounts it, and locks it again if it was the one that opened the LUKS container. A drive that was already mounted before the run is left mounted, with a warning.
 
+### Step 10 – Exit code
+Exits `1` (with a warning) if no job ran, or if any job's status was not `OK`; otherwise exits `0`.
+
 ---
 
 ## Notes
 
-- **Always exits `0`.** Even if a job fails or is only partial, the script ends with `exit 0`; the status is only visible in the summary and the log, so it can't be used directly for error handling from cron or another script.
+- **Exit code.** `0` only if at least one job ran and every job that ran finished `OK`. `1` if any job was partial, failed, interrupted or skipped, or if no job ran at all (e.g. `--kun` with a name that matches no job). Fatal errors (missing drive, missing prerequisites, not enough space) also exit `1`, and an unknown option exits `2`. This makes the script usable from cron or another script.
 - **`--spejl` deletes data.** In mirror mode `--delete --delete-excluded` also removes anything on the drive that matches an exclude pattern (e.g. an existing `#recycle/` folder). Run with `--torloeb --spejl` first to see what would be removed.
 - **`--plads` is conservative.** It compares the *full* size of the sources with the free space, not just what's new, so on a drive that already holds most of the data it can abort a run that would in fact fit.
 - **No cleanup after fatal errors.** Errors go through `doed`, which exits immediately without a trap. If the script fails after unlocking/mounting the drive (or is interrupted with Ctrl-C), the drive stays unlocked and mounted until you close it manually.
 - **Dry run still unlocks the drive.** `--torloeb` only prevents rsync from writing; the drive is still unlocked and mounted so the comparison can be made.
 - **`--maal` and `--luk`.** With `--maal` the script never mounts anything, so `--luk` only prints the "was already mounted" warning.
-- **Unknown `--kun` name.** A name that matches no job silently runs nothing and prints an empty summary.
 - **Hardcoded, machine-specific values.** The device path, both UUIDs, the key file path and the NAS mount points are tied to one specific drive and machine (`Debian-Laptop`); update them at the top of the script if the drive is replaced.
-- **Language.** Console output, log lines and comments are in Danish. The script's own header comment and help heading still call it `wd-backup-sync.sh`, although the file is named `WD_Backup.sh`.
-- **File mode.** The file is currently not executable (`644`); run `chmod +x` or start it with `sudo bash WD_Backup.sh`.
+- **Language.** Console output, log lines and comments are in Danish.
 - No dependency on any other script in the folder.

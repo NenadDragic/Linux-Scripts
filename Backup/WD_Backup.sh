@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# wd-backup-sync.sh — kopiér NAS-shares til det krypterede WD Elements-drev.
+# WD_Backup.sh — kopiér NAS-shares til det krypterede WD Elements-drev.
 #
 #   /mnt/NetBackup  ->  <drev>/NetBackup
 #   /mnt/Dragic     ->  <drev>/Dragic
@@ -13,8 +13,8 @@
 #   (xfr#23262, ir-chk=6513/151321) -> (xfr#23.262, ir-chk=6.513/151.321)
 # Slå det fra med --raatal, hvis du vil have rsyncs rå output.
 #
-# Brug:   sudo ./wd-backup-sync.sh [tilvalg]
-# Hjælp:  ./wd-backup-sync.sh --hjaelp
+# Brug:   sudo ./WD_Backup.sh [tilvalg]
+# Hjælp:  ./WD_Backup.sh --hjaelp
 #
 # Nenad Dragic — Debian-Laptop
 
@@ -47,6 +47,7 @@ EXCLUDES=(
 
 # ─── Tilvalg ─────────────────────────────────────────────────────────────────
 TORLOEB=0; SPEJL=0; LUK=0; KUN=""; MAAL_OVERRIDE=""; PLADS=0; RAATAL=0
+FEJLET=0
 
 RED=$'\033[0;31m'; GRN=$'\033[0;32m'; YEL=$'\033[0;33m'
 BLU=$'\033[0;34m'; BLD=$'\033[1m'; NC=$'\033[0m'
@@ -59,7 +60,7 @@ LOG=""
 
 hjaelp() {
   cat <<EOF
-${BLD}wd-backup-sync.sh${NC} — kopiér NAS-shares til det krypterede WD-drev
+${BLD}WD_Backup.sh${NC} — kopiér NAS-shares til det krypterede WD-drev
 
   sudo $0 [tilvalg]
 
@@ -331,7 +332,7 @@ printf '%s\n' "${BLD}Opsummering${NC}"
 printf '  %-14s %-14s %s\n' "JOB" "STATUS" "TID"
 for r in "${RESULTAT[@]}"; do
   IFS='|' read -r n s t <<<"$r"
-  farve="$GRN"; [[ "$s" == OK ]] || farve="$YEL"
+  farve="$GRN"; [[ "$s" == OK ]] || { farve="$YEL"; FEJLET=1; }
   printf '  %-14s %s%-14s%s %s\n' "$n" "$farve" "$s" "$NC" "$t"
   log "RESULTAT $n $s $t"
 done
@@ -341,4 +342,14 @@ printf '  Log: %s\n\n' "$LOG"
 
 [[ $LUK -eq 1 ]] && luk_drev
 
+# Afslutningskode: 0 kun hvis mindst ét job kørte, og alle kørte uden fejl.
+# Så kan cron eller et andet script se, om backuppen lykkedes.
+if [[ ${#RESULTAT[@]} -eq 0 ]]; then
+  advar "Intet job blev kørt${KUN:+ — ukendt jobnavn for --kun: $KUN}."
+  exit 1
+fi
+if [[ $FEJLET -eq 1 ]]; then
+  advar "Mindst ét job blev ikke gennemført uden fejl — se opsummeringen og loggen."
+  exit 1
+fi
 exit 0
