@@ -10,7 +10,7 @@ General-purpose Linux admin/utility scripts, grouped by topic.
 
 | Folder | Overview | Scripts | What's there |
 |---|---|---|---|
-| `Backup` | [Overview](Backup/Overview.md) | 7 | Rsync-based backups (NAS/USB/SD), raw `dd` disk imaging, per-user crontab backups, plus USB mount management. |
+| `Backup` | [Overview](Backup/Overview.md) | 8 | Rsync-based backups (NAS/USB/SD), NAS-share copy to an encrypted WD drive, raw `dd` disk imaging, per-user crontab backups, plus USB mount management. |
 | `MISC/Create_PDF_From_Web` | [Overview](MISC/Create_PDF_From_Web/Overview.md) | 1 | Converts a list of URLs into dated PDFs via `wkhtmltopdf`. |
 | `MISC/File_Handle` | [Overview](MISC/File_Handle/Overview.md) | 12 | File discovery, archiving (7z), renaming, SMB share mounting, and test-data generation. |
 | `MISC/IBM` | [Overview](MISC/IBM/Overview.md) | 1 | IBM server hardware/firmware info menu. |
