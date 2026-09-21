@@ -7,8 +7,8 @@ Backs up every user's crontab into its own timestamped file, so crontabs can be 
 ## Usage
 
 ```console
-chmod +x Backup_crontabs.sh
-sudo ./Backup_crontabs.sh [-d katalog] [-u bruger]... [-k dage] [-s] [-n] [-q] [-h]
+chmod +x Backup_Crontabs.sh
+sudo ./Backup_Crontabs.sh [-d katalog] [-u bruger]... [-k dage] [-s] [-n] [-q] [-h]
 ```
 
 Run as root to capture every user's crontab; without root it silently restricts itself to the invoking user's own crontab and skips system cron (see Notes). Restore a saved crontab with:
