@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Kalder Claude Code til at dokumentere nye/manglende .ps1-scripts, opdatere Overview.md,
+# og committe + pushe resultatet til GitHub.
+#
+# Kræver at "claude" (Claude Code CLI) er installeret og logget ind på denne maskine.
+# Kører uden at spørge undervejs - den committer og pusher automatisk, hvis der er noget at gøre.
+
+set -uo pipefail
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [ -z "$repo_root" ]; then
+    echo "Kunne ikke finde et git-repo herfra."
+    exit 1
+fi
+cd "$repo_root" || exit 1
+
+if ! command -v claude >/dev/null 2>&1; then
+    echo "Kunne ikke finde 'claude' (Claude Code CLI) i PATH. Er den installeret?"
+    exit 1
+fi
+
+prompt="$(cat <<'EOF'
+Der kan være nye eller ændrede .ps1-filer i PowerShell/-mappen, som mangler en tilhørende .md-dokumentationsfil (samme filnavn, .md i stedet for .ps1).
+
+Gør følgende:
+1. Find alle .ps1-filer i PowerShell/ der mangler en matchende .md-fil.
+2. Læs 2-3 eksisterende .md-filer i samme mappe for at følge den nøjagtige struktur og stil (titel + kort resumé, "Usage"-sektion med kodeblok og forudsætninger, en "Configuration"-tabel for hardcodede variabler, "What the Script Does" med nummererede trin, og en "Notes"-sektion med gotchas/begrænsninger).
+3. Læs hvert manglende script grundigt og skriv en ny .md-fil for det, der beskriver hvad scriptet faktisk gør - gæt ikke på funktionalitet der ikke er i koden.
+4. Hvis et script er tomt, eller indholdet tydeligt ikke stemmer overens med filnavnet (fx en oplagt kopiér-fejl), så spring dokumentationen af den fil over og forklar hvorfor i den afsluttende opsummering, i stedet for at gætte eller opdigte funktionalitet.
+5. Opdater PowerShell/Overview.md, så hvert nyt/rettet script er listet med korrekt link og en kort engelsk beskrivelse i den mest passende sektion (opret en ny sektion, hvis det ikke passer ind i de eksisterende).
+6. Stage kun de relevante filer (brug ikke `git add -A`/`git add .`), lav én commit med en kort, beskrivende besked, og push til origin.
+7. Afslut med en kort opsummering: hvad blev committet og pushet, og hvilke filer (hvis nogen) blev sprunget over og hvorfor.
+
+Hvis der slet ingen nye/udokumenterede .ps1-filer findes, så sig det bare og lav ingen commit.
+EOF
+)"
+
+echo "Starter Claude Code for at opdatere dokumentation, committe og pushe..."
+echo
+
+claude -p "$prompt" \
+    --permission-mode acceptEdits \
+    --allowedTools "Read Write Edit Glob Grep Bash(git *)"
