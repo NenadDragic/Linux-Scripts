@@ -41,6 +41,12 @@ An index of the scripts in this folder and their documentation. Each script has 
 |---|---|---|
 | `Web_Stat_DL.sh` | [Web_Stat_DL.md](Web_Stat_DL.md) | Downloads the Web-Status HTML reports from the NAS to a local `Documents` folder via `rsync`. |
 
+## Monitoring
+
+| Script | Doc | Summary |
+|---|---|---|
+| `SpaceUsageRealTime.sh` | [SpaceUsageRealTime.md](SpaceUsageRealTime.md) | Lists all mounted drives/shares, lets you pick one interactively, then polls and logs its disk usage (timestamp, used, available, use%) once per interval to both the screen and `~/<drive>-usage.log` until stopped with `Ctrl+C`. |
+
 ## Test Data
 
 | Script | Doc | Summary |
@@ -51,7 +57,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 
 ## Notes
 
-- Danish console output: `7ZipAllPack.sh`, `7ZipUnPackAll.sh`, `CreateTxTFiles.sh`, and `SMB.sh` all print their status/error messages in Danish (e.g. "Forkert adgangskode.", "FEJL", "Opretter...", "Ugyldigt share-navn"); `MoveDocToArchive.sh`'s documented example output is also entirely in Danish. The remaining File Discovery/Search scripts and `Rename_Extensions_To_Big_Letter.sh` produce English (or no) output.
+- Danish console output: `7ZipAllPack.sh`, `7ZipUnPackAll.sh`, `CreateTxTFiles.sh`, `SMB.sh`, and `SpaceUsageRealTime.sh` all print their status/error messages in Danish (e.g. "Forkert adgangskode.", "FEJL", "Opretter...", "Ugyldigt share-navn", "Overvågning stoppet."); `MoveDocToArchive.sh`'s documented example output is also entirely in Danish. The remaining File Discovery/Search scripts and `Rename_Extensions_To_Big_Letter.sh` produce English (or no) output.
 - Filename-vs-behavior mismatches to watch for: `CreateTxTFiles.sh` produces random-binary `.bin` files, not text files; `Rename_Extensions_To_Big_Letter.sh` uppercases the *entire* filename (not just the extension, despite "Extensions" in its name) and does **not** recurse into subdirectories even though a comment in the script claims it does.
 - Destructive / no-dry-run scripts: `Rename_Extensions_To_Big_Letter.sh` renames every file in the current directory immediately with no confirmation or preview. `7ZipAllPack.sh`/`7ZipUnPackAll.sh` require a password matching a hardcoded MD5 hash and have no dry-run mode, though `7ZipUnPackAll.sh` may hit an interactive overwrite prompt if the destination already has files. `MoveDocToArchive.sh` is the one script here with explicit `find`/`dryrun`/`run` stages to preview before moving anything.
 - Hardcoded, machine-specific values are common: the 7Zip scripts embed a fixed password MD5, `SMB.sh` embeds a remote IP (`192.168.1.50`) and credential paths under `/home/nenad/`, `Web_Stat_DL.sh` embeds the same NAS IP plus a remote user (`ElBosso`) and a local destination under `/home/nenad/`, and `MoveDocToArchive.sh`'s documented examples use paths like `/home/nenad/Billeder` — these are specific to the original author's machine and need editing before reuse elsewhere.
