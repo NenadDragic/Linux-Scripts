@@ -94,8 +94,15 @@ echo
 
 trap 'printf "\n%s  Overvågning stoppet.\n" "$(date "+%F %T")"; exit 0' INT TERM
 
-while :; do
-  printf '%s %s\n' "$(date '+%F %T')" \
-    "$(df -h --output=used,avail,pcent "$TARGET" | tail -1)"
-  sleep "$INTERVAL"
-done | tee -a "$LOG"
+ROW_FMT='%-19s %6s %6s %6s\n'
+{
+  # shellcheck disable=SC2059 # ROW_FMT er et fast, internt format uden brugerinput
+  printf "$ROW_FMT" "TIDSPUNKT" "BRUGT" "LEDIGT" "BRUGT%"
+  while :; do
+    # shellcheck disable=SC2086 # kolonner adskilt af enkelt mellemrum fra df, ønsket ord-splitting
+    read -r used avail pcent <<<"$(df -h --output=used,avail,pcent "$TARGET" | tail -1)"
+    # shellcheck disable=SC2059
+    printf "$ROW_FMT" "$(date '+%F %T')" "$used" "$avail" "$pcent"
+    sleep "$INTERVAL"
+  done
+} | tee -a "$LOG"

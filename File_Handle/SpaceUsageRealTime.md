@@ -49,22 +49,22 @@ Prompts for a number in range; re-prompts on anything else (non-numeric, `0`, or
 Builds a filesystem-safe name from the chosen mount point's last path component (`/` itself becomes `root`), falling back to the device name if that comes out empty. The log is written to `~/<name>-usage.log`.
 
 ### Step 5 – Monitor
-Prints what's being monitored, the interval, and the log path, then loops forever:
+Prints what's being monitored, the interval, and the log path, then prints a header row (`TIDSPUNKT  BRUGT LEDIGT BRUGT%`) followed by one aligned row per measurement, forever:
 
 ```bash
-printf '%s %s\n' "$(date '+%F %T')" \
-  "$(df -h --output=used,avail,pcent "$TARGET" | tail -1)"
+read -r used avail pcent <<<"$(df -h --output=used,avail,pcent "$TARGET" | tail -1)"
+printf '%-19s %6s %6s %6s\n' "$(date '+%F %T')" "$used" "$avail" "$pcent"
 sleep "$INTERVAL"
 ```
 
-Each line (timestamp, used, available, use%) goes to both the terminal and the log file via `tee -a`. A trap on `Ctrl+C`/`SIGTERM` prints a "stopped" line and exits cleanly (`exit 0`) instead of just being killed mid-line.
+The header and every row go to both the terminal and the log file via `tee -a`, so the header is written once at the top of each run in the log too. A trap on `Ctrl+C`/`SIGTERM` prints a "stopped" line and exits cleanly (`exit 0`) instead of just being killed mid-line.
 
 ---
 
 ## Notes
 
 - **Runs until stopped:** there's no fixed duration or count — it's meant to be left running (e.g. in `tmux`) and interrupted with `Ctrl+C` when you're done watching.
-- **Log grows indefinitely:** every run appends (`tee -a`); nothing rotates or trims old entries. For long-term monitoring, rotate `~/<name>-usage.log` yourself (e.g. `logrotate`).
+- **Log grows indefinitely:** every run appends (`tee -a`); nothing rotates or trims old entries. For long-term monitoring, rotate `~/<name>-usage.log` yourself (e.g. `logrotate`). Each run also appends its own header row, so a log spanning several runs has one `TIDSPUNKT BRUGT LEDIGT BRUGT%` line per run, not just one at the very top.
 - **Chosen by mount point, not device:** the loop queries `df` by the target mount point, not the raw device path, so it keeps working correctly even if the underlying device node changes (e.g. `/dev/sdb1` → `/dev/sdc1` after a reboot) as long as the same thing is still mounted at the same place.
 - **If the mount disappears mid-run:** `df` on a mount point that's gone (drive unplugged, network share dropped) prints an error to stderr and returns nothing useful for that line; the loop keeps running and retrying every interval rather than exiting.
 - **No parent-directory creation:** if `$HOME` isn't writable, `tee` fails for that run (visible as a `tee: ... No such file or directory` error) but the loop still keeps printing to the screen.
