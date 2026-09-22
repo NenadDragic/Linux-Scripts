@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Total_Update_Debian.sh
+# Total_Update_Ubuntu.sh
 # Total system opdatering af Ubuntu Desktop
 # Opdaterer: APT pakker, Snap, Flatpak, firmware, Python pip, npm (global),
 #            rydder op efter sig selv og genstarter om nødvendigt.
@@ -44,16 +44,13 @@ if [[ -f /etc/os-release ]]; then
   OS_VERSION="${VERSION_ID:-}"
 fi
 
-echo -e "\n${BOLD}Total Update Script${RESET}"
+echo -e "\n${BOLD}Total Update Script — Ubuntu Desktop${RESET}"
 echo    "System:  ${OS_NAME} ${OS_VERSION}"
 echo    "Startet: $(date '+%d-%m-%Y %H:%M:%S')"
 echo    "Kørende som: $(logname 2>/dev/null || echo 'root')"
 
-# Info om hvad der er relevant for det detekterede OS
-if echo "$OS_NAME" | grep -qi "ubuntu"; then
-  info "Ubuntu detekteret — alle trin aktive inkl. Snap"
-elif echo "$OS_NAME" | grep -qi "debian"; then
-  warn "Debian detekteret — Snap og fwupd er ikke standard, springer over hvis ikke installeret"
+if ! echo "$OS_NAME" | grep -qi "ubuntu"; then
+  warn "Dette script er skrevet til Ubuntu Desktop, men systemet rapporterer '${OS_NAME}'. Fortsætter alligevel."
 fi
 
 # ─────────────────────────────────────────
@@ -203,7 +200,6 @@ fi
 # ─────────────────────────────────────────
 section "Afslutning"
 
-# Tjek om en genstart er nødvendig
 if [[ -f /var/run/reboot-required ]]; then
   REBOOT_NEEDED=true
 fi

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Total_Update_Debian.sh
-# Total system opdatering af Ubuntu Desktop
-# Opdaterer: APT pakker, Snap, Flatpak, firmware, Python pip, npm (global),
+# Total_Update_Ubuntu_Server.sh
+# Total system opdatering af Ubuntu Server
+# Opdaterer: APT pakker, Snap, firmware, Python pip, npm (global),
 #            rydder op efter sig selv og genstarter om nødvendigt.
 # Kræver: sudo-adgang
 # =============================================================================
@@ -44,22 +44,23 @@ if [[ -f /etc/os-release ]]; then
   OS_VERSION="${VERSION_ID:-}"
 fi
 
-echo -e "\n${BOLD}Total Update Script${RESET}"
+echo -e "\n${BOLD}Total Update Script — Ubuntu Server${RESET}"
 echo    "System:  ${OS_NAME} ${OS_VERSION}"
 echo    "Startet: $(date '+%d-%m-%Y %H:%M:%S')"
 echo    "Kørende som: $(logname 2>/dev/null || echo 'root')"
 
-# Info om hvad der er relevant for det detekterede OS
-if echo "$OS_NAME" | grep -qi "ubuntu"; then
-  info "Ubuntu detekteret — alle trin aktive inkl. Snap"
-elif echo "$OS_NAME" | grep -qi "debian"; then
-  warn "Debian detekteret — Snap og fwupd er ikke standard, springer over hvis ikke installeret"
+if ! echo "$OS_NAME" | grep -qi "ubuntu"; then
+  warn "Dette script er skrevet til Ubuntu Server, men systemet rapporterer '${OS_NAME}'. Fortsætter alligevel."
+fi
+
+if command -v Xorg &>/dev/null || [[ -n "${XDG_CURRENT_DESKTOP:-}" ]]; then
+  warn "Der er fundet en grafisk desktop på maskinen — overvej at bruge Total_Update_Ubuntu.sh i stedet (inkl. Flatpak)."
 fi
 
 # ─────────────────────────────────────────
 #  1. APT – pakker fra repositorier
 # ─────────────────────────────────────────
-section "1/8 · APT — pakke-opdatering"
+section "1/7 · APT — pakke-opdatering"
 
 info "Opdaterer pakkeliste..."
 apt-get update -qq
@@ -78,7 +79,7 @@ ok "Afhængigheder løst"
 # ─────────────────────────────────────────
 #  2. APT – oprydning
 # ─────────────────────────────────────────
-section "2/8 · APT — oprydning"
+section "2/7 · APT — oprydning"
 
 info "Fjerner forældede pakker (autoremove)..."
 apt-get autoremove -y -qq
@@ -91,7 +92,7 @@ ok "Cache renset"
 # ─────────────────────────────────────────
 #  3. Snap
 # ─────────────────────────────────────────
-section "3/8 · Snap — opdatering"
+section "3/7 · Snap — opdatering"
 
 if command -v snap &>/dev/null; then
   info "Opdaterer alle Snap-pakker..."
@@ -111,24 +112,9 @@ else
 fi
 
 # ─────────────────────────────────────────
-#  4. Flatpak
+#  4. Firmware (fwupd)
 # ─────────────────────────────────────────
-section "4/8 · Flatpak — opdatering"
-
-if command -v flatpak &>/dev/null; then
-  info "Opdaterer alle Flatpak-applikationer..."
-  flatpak update -y
-  info "Fjerner ubrugte Flatpak-runtime-pakker..."
-  flatpak uninstall --unused -y
-  ok "Flatpak opdateret og ryddet"
-else
-  warn "Flatpak ikke installeret – springer over"
-fi
-
-# ─────────────────────────────────────────
-#  5. Firmware (fwupd)
-# ─────────────────────────────────────────
-section "5/8 · Firmware — fwupd"
+section "4/7 · Firmware — fwupd"
 
 if command -v fwupdmgr &>/dev/null; then
   info "Henter firmware-metadata..."
@@ -144,13 +130,13 @@ if command -v fwupdmgr &>/dev/null; then
     ok "Ingen firmware-opdateringer tilgængelige"
   fi
 else
-  warn "fwupd ikke installeret – springer over"
+  warn "fwupd ikke installeret – springer over (typisk for VM'er/cloud-instanser)"
 fi
 
 # ─────────────────────────────────────────
-#  6. Python pip (bruger-niveau)
+#  5. Python pip (bruger-niveau)
 # ─────────────────────────────────────────
-section "6/8 · Python pip — bruger-pakker"
+section "5/7 · Python pip — bruger-pakker"
 
 REAL_USER=$(logname 2>/dev/null || echo "")
 if [[ -n "$REAL_USER" ]] && command -v pip3 &>/dev/null; then
@@ -171,9 +157,9 @@ else
 fi
 
 # ─────────────────────────────────────────
-#  7. npm globale pakker
+#  6. npm globale pakker
 # ─────────────────────────────────────────
-section "7/8 · npm — globale pakker"
+section "6/7 · npm — globale pakker"
 
 if command -v npm &>/dev/null; then
   info "Opdaterer npm selv..."
@@ -186,9 +172,9 @@ else
 fi
 
 # ─────────────────────────────────────────
-#  8. updatedb (locate-database)
+#  7. updatedb (locate-database)
 # ─────────────────────────────────────────
-section "8/8 · updatedb — fil-lokations-database"
+section "7/7 · updatedb — fil-lokations-database"
 
 if command -v updatedb &>/dev/null; then
   info "Opdaterer locate-database..."
@@ -203,7 +189,6 @@ fi
 # ─────────────────────────────────────────
 section "Afslutning"
 
-# Tjek om en genstart er nødvendig
 if [[ -f /var/run/reboot-required ]]; then
   REBOOT_NEEDED=true
 fi

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Total_Update_Debian.sh
-# Total system opdatering af Ubuntu Desktop
-# Opdaterer: APT pakker, Snap, Flatpak, firmware, Python pip, npm (global),
-#            rydder op efter sig selv og genstarter om nødvendigt.
+# Total_Update_RaspberryPi.sh
+# Total system opdatering af Raspberry Pi (Raspberry Pi OS / Debian-baseret)
+# Opdaterer: APT pakker, EEPROM/bootloader-firmware, Snap, Python pip,
+#            npm (global), rydder op efter sig selv og genstarter om nødvendigt.
 # Kræver: sudo-adgang
 # =============================================================================
 
@@ -35,7 +35,7 @@ fi
 REBOOT_NEEDED=false
 START_TIME=$(date +%s)
 
-# ---------- OS-detektion ----------
+# ---------- OS/hardware-detektion ----------
 OS_NAME="Linux"
 OS_VERSION=""
 if [[ -f /etc/os-release ]]; then
@@ -44,22 +44,25 @@ if [[ -f /etc/os-release ]]; then
   OS_VERSION="${VERSION_ID:-}"
 fi
 
-echo -e "\n${BOLD}Total Update Script${RESET}"
+PI_MODEL=""
+if [[ -f /proc/device-tree/model ]]; then
+  PI_MODEL=$(tr -d '\0' < /proc/device-tree/model)
+fi
+
+echo -e "\n${BOLD}Total Update Script — Raspberry Pi${RESET}"
 echo    "System:  ${OS_NAME} ${OS_VERSION}"
+[[ -n "$PI_MODEL" ]] && echo "Model:   ${PI_MODEL}"
 echo    "Startet: $(date '+%d-%m-%Y %H:%M:%S')"
 echo    "Kørende som: $(logname 2>/dev/null || echo 'root')"
 
-# Info om hvad der er relevant for det detekterede OS
-if echo "$OS_NAME" | grep -qi "ubuntu"; then
-  info "Ubuntu detekteret — alle trin aktive inkl. Snap"
-elif echo "$OS_NAME" | grep -qi "debian"; then
-  warn "Debian detekteret — Snap og fwupd er ikke standard, springer over hvis ikke installeret"
+if [[ -z "$PI_MODEL" ]]; then
+  warn "Kunne ikke bekræfte at dette er en Raspberry Pi (mangler /proc/device-tree/model). Fortsætter alligevel."
 fi
 
 # ─────────────────────────────────────────
 #  1. APT – pakker fra repositorier
 # ─────────────────────────────────────────
-section "1/8 · APT — pakke-opdatering"
+section "1/7 · APT — pakke-opdatering"
 
 info "Opdaterer pakkeliste..."
 apt-get update -qq
@@ -78,7 +81,7 @@ ok "Afhængigheder løst"
 # ─────────────────────────────────────────
 #  2. APT – oprydning
 # ─────────────────────────────────────────
-section "2/8 · APT — oprydning"
+section "2/7 · APT — oprydning"
 
 info "Fjerner forældede pakker (autoremove)..."
 apt-get autoremove -y -qq
@@ -89,9 +92,28 @@ apt-get autoclean -qq
 ok "Cache renset"
 
 # ─────────────────────────────────────────
-#  3. Snap
+#  3. EEPROM / bootloader-firmware
 # ─────────────────────────────────────────
-section "3/8 · Snap — opdatering"
+section "3/7 · Firmware — rpi-eeprom-update"
+
+if command -v rpi-eeprom-update &>/dev/null; then
+  info "Tjekker for EEPROM/bootloader-opdateringer..."
+  if rpi-eeprom-update 2>/dev/null | grep -q "UPDATE AVAILABLE"; then
+    info "Installerer EEPROM-opdatering..."
+    rpi-eeprom-update -a 2>/dev/null || warn "EEPROM-opdatering kunne ikke installeres"
+    ok "EEPROM/bootloader opdateret"
+    REBOOT_NEEDED=true
+  else
+    ok "Ingen EEPROM-opdateringer tilgængelige"
+  fi
+else
+  warn "rpi-eeprom-update ikke installeret – springer over"
+fi
+
+# ─────────────────────────────────────────
+#  4. Snap
+# ─────────────────────────────────────────
+section "4/7 · Snap — opdatering"
 
 if command -v snap &>/dev/null; then
   info "Opdaterer alle Snap-pakker..."
@@ -107,50 +129,13 @@ if command -v snap &>/dev/null; then
     done
   ok "Gamle revisioner ryddet"
 else
-  warn "Snap ikke fundet – springer over"
+  warn "Snap ikke fundet – springer over (ikke standard på Raspberry Pi OS)"
 fi
 
 # ─────────────────────────────────────────
-#  4. Flatpak
+#  5. Python pip (bruger-niveau)
 # ─────────────────────────────────────────
-section "4/8 · Flatpak — opdatering"
-
-if command -v flatpak &>/dev/null; then
-  info "Opdaterer alle Flatpak-applikationer..."
-  flatpak update -y
-  info "Fjerner ubrugte Flatpak-runtime-pakker..."
-  flatpak uninstall --unused -y
-  ok "Flatpak opdateret og ryddet"
-else
-  warn "Flatpak ikke installeret – springer over"
-fi
-
-# ─────────────────────────────────────────
-#  5. Firmware (fwupd)
-# ─────────────────────────────────────────
-section "5/8 · Firmware — fwupd"
-
-if command -v fwupdmgr &>/dev/null; then
-  info "Henter firmware-metadata..."
-  fwupdmgr refresh --force 2>/dev/null || warn "Metadata-opdatering fejlede (ikke kritisk)"
-
-  info "Tjekker for firmware-opdateringer..."
-  if fwupdmgr get-updates 2>/dev/null | grep -q "Upgrade"; then
-    info "Installerer firmware-opdateringer..."
-    fwupdmgr update -y 2>/dev/null || warn "Nogle firmware-opdateringer kunne ikke installeres"
-    ok "Firmware opdateret"
-    REBOOT_NEEDED=true
-  else
-    ok "Ingen firmware-opdateringer tilgængelige"
-  fi
-else
-  warn "fwupd ikke installeret – springer over"
-fi
-
-# ─────────────────────────────────────────
-#  6. Python pip (bruger-niveau)
-# ─────────────────────────────────────────
-section "6/8 · Python pip — bruger-pakker"
+section "5/7 · Python pip — bruger-pakker"
 
 REAL_USER=$(logname 2>/dev/null || echo "")
 if [[ -n "$REAL_USER" ]] && command -v pip3 &>/dev/null; then
@@ -171,9 +156,9 @@ else
 fi
 
 # ─────────────────────────────────────────
-#  7. npm globale pakker
+#  6. npm globale pakker
 # ─────────────────────────────────────────
-section "7/8 · npm — globale pakker"
+section "6/7 · npm — globale pakker"
 
 if command -v npm &>/dev/null; then
   info "Opdaterer npm selv..."
@@ -186,9 +171,9 @@ else
 fi
 
 # ─────────────────────────────────────────
-#  8. updatedb (locate-database)
+#  7. updatedb (locate-database)
 # ─────────────────────────────────────────
-section "8/8 · updatedb — fil-lokations-database"
+section "7/7 · updatedb — fil-lokations-database"
 
 if command -v updatedb &>/dev/null; then
   info "Opdaterer locate-database..."
@@ -203,7 +188,6 @@ fi
 # ─────────────────────────────────────────
 section "Afslutning"
 
-# Tjek om en genstart er nødvendig
 if [[ -f /var/run/reboot-required ]]; then
   REBOOT_NEEDED=true
 fi
