@@ -7,6 +7,9 @@ TOOLS=(
   "mtr|Kombineret ping/traceroute til netværksfejlfinding"
   "bat|cat med syntax highlighting (binær hedder 'batcat' på Debian/Ubuntu)"
   "glances|Systemovervågning i terminalen (htop på steroider)"
+  "tmux|Terminal-multiplexer – flere vinduer/paneler og sessioner der overlever afbrudt SSH"
+  "doublecmd-qt|Double Commander – tovindues filhåndtering (Qt-udgave, GUI)"
+  "doublecmd-plugins|Plugins til Double Commander (trækkes automatisk med doublecmd-qt)"
 )
 
 # --- Rettigheds-validering -------------------------------------------------
@@ -36,12 +39,31 @@ else
 fi
 # ---------------------------------------------------------------------------
 
-# Filtrer allerede installerede pakker ud
+# Kun "install ok installed" tæller – 'dpkg -s' giver også exit 0 for
+# pakker der er fjernet men ikke purged (status "config-files").
+is_installed() {
+  dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "install ok installed"
+}
+
+# Findes pakken i de aktiverede repos?
+is_available() {
+  local cand
+  cand=$(apt-cache policy "$1" 2>/dev/null | awk '/Candidate:/ {print $2}')
+  [[ -n "$cand" && "$cand" != "(none)" ]]
+}
+
+# Opdater pakkelister først, så tilgængeligheds-tjekket er retvisende
+echo "ℹ Opdaterer pakkelister..."
+$SUDO apt-get update -qq
+
+# Filtrer installerede og utilgængelige pakker ud
 declare -a AVAILABLE=()
 for entry in "${TOOLS[@]}"; do
   pkg="${entry%%|*}"
-  if dpkg -s "$pkg" &>/dev/null; then
+  if is_installed "$pkg"; then
     echo "✔ $pkg er allerede installeret – springes over"
+  elif ! is_available "$pkg"; then
+    echo "⚠ $pkg findes ikke i de aktiverede repos (Ubuntu: kræver evt. 'universe') – springes over"
   else
     AVAILABLE+=("$entry")
   fi
@@ -71,10 +93,32 @@ fi
 
 [[ ${#SELECTED[@]} -eq 0 ]] && { echo "Intet valgt."; exit 0; }
 
+# --- Double Commander-specifikke tjek --------------------------------------
+# doublecmd-qt "Depends: doublecmd-common, doublecmd-plugins", så plugins
+# kommer automatisk med. Vælges plugins ALENE, får man biblioteksfilerne
+# uden nogen GUI at bruge dem i.
+if [[ " ${SELECTED[*]} " == *" doublecmd-plugins "* \
+      && " ${SELECTED[*]} " != *" doublecmd-qt "* ]] \
+   && ! is_installed doublecmd-qt && ! is_installed doublecmd-gtk; then
+  echo "⚠ doublecmd-plugins alene installerer ingen GUI (Double Commander mangler)."
+  read -rp "Tilføj doublecmd-qt? [J/n] " ans
+  [[ "$ans" =~ ^[nN]$ ]] || SELECTED+=("doublecmd-qt")
+fi
+
+# doublecmd-qt og doublecmd-gtk Provides/Conflicts/Replaces den virtuelle
+# pakke "doublecmd" – de kan ikke være installeret samtidig.
+if [[ " ${SELECTED[*]} " == *" doublecmd-qt "* ]] && is_installed doublecmd-gtk; then
+  echo "⚠ doublecmd-gtk er installeret. Qt- og GTK-udgaven kan ikke sameksistere,"
+  echo "  så apt vil FJERNE doublecmd-gtk. Indstillinger i ~/.config/doublecmd bevares."
+  read -rp "Fortsæt? [j/N] " ans
+  [[ "$ans" =~ ^[jJyY]$ ]] || { echo "Afbrudt."; exit 0; }
+fi
+# ---------------------------------------------------------------------------
+
 echo
 echo "Installerer: ${SELECTED[*]}"
-$SUDO apt update
-$SUDO apt install -y "${SELECTED[@]}"
+# apt-get frem for apt i scripts – stabilt CLI og ingen "unstable CLI"-advarsel
+$SUDO apt-get install -y "${SELECTED[@]}"
 
 # bat: tilbyd et 'bat'-alias, da binæren hedder batcat
 if [[ " ${SELECTED[*]} " == *" bat "* ]] && command -v batcat &>/dev/null && ! command -v bat &>/dev/null; then

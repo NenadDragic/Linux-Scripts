@@ -14,7 +14,7 @@ General-purpose Linux admin/utility scripts, grouped by topic.
 | `MISC/Create_PDF_From_Web` | [Overview](MISC/Create_PDF_From_Web/Overview.md) | 1 | Converts a list of URLs into dated PDFs via `wkhtmltopdf`. |
 | `MISC/File_Handle` | [Overview](MISC/File_Handle/Overview.md) | 12 | File discovery, archiving (7z), renaming, SMB share mounting, and test-data generation. |
 | `MISC/IBM` | [Overview](MISC/IBM/Overview.md) | 1 | IBM server hardware/firmware info menu. |
-| `MISC/Install` | [Overview](MISC/Install/Overview.md) | 1 | Driver/monitor-mode setup for the AWUS036ACH Wi-Fi adapter. |
+| `MISC/Install` | [Overview](MISC/Install/Overview.md) | 2 | Driver/monitor-mode setup for the AWUS036ACH Wi-Fi adapter, plus an interactive apt tool-picker. |
 | `MISC/Network` | [Overview](MISC/Network/Overview.md) | 1 | WireGuard VPN up/down/status wrapper. |
 | `MISC/Pic` | [Overview](MISC/Pic/Overview.md) | 9 | Photo/video sorting by date and camera model, HEIC/DNG conversion, playback, and library maintenance. |
 | `MISC/Screen` | [Overview](MISC/Screen/Overview.md) | 4 | GNU `screen` session helpers, plus an SSH host picker. |
