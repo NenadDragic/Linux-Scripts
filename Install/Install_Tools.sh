@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install-tools.sh – vælg hvilke værktøjer der skal installeres via apt
+# Install_Tools.sh – vælg hvilke værktøjer der skal installeres via apt
 set -euo pipefail
 
 # Navn|Beskrivelse  (rediger frit her)

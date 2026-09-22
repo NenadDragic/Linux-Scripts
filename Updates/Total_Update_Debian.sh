@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# ubuntu-total-update.sh
+# Total_Update_Debian.sh
 # Total system opdatering af Ubuntu Desktop
 # Opdaterer: APT pakker, Snap, Flatpak, firmware, Python pip, npm (global),
 #            rydder op efter sig selv og genstarter om nødvendigt.

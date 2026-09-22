@@ -2,7 +2,7 @@
 # Henter nye commits ned fra GitHub for hvert git-repo under en base-mappe,
 # uden at overskrive lokale ændringer.
 #
-# Base-mappe (kan overstyres med et argument: ./sync-from-github.sh /anden/sti):
+# Base-mappe (kan overstyres med et argument: ./Sync-from-github.sh /anden/sti):
 #   Windows (Git Bash): H:\git  (/h/git)
 #   Linux:               ~/Git
 
