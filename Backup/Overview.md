@@ -12,6 +12,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 | `Backup_SD_USB.sh` | [Backup_SD_USB.md](Backup_SD_USB.md) | Same rsync/logging/status-file pattern as `Backup_NAS.sh`, but mirrors an already-mounted SD card's root filesystem to a dated folder on a locally mounted USB backup drive. |
 | `Backup_USB.sh` | [Backup_USB.md](Backup_USB.md) | The USB-destination counterpart to `Backup_NAS.sh` — mirrors the local root filesystem to a dated folder on a locally mounted USB backup drive, carrying additional "v6" reliability fixes to the logging pipeline and stats extraction. |
 | `WD_Backup.sh` | [WD_Backup.md](WD_Backup.md) | Copies three NAS shares (`/mnt/NetBackup`, `/mnt/Dragic`, `/mnt/DashCam`) to a LUKS-encrypted WD Elements USB drive with `rsync`, unlocking and mounting the drive itself if needed; adds/updates only by default, with optional dry run, mirror (`--spejl`), single-job, space-check and auto-lock modes, Danish-formatted progress and a timestamped log. |
+| `WD-Drive.sh` | [WD-Drive.md](WD-Drive.md) | Mounts, shows status for, and unmounts the LUKS-encrypted WD Elements drive (found by LUKS UUID) on `/mnt/backup`; `status` returns exit codes 0/1/3 for use in other scripts, and `umount --sluk` also powers off the USB drive. |
 | `Total_Backup.sh` | [Total_Backup.md](Total_Backup.md) | Backs up three drives (`nvme0n1p1`/`p2`/`p3`) as raw `dd` disk images, named by drive type and date, into a backup directory; requires root. |
 
 ## System Backup Jobs
