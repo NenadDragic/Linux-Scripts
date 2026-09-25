@@ -8,6 +8,8 @@
 #
 # Scriptet låser drevet op og monterer det, hvis det ikke allerede er monteret,
 # kopierer hvert job med rsync og viser samlet fremdrift undervejs.
+# NAS-shares, der ikke allerede er monteret, monteres via File_Handle/SMB.sh
+# før kopieringen og afmonteres igen bagefter (kun dem scriptet selv monterede).
 #
 # Fremdriftens tællere vises med dansk tusindtalsseparator:
 #   (xfr#23262, ir-chk=6513/151321) -> (xfr#23.262, ir-chk=6.513/151.321)
@@ -224,6 +226,49 @@ if [[ -n "$MAAL_OVERRIDE" ]]; then
 else
   montér_drev
 fi
+
+# ─── Montér NAS-shares ───────────────────────────────────────────────────────
+# Kun de shares, der ikke allerede er monteret, monteres — og kun dem afmonteres
+# igen bagefter. SMB.sh returnerer 0 selv ved fejl, så resultatet tjekkes med
+# mountpoint.
+SMB_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../File_Handle/SMB.sh"
+declare -a SHARES_MOUNTED=()
+
+afmontér_shares() {
+  local navn
+  for navn in "${SHARES_MOUNTED[@]}"; do
+    if bash "$SMB_SCRIPT" "$navn" umount >>"$LOG" 2>&1; then
+      info "Share $navn afmonteret"
+    else
+      advar "Kunne ikke afmontere share $navn"
+    fi
+  done
+  SHARES_MOUNTED=()
+}
+
+montér_shares() {
+  local job src navn
+  for job in "${JOBS[@]}"; do
+    src="${job%%:*}"; navn="${job##*:}"
+    [[ -n "$KUN" && "$KUN" != "$navn" ]] && continue
+    if mountpoint -q "$src" 2>/dev/null; then
+      info "Share $navn er allerede monteret på $src"
+      continue
+    fi
+    info "Monterer share $navn ..."
+    bash "$SMB_SCRIPT" "$navn" mount >>"$LOG" 2>&1
+    if mountpoint -q "$src" 2>/dev/null; then
+      SHARES_MOUNTED+=("$navn")
+      ok "Share $navn monteret på $src"
+    else
+      advar "Kunne ikke montere share $navn — jobbet springes over."
+    fi
+  done
+}
+
+[[ -f "$SMB_SCRIPT" ]] || doed "Kan ikke finde $SMB_SCRIPT"
+trap afmontér_shares EXIT
+montér_shares
 
 # ─── Byg rsync-kommandoen ────────────────────────────────────────────────────
 # -a  = -rlptgoD. ACL (-A) og xattr (-X) udelades med vilje: NAS-shares

@@ -31,7 +31,7 @@ Prerequisites:
 - Must be run as root, unless `--maal` is given — unlocking, mounting and reading the NAS shares need root.
 - `rsync` and `findmnt` are checked at startup; the script exits if either is missing. `cryptsetup`, `mount`/`umount`, `du`, `df`, `numfmt` and `getent` are used without being checked.
 - `perl` is used to format the progress numbers; if it is missing the script warns and falls back to raw numbers (as if `--raatal` was given).
-- The NAS shares should already be mounted at `/mnt/NetBackup`, `/mnt/Dragic` and `/mnt/DashCam` — the script does not mount them.
+- The NAS shares are mounted automatically via `../File_Handle/SMB.sh` (`<Share> mount`) if they are not already mounted at `/mnt/NetBackup`, `/mnt/Dragic` and `/mnt/DashCam`, and unmounted again (`<Share> umount`) when the script exits — but only the shares the script mounted itself. Shares that were already mounted are left alone. This happens whether or not the WD drive was already mounted, and respects `--kun`. If a share cannot be mounted, its job is skipped with a warning. Unmounting runs from an `EXIT` trap, so it also happens after fatal errors.
 - The WD drive must be connected. If it is locked, the script either uses the key file (if present) or prompts for the passphrase.
 
 ### Configuration (top of script)
