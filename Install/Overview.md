@@ -14,7 +14,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 
 | Script | Doc | Summary |
 |---|---|---|
-| `Install_Tools.sh` | [Install_Tools.md](Install_Tools.md) | Lets you pick which of a fixed set of apt packages (`mtr`, `bat`, `glances`, `tmux`, `doublecmd-qt`, `doublecmd-plugins`) to install, filtering out ones already installed or unavailable, via a `whiptail` checklist or a text fallback, with extra checks for Double Commander's Qt/GTK conflict and an optional `bat` symlink. |
+| `Install_Tools.sh` | [Install_Tools.md](Install_Tools.md) | Lets you pick which of a fixed set of apt packages (`mtr`, `bat`, `glances`, `tmux`, `doublecmd-qt`, `doublecmd-plugins`, `cockpit`) to install, filtering out ones already installed or unavailable, via a `whiptail` checklist or a text fallback, with extra checks for Double Commander's Qt/GTK conflict an optional `bat` symlink, and enabling `cockpit.socket` after installing Cockpit. |
 
 ---
 

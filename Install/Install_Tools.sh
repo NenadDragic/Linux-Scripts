@@ -10,6 +10,7 @@ TOOLS=(
   "tmux|Terminal-multiplexer – flere vinduer/paneler og sessioner der overlever afbrudt SSH"
   "doublecmd-qt|Double Commander – tovindues filhåndtering (Qt-udgave, GUI)"
   "doublecmd-plugins|Plugins til Double Commander (trækkes automatisk med doublecmd-qt)"
+  "cockpit|Cockpit – webbaseret administration af serveren (https://<host>:9090)"
 )
 
 # --- Rettigheds-validering -------------------------------------------------
@@ -130,6 +131,13 @@ if [[ " ${SELECTED[*]} " == *" bat "* ]] && command -v batcat &>/dev/null && ! c
     [[ $EUID -eq 0 && "$REAL_USER" != "root" ]] && chown -R "$REAL_USER" "$REAL_HOME/.local"
     echo "Symlink oprettet. Sørg for at $REAL_HOME/.local/bin er i din PATH."
   fi
+fi
+
+# cockpit: sørg for at web-UI'et lytter, og vis adressen
+if [[ " ${SELECTED[*]} " == *" cockpit "* ]] && is_installed cockpit; then
+  $SUDO systemctl enable --now cockpit.socket
+  echo "Cockpit kører på https://$(hostname -f 2>/dev/null || hostname):9090"
+  echo "  Log ind med en almindelig bruger (root er som standard spærret i /etc/cockpit/disallowed-users)."
 fi
 
 echo "Færdig."

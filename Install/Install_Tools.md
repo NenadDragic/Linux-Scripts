@@ -1,6 +1,6 @@
 # Install Tools
 
-Presents a fixed list of apt packages and lets you pick which ones to install: filters out packages that are already installed or unavailable in the enabled repos, offers a graphical checklist (`whiptail`) with a text-based per-package fallback, handles two package-specific gotchas for Double Commander, then installs the selection with `apt-get`.
+Presents a fixed list of apt packages and lets you pick which ones to install: filters out packages that are already installed or unavailable in the enabled repos, offers a graphical checklist (`whiptail`) with a text-based per-package fallback, handles two package-specific gotchas for Double Commander, then installs the selection with `apt-get` and runs small post-install steps for `bat` and Cockpit.
 
 ---
 
@@ -23,7 +23,7 @@ Prerequisites:
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `TOOLS` | `mtr`, `bat`, `glances`, `tmux`, `doublecmd-qt`, `doublecmd-plugins` | Candidate packages, as `package\|Danish description` pairs; edit this array to change what's offered |
+| `TOOLS` | `mtr`, `bat`, `glances`, `tmux`, `doublecmd-qt`, `doublecmd-plugins`, `cockpit` | Candidate packages, as `package\|Danish description` pairs; edit this array to change what's offered |
 
 ---
 
@@ -57,6 +57,9 @@ Prints the final selection and runs `apt-get install -y` with the selected packa
 ### Step 7 – Optional `bat` symlink
 If `bat` was selected and the `batcat` binary is present but no `bat` command is on `PATH` (the Debian/Ubuntu package installs the binary as `batcat`), asks (default no) whether to create `~/.local/bin/bat` as a symlink to `batcat` in the real user's home directory. If run as root via `sudo`, the created `~/.local` files are `chown`'d back to the real user.
 
+### Step 8 – Cockpit post-install
+If `cockpit` was selected and is now installed, runs `systemctl enable --now cockpit.socket` so the web UI starts on demand and survives reboots, then prints the address `https://<fqdn>:9090` and a reminder that `root` is blocked from logging in by default (`/etc/cockpit/disallowed-users`), so log in as a normal user with sudo rights.
+
 ---
 
 ## Notes
@@ -66,5 +69,5 @@ If `bat` was selected and the `batcat` binary is present but no `bat` command is
 - **Symlink question always asked, even after a previous run:** if `~/.local/bin/bat` already exists, `command -v bat` will find it and the question is skipped — but if the symlink was removed manually, the question reappears on every run where `bat`/`batcat` are involved.
 - **Distribution-specific:** built around `apt-get`/`dpkg-query`/`apt-cache`, so it only works on Debian/Ubuntu-based systems; the "requires `universe`" hint in the availability warning is Ubuntu-specific phrasing.
 - **`set -euo pipefail`:** the script exits immediately on most errors; the explicit early exits ("Intet at installere.", "Intet valgt.", cancelled `whiptail`, declined Double Commander confirmation) all use plain `exit 0`, so a deliberate no-op run is not distinguishable from success via the exit code.
-- The script's own header comment still calls it `install-tools.sh`, although the file is named `Install_Tools.sh`.
+- **Cockpit uses a self-signed certificate** by default, so the browser will show a certificate warning on the first visit to port `9090`. If a firewall (e.g. `ufw`) is active, port `9090/tcp` must be opened separately — the script does not touch firewall rules.
 - No dependency on any other script in the folder.
