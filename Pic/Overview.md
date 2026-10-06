@@ -36,6 +36,5 @@ An index of the scripts in this folder and their documentation. Each script has 
 - `Play2.sh` is an explicit variant of `Play.sh`: same EXIF-driven date/camera sorting, but it additionally bundles paired MOV/HEIC/MP4/CR2 files with each JPG, adds a guard for "no matching files" that `Play.sh` lacks, and uses a slightly different (and likely unintentionally different) character-sanitizing regex.
 - Required external tools recur across the folder: `exiftool` (most scripts, incl. DNG preview extraction in `Sort_Total.sh`), `heif-convert`/`libheif-examples` (HEIC conversion), and the Perl `rename` utility (`Convert.sh`).
 - Destructive/unsafe-by-design scripts: `Convert.sh` renames every file and subdirectory in the working directory to uppercase with no filter and no collision handling (can silently overwrite); `LibHEIF_Update.sh` purges the existing `libheif` packages before the source rebuild even starts.
-- Hardcoded path: `Update_PVT_Folders.sh` points at `/home/nenad/git/Linux-Scripts/MISC/Pic/Convert.sh`, tying it to one user's home directory and clone location.
 - `Convert.sh` ignores any argument passed to it — `Update_PVT_Folders.sh` passes the matched `.PVT` file path, but `Convert.sh` always processes the entire current working directory regardless.
 - Comments and console output across this folder's scripts are documented as English.

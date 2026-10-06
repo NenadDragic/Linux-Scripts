@@ -23,7 +23,7 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify root privileges
-The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits without doing anything.
+The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits with status `1` without doing anything.
 
 ### Step 2 – Check for available firmware updates
 It runs `fwupdmgr get-updates`, which queries fwupd for any firmware updates available for devices already known to the system.

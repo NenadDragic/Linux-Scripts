@@ -32,7 +32,7 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Root check
-Compares `whoami` to `root`; if they don't match, prints "Please run as root." and exits.
+Compares `whoami` to `root`; if they don't match, prints "Please run as root." and exits with status `1`.
 
 ### Step 2 – Define paths and date
 Sets `backup_dir` and captures the current date as `YYYY-MM-DD` into `date`.

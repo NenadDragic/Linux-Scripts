@@ -17,7 +17,7 @@ require_tools wget sudo
 if [ "$(whoami)" != "root" ]
   then
     echo "Please run as root.\n"
-    exit
+    exit 1
 fi
 
 # URL to download

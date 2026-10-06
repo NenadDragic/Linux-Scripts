@@ -15,7 +15,7 @@ require_tools sudo dmidecode
 if [ "$(whoami)" != "root" ]
   then
     echo "Please run as root.\n"
-    exit
+    exit 1
 fi
 
 echo "Which command would you like to run?"

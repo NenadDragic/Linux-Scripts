@@ -27,7 +27,7 @@ for hjaelpescript in Sort_photos_Dates.sh Sort_photos_Types.sh; do
     if [ ! -f "$SCRIPT_DIR/$hjaelpescript" ]; then
         echo "ERROR: $hjaelpescript not found in $SCRIPT_DIR" >&2
         echo "Sort_Total.sh must be in the same folder as Sort_photos_Dates.sh and Sort_photos_Types.sh." >&2
-        echo "Run e.g.: bash ~/git/Linux-Scripts/MISC/Pic/Sort_Total.sh" >&2
+        echo "Run e.g.: bash ~/git/Linux-Scripts/Pic/Sort_Total.sh" >&2
         exit 1
     fi
 done

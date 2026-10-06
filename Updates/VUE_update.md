@@ -31,7 +31,7 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify root privileges
-The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits without doing anything.
+The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits with status `1` without doing anything.
 
 ### Step 2 – Download the archive
 Derives `filename` from the `url` variable using `basename`, then runs `wget $url` to download the archive into the current working directory, and prints "Download completed."

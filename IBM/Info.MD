@@ -23,7 +23,7 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify root privileges
-Checks whether `whoami` returns `root`; if not, it prints "Please run as root." and exits without doing anything else.
+Checks whether `whoami` returns `root`; if not, it prints "Please run as root." and exits with status `1` without doing anything else.
 
 ### Step 2 – Present the menu
 Prints two numbered options and reads a single value into `choice`:
@@ -43,4 +43,4 @@ Based on `choice`:
 - Read-only: it only queries hardware info via `dmidecode` and never modifies anything, so it's always safe to re-run.
 - The root check uses `whoami` rather than `$EUID`/`id -u`, which is a less common but equivalent way to detect root.
 - No validation loop: an invalid menu entry just ends the script with an error message rather than re-prompting.
-- Despite the script's location under `MISC/IBM`, it works on any system with `dmidecode` (not IBM/Lenovo-specific) — it's just that the serial-number fields it greps for are most commonly used to identify IBM/Lenovo server hardware.
+- Despite the script's location under `IBM`, it works on any system with `dmidecode` (not IBM/Lenovo-specific) — it's just that the serial-number fields it greps for are most commonly used to identify IBM/Lenovo server hardware.

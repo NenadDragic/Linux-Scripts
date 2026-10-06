@@ -17,7 +17,7 @@ require_tools "fwupdmgr:fwupd"
 if [ "$(whoami)" != "root" ]
   then
     echo "Please run as root.\n"
-    exit
+    exit 1
 fi
 
 # Execute fwupdmgr get-devices command

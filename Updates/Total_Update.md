@@ -24,7 +24,7 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify root privileges
-The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits without doing anything.
+The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits with status `1` without doing anything.
 
 ### Step 2 – Update the APT package index
 Runs `apt -y update` to refresh the local package index from configured repositories.

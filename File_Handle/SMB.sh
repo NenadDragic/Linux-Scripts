@@ -34,6 +34,12 @@ if [ -z "$SHARE_NAME" ] || [ -z "$ACTION" ]; then
     exit 1
 fi
 
+# mount/umount af CIFS kræver root
+if [ "$(id -u)" -ne 0 ]; then
+    echo "FEJL: Scriptet skal køres som root: sudo $0 $SHARE_NAME $ACTION"
+    exit 1
+fi
+
 # Konfigurationsafhængige variabler
 # Vi bruger også her lowercase tjek for share-navnet for at gøre det mere brugervenligt
 case "${SHARE_NAME,,}" in

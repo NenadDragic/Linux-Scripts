@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Check if Convert.sh exists and is executable
-CONVERT_SCRIPT="/home/nenad/git/Linux-Scripts/MISC/Pic/Convert.sh"
+# Check if Convert.sh exists and is executable (it lives in the same folder as this script)
+CONVERT_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/Convert.sh"
 if [ ! -x "$CONVERT_SCRIPT" ]; then
     echo "Error: Convert.sh not found or not executable at $CONVERT_SCRIPT"
     exit 1

@@ -15,7 +15,7 @@ require_tools pv
 if [ "$(whoami)" != "root" ]
   then
     echo "Please run as root.\n"
-    exit
+    exit 1
 fi
 
 # Define the backup directory

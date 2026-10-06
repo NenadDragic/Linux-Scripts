@@ -20,7 +20,7 @@ sudo ./SMB.sh dragic umount
 
 Prerequisites:
 
-- Must be run as root (or via `sudo`) — the script itself does not check for root, but `mount`/`umount` will fail without sufficient privileges.
+- Must be run as root (or via `sudo`) — the script checks this after the argument check and exits with status `1` if not root.
 - `cifs-utils` (provides `mount.cifs`) must be installed for `mount -t cifs` to work.
 - A credentials file must already exist at the hardcoded path for the chosen share (see Configuration) containing the SMB username/password.
 - The remote CIFS server must be reachable at the hardcoded IP address.
