@@ -58,7 +58,7 @@ git diff origin/main                                # Filindhold-forskel
 
 ## Nyttige flag
 | Flag | Beskrivelse |
-|------|-------------|
+| --- | --- |
 | `--oneline` | Kompakt visning – én linje pr. commit |
 | `--left-right` | Viser `<` (lokal) og `>` (remote) retning |
 | `--stat` | Viser kun filnavne og antal ændrede linjer |

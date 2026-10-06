@@ -7,7 +7,7 @@ Documentation templates used when writing the `.md` files in this repository. Ea
 ## Templates
 
 | Template | For |
-|---|---|
+| --- | --- |
 | [Overview/Template.md](Overview/Template.md) | `Overview.md` — the index of a folder |
 | [Shell/Template.md](Shell/Template.md) | Documentation for a `.sh` script |
 | [PowerShell/Template.md](PowerShell/Template.md) | Documentation for a `.ps1` script |

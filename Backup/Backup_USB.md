@@ -23,7 +23,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `SOURCE_DIR` | `/` | Root filesystem being backed up |
 | `CFG_FILE` | `$SCRIPT_DIR/Backup.cfg`, falls back to `/etc/Backup.cfg` | Location of the config file that supplies `Hostname=` |
 | `DEST_BASE` | `/mnt/usb/Backup/${HOSTNAME_FROM_CFG}` | Destination folder on the USB backup drive |

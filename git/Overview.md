@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Git Repository Maintenance
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Init_Git.sh` | [Init_Git.md](Init_Git.md) | Clones all of NenadDragic's GitHub repositories (a fixed list of 15 named repos) to the current directory. |
 | `Pull_Git.sh` | [Pull_Git.md](Pull_Git.md) | Iterates through every subdirectory under the `~/git` base directory, and for each one that is a Git repository, runs `git pull` to fetch and integrate remote changes. |
 | `Status_Git.sh` | [Status_Git.md](Status_Git.md) | Iterates through every subdirectory under a user-defined base directory (default `~/git`), and for each one that is a Git repository, runs `git status` to show its state. |

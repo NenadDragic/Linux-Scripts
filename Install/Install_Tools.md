@@ -22,7 +22,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `TOOLS` | `mtr`, `bat`, `glances`, `tmux`, `doublecmd-qt`, `doublecmd-plugins`, `cockpit` | Candidate packages, as `package\|Danish description` pairs; edit this array to change what's offered |
 
 ---

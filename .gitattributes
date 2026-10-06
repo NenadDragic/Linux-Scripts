@@ -1,0 +1,8 @@
+# Alle tekstfiler gemmes og checkes ud med LF (Unix-linjeskift), også på Windows.
+# Så kan scripts kopieres direkte til Linux/NAS uden "bash\r: not found",
+# og Windows-editorer (VS Code, Notepad m.fl.) håndterer LF uden problemer.
+* text=auto eol=lf
+
+# Windows-batchfiler skal have CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf

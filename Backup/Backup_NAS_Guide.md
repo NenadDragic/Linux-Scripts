@@ -175,7 +175,7 @@ Når mountpunktet er tomt i output, er drevet afmonteret.
 ## Filer og placeringer
 
 | Fil | Formål |
-|-----|--------|
+| --- | --- |
 | `/etc/udev/rules.d/99-backup-mount.rules` | Opdager tilslutning/frakobling |
 | `/etc/systemd/system/backup-mount.service` | Udfører mount/umount |
 | `/mnt/usb/Backup` | Mountpunkt |

@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## System & App Updates
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Total_Update.sh` | [Total_Update.md](Total_Update.md) | Checks for root privileges, then updates APT packages (`update`/`upgrade`/`dist-upgrade`/`autoremove`/`autoclean`) and refreshes the `locate` database (`updatedb`) on a Debian-based system. |
 | `Total_Update_Debian.sh` | [Total_Update_Debian.md](Total_Update_Debian.md) | Runs a fuller update pass on a Debian/Ubuntu machine covering APT, Snap, Flatpak, firmware (`fwupd`), user-level pip packages, global npm packages, and the `locate` database, then reports whether a reboot is needed. |
 | `Total_Update_Ubuntu.sh` | [Total_Update_Ubuntu.md](Total_Update_Ubuntu.md) | Ubuntu Desktop-labeled fork of `Total_Update_Debian.sh`: same full pass (APT, Snap, Flatpak, `fwupd`, pip, npm, `updatedb`), warns if the detected OS isn't Ubuntu. |

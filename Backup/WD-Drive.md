@@ -16,7 +16,7 @@ sudo ./WD-Drive.sh umount [--sluk]    # unmount and lock; --sluk also powers off
 Commands:
 
 | Command | Meaning |
-|---|---|
+| --- | --- |
 | `mount`, `monter`, `montér` | Unlock the LUKS container (if needed) and mount the filesystem on `MOUNTPOINT`. Needs root |
 | `status` | Show whether the drive is connected, unlocked and mounted, plus free space. With root it also lists processes using the drive and the SMART health status |
 | `umount`, `unmount`, `afmonter`, `afmontér` | Unmount every mount of the drive, then lock it. Needs root |
@@ -25,7 +25,7 @@ Commands:
 Option (for `umount` only):
 
 | Option | Meaning |
-|---|---|
+| --- | --- |
 | `--sluk`, `--power-off` | After locking, power the drive off with `udisksctl power-off` so it can be unplugged right away |
 
 Prerequisites:
@@ -38,7 +38,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `LUKS_UUID` | `f77e78ad-3189-4e36-b912-82e42359049e` | UUID of the LUKS partition; used to find the drive via `/dev/disk/by-uuid/` |
 | `FS_UUID` | `8154462f-dffc-481a-b95f-37f048a3236a` | UUID of the filesystem inside the container; used to find all existing mounts |
 | `MAPNAME` | `wd-backup` | Device-mapper name used when the script unlocks the drive itself |
@@ -63,7 +63,7 @@ Prints a small table: connected (with device and size), unlocked (with mapper), 
 Exit codes for `status`, usable from other scripts:
 
 | Code | Meaning |
-|---|---|
+| --- | --- |
 | `0` | Mounted |
 | `1` | Connected, but not mounted (locked, or unlocked without a mount) |
 | `3` | Not connected |

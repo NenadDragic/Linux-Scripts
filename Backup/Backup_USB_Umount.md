@@ -21,7 +21,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `MOUNT_POINT` | `/mnt/usb/Backup` | Directory the drive is mounted at and will be unmounted from |
 | `UUID` | a hardcoded partition UUID (see script) | Identifies the specific backup USB partition to eject, independent of its `/dev/sdX` device name |
 

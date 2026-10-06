@@ -21,7 +21,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `base_dir` | `~/git` | The directory whose immediate subdirectories are scanned for Git repositories to pull. |
 
 ---

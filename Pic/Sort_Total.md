@@ -16,7 +16,7 @@ Run it from the folder containing your image and video files, with `Sort_photos_
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `SLET_DNG_EFTER` | `0` | Set to `1` to delete the DNG original after a successful conversion instead of keeping it |
 
 ---

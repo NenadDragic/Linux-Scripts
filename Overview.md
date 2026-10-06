@@ -9,7 +9,7 @@ Root index of every documented folder in this repository. Each folder listed bel
 General-purpose Linux admin/utility scripts, grouped by topic.
 
 | Folder | Overview | Scripts | What's there |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `Backup` | [Overview](Backup/Overview.md) | 10 | Rsync-based backups (NAS/USB/SD), archiving of dated backup folders, NAS-share copy to an encrypted WD drive, mount/status/unmount helper for that drive, raw `dd` disk imaging, per-user crontab backups, plus USB mount management. |
 | `Create_PDF_From_Web` | [Overview](Create_PDF_From_Web/Overview.md) | 1 | Converts a list of URLs into dated PDFs via `wkhtmltopdf`. |
 | `File_Handle` | [Overview](File_Handle/Overview.md) | 14 | File discovery, archiving (7z), renaming, SMB share mounting, real-time disk-usage monitoring, and test-data generation. |
@@ -25,7 +25,7 @@ General-purpose Linux admin/utility scripts, grouped by topic.
 ## Support
 
 | Folder | Overview | What's there |
-|---|---|---|
+| --- | --- | --- |
 | `lib` | [Overview](lib/Overview.md) | `require_tools.sh`, the shared dependency checker that scripts source at startup. |
 | `Templates` | [Overview](Templates/Overview.md) | Documentation templates (Overview, Shell, PowerShell, Python) used to write the `.md` files. |
 

@@ -22,7 +22,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `fra_folder` | `/sti/til/fra_folder` (placeholder) | Source directory scanned non-recursively (`-maxdepth 1`) for files matching `*2008-??-??*` |
 | `til_folder` | `/sti/til/til_folder` (placeholder) | Destination directory files are moved into; created with `mkdir -p` in `dryrun` and `run` modes if missing |
 | `logfil` | `$til_folder/flyttede_filer_<timestamp>.log` | Path of the log file written during `run`, timestamped per invocation |

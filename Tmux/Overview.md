@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Session Rotation
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Tmux-Rotate.sh` | [Tmux-Rotate.md](Tmux-Rotate.md) | Rotates a tmux client between selected sessions. |
 
 ---

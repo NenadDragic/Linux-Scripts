@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Web-to-PDF Conversion
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `CreatePDF.sh` | [CreatePDF.md](CreatePDF.md) | Converts a list of web pages into PDF files using `wkhtmltopdf`, naming each output file with today's date, and moves every successfully generated PDF into a `PDF/` subfolder. |
 
 ---

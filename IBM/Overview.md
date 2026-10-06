@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Hardware Info
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Info.sh` | [Info.MD](Info.MD) | Presents a menu to look up either the system serial number or the baseboard serial number of an IBM/Lenovo machine via `dmidecode`, based on the user's numeric choice. |
 
 ---

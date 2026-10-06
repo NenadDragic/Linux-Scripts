@@ -7,7 +7,7 @@ Shared code that the scripts in this repository source. Nothing here is run on i
 ## Shared Functions
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `require_tools.sh` | [require_tools.md](require_tools.md) | Checks that the external tools a script needs are installed; prints one `apt install` command for the missing ones and stops the script. |
 
 ---

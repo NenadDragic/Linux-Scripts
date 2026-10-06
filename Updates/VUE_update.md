@@ -23,7 +23,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `url` | `https://example.com/somefile.tar.gz` | Placeholder download URL for the VueScan `.tar.gz` archive; must be replaced with the actual VueScan download link before running. |
 
 ---

@@ -28,7 +28,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `REMOTE_SERVER` | `192.168.1.50` | IP address of the SMB/CIFS server |
 | `MOUNT_BASE_DIR` | `/mnt` | Parent directory under which each share is mounted |
 | `LOCAL_UID` | `1000` | UID assigned to mounted files (`uid=` mount option) |
@@ -38,7 +38,7 @@ Prerequisites:
 Per-share settings (hardcoded in a `case` statement, not meant to be edited per run):
 
 | Share name (case-insensitive) | `REAL_NAME` | Credentials file |
-|---|---|---|
+| --- | --- | --- |
 | `dashcam` | `DashCam` | `/home/nenad/.smbcredentials_DashCam` |
 | `dragic` | `Dragic` | `/home/nenad/.smbcredentials_Dragic` |
 | `netbackup` | `NetBackup` | `/home/nenad/.smbcredentials_NetBackup` |

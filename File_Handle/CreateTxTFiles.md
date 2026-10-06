@@ -22,7 +22,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `OUTDIR` | `${1:-$HOME/testfiles}` | Destination folder for generated files; overridden by the first command-line argument |
 | `COUNT` | `1` | Number of files to generate |
 | `SIZE_MB` | `500` | Size of each generated file, in megabytes |

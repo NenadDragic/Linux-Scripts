@@ -23,7 +23,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `backup_dir` | `../../media/nenad/3CA79D5F2053D934` | Directory where `.img` backups are written — a *relative* path, resolved against the script's current working directory at launch, despite resembling an absolute mount path |
 | `date` | `$(date +%Y-%m-%d)` | Date stamp appended to each output image's filename |
 

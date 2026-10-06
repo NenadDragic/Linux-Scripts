@@ -21,7 +21,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `CONVERT_SCRIPT` | `<script folder>/Convert.sh` | Path to the `Convert.sh` script to invoke, resolved from the script's own location |
 
 ---

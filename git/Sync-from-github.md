@@ -17,7 +17,7 @@ Requires `bash` and `git` on the `PATH`. Make it executable once with `chmod +x 
 ### Configuration
 
 | Value | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `$1` (optional argument) | none | Overrides the base folder to scan; if omitted, falls back to the OS-based default below |
 | Default base folder | `/h/git` in Git Bash on Windows (`MINGW*`/`MSYS*`/`CYGWIN*`), `$HOME/Git` everywhere else | Folder whose immediate subdirectories are checked for `.git` folders |
 

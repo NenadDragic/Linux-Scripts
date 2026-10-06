@@ -20,7 +20,7 @@ crontab -u <bruger> crontab_<bruger>_<dato>.txt
 Options:
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `-d KATALOG` | Output directory (default `/var/backups/crontabs`) |
 | `-u BRUGER` | Only back up this user; repeatable. Default: all users from `getent passwd` |
 | `-k DAGE` | Delete backup files in the output directory older than this many days (`0` = no cleanup) |
@@ -37,7 +37,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `OUTDIR` | `/var/backups/crontabs` | Directory backup files are written to (overridable with `-d`) |
 | `KEEP_DAYS` | `0` | Age threshold in days for pruning old backups (`0` disables cleanup; overridable with `-k`) |
 | `INCLUDE_SYSTEM` | `0` | Whether to also back up `/etc/crontab` + `/etc/cron.d/*` (overridable with `-s`) |

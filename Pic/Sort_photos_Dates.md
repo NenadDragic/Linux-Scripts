@@ -7,7 +7,7 @@ A Bash script that normalizes, converts, and sorts image and video files into a 
 ## Requirements
 
 | Tool | Purpose |
-|------|---------|
+| --- | --- |
 | `exiftool` | Reads EXIF and QuickTime metadata from image and video files |
 | `libheif-examples` | Converts HEIC files to JPEG (auto-installed if missing) |
 
@@ -107,7 +107,7 @@ Steps 3, 4 and 5 print a progress tag in front of each file: `[123/2805 | 00:03:
 ## Key Commands Explained
 
 | Command | Description |
-|---------|-------------|
+| --- | --- |
 | `dpkg -l \| grep -q libheif-examples` | Checks if a package is installed without printing output |
 | `tr 'a-z' 'A-Z'` | Converts text to uppercase |
 | `exiftool -b -n -s -M -EXIF:Model` | Reads the camera model from image EXIF metadata (JPG, PNG) |

@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Archiving
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `7ZipAllPack.sh` | [7ZipAllPack.md](7ZipAllPack.md) | Compresses every subfolder of the current directory into its own password-protected `.7z` archive using the `7zz` CLI, named after the subfolder and written one level up. |
 | `7ZipUnPackAll.sh` | [7ZipUnPackAll.md](7ZipUnPackAll.md) | Extracts every password-protected `.7z` archive found in the current directory using the `7zz` CLI, placing each archive's contents into a new folder named after the archive. |
 | `MoveDocToArchive.sh` | [MoveDocToArchive.md](MoveDocToArchive.md) | Finds, previews (`find`/`dryrun`), or moves (`run`) files matching a date pattern from a source folder to an archive folder, automatically enabling checksum verification when source and destination are on different filesystems. |
@@ -15,7 +15,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## File Discovery/Search
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `File_Count.sh` | [File_Count.md](File_Count.md) | Counts how many files of each extension exist in the current directory tree and prints a sorted tally, from least to most common. |
 | `Find_Empty_Files.sh` | [Find_Empty_Files.md](Find_Empty_Files.md) | Finds and prints the paths of all empty files in the current directory and its subdirectories (`find . -type f -empty`). |
 | `Find_Files_With_Big_Letters_In_FileName_Begginig.sh` | [Find_Files_With_Big_Letters_In_FileName_Begginig.md](Find_Files_With_Big_Letters_In_FileName_Begginig.md) | Finds all files whose filenames begin with a capital letter (`find . -type f -regex './[A-Z]*'`). |
@@ -26,31 +26,31 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Renaming
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Rename_Extensions_To_Big_Letter.sh` | [Rename_Extensions_To_Big_Letter.md](Rename_Extensions_To_Big_Letter.md) | Renames every file in the current directory by transliterating all lowercase letters in the filename to uppercase (whole filename, not just the extension; no recursion despite what the script's intro comment says). |
 
 ## Network Shares
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `SMB.sh` | [SMB.md](SMB.md) | Mounts or unmounts one of three predefined CIFS/SMB network shares (`DashCam`, `Dragic`, `NetBackup`) from a fixed remote server to a fixed local mount point under `/mnt`. |
 
 ## Remote Sync
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Web_Stat_DL.sh` | [Web_Stat_DL.md](Web_Stat_DL.md) | Downloads the Web-Status HTML reports from the NAS to a local `Documents` folder via `rsync`. |
 
 ## Monitoring
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `SpaceUsageRealTime.sh` | [SpaceUsageRealTime.md](SpaceUsageRealTime.md) | Lists all mounted drives/shares, lets you pick one interactively, then polls and logs its disk usage (timestamp, used, available, use%) once per interval to both the screen and `~/<drive>-usage.log` until stopped with `Ctrl+C`. |
 
 ## Test Data
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `CreateTxTFiles.sh` | [CreateTxTFiles.md](CreateTxTFiles.md) | Generates one or more large files filled with random binary data (via `/dev/urandom`) for test/dummy data of a known size — despite its filename, it creates `file_NNNN.bin` files, not `.txt` files. |
 
 ---

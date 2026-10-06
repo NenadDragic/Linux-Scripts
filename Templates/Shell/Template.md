@@ -34,7 +34,7 @@ Prerequisites:
 <Table of variables defined at the top of the script that a user is expected to tweak. Delete this section if there are none.>
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `<VAR_NAME>` | `<default>` | <what it controls> |
 
 ---

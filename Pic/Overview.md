@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Sorting/Organizing
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Sort_Total.sh` | [Sort_Total.md](Sort_Total.md) | Orchestrates the full pipeline: converts DNG files to JPGs (embedded full-size preview), then runs `Sort_photos_Dates.sh` to sort by date/camera model, then runs `Sort_photos_Types.sh` on each resulting folder to split files by type. |
 | `Sort_photos_Dates.sh` | [Sort_photos_Dates.md](Sort_photos_Dates.md) | Normalizes file extensions to uppercase, converts HEIC to JPEG, then sorts JPG/JPEG/PNG images — plus any related MOV/HEIC/MP4/CR2 files sharing the same base name — into `YYYY-MM-DD/CameraModel/` folders using EXIF/QuickTime metadata. |
 | `Sort_photos_Types.sh` | [Sort_photos_Types.md](Sort_photos_Types.md) | Organizes files in the current folder into `ORG`/`MOV`/`MP4`/`CR2`/`HEIC` subfolders by extension; HEIC-to-JPG conversion code exists but is commented out, so HEIC files are moved as-is. |
@@ -17,14 +17,14 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Format Conversion
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Convert.sh` | [Convert.md](Convert.md) | Renames every file and directory in the current folder to uppercase, converts any resulting `.HEIC` files to quality-100 JPEGs with `heif-convert`, then runs a second uppercase-rename pass — a general folder-normalize-and-convert utility, not limited to photos. |
 | `Update_PVT_Folders.sh` | [Update_PVT_Folders.md](Update_PVT_Folders.md) | Recursively finds `*.PVT` files in the current directory tree and invokes `Convert.sh` (via a hardcoded path) once per match found. |
 
 ## Diagnostics/Maintenance
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Camera-Model.sh` | [Camera-Model.md](Camera-Model.md) | Reads every `.JPG`/`.JPEG` file in the current directory and prints filename, camera model, and creation date from EXIF metadata via `exiftool`; a read-only diagnostic listing that never copies, moves, renames, or deletes files. |
 | `LibHEIF_Update.sh` | [LibHEIF_Update.md](LibHEIF_Update.md) | Removes any distro-packaged `libheif1`/`libheif-dev`, then builds and installs the latest tagged `libheif` release from source via `git`/`cmake`/`make`; a standalone dependency installer for HEIC support used indirectly by `Convert.sh` and `Sort_Total.sh`. |
 

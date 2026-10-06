@@ -16,7 +16,7 @@ Run as root (unless `--maal` is used, see below). Run it inside `tmux` for long 
 Options:
 
 | Option | Meaning |
-|---|---|
+| --- | --- |
 | `--torloeb`, `--tørløb`, `-n` | Dry run: `rsync --dry-run --itemize-changes`, so it lists what would be copied and writes nothing to the drive |
 | `--mangler`, `--status` | Count only: shows per job and in total how many files and how much data are missing on the drive, without copying anything. With `--spejl` it also counts the files that would be deleted |
 | `--tael-foerst`, `--tæl-først` | Like `--mangler`, then copies. Jobs where nothing is missing are skipped. Costs an extra pass over all files before copying starts |
@@ -39,7 +39,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `DISK_BYID` | `/dev/disk/by-id/usb-WD_Elements_25A3_4230315738365444-0:0` | Stable device path of the WD drive; partition 1 (`-part1`) is the LUKS container |
 | `LUKS_UUID` | `f77e78ad-3189-4e36-b912-82e42359049e` | UUID of the LUKS container; used to recognise an already opened `/dev/mapper/luks-<uuid>` |
 | `FS_UUID` | `8154462f-dffc-481a-b95f-37f048a3236a` | UUID of the filesystem inside the container; used to find an existing mount |

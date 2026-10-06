@@ -31,7 +31,7 @@ Prerequisites:
 <Table of CLI arguments (argparse/click/sys.argv) or top-of-file config constants. Delete this section if the script has neither.>
 
 | Variable/Argument | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `<name>` | `<default>` | <what it controls> |
 
 ---

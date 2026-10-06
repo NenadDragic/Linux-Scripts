@@ -32,7 +32,7 @@ Prerequisites:
 <Table of either `param()` block arguments or hardcoded config variables at the top of the script. Delete this section if the script has neither.>
 
 | Variable/Parameter | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `<$Name>` | `<default>` | <what it controls> |
 
 ---

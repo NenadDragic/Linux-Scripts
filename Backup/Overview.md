@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Rsync Backup Jobs
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Backup_NAS.sh` | [Backup_NAS.md](Backup_NAS.md) | Reads a hostname from a config file and uses `rsync` to mirror the local root filesystem to a dated folder on a NAS mount, logging locally and to a separate USB-mounted log share, with a status file written on success or failure. |
 | `Backup_SD_USB.sh` | [Backup_SD_USB.md](Backup_SD_USB.md) | Same rsync/logging/status-file pattern as `Backup_NAS.sh`, but mirrors an already-mounted SD card's root filesystem to a dated folder on a locally mounted USB backup drive. |
 | `Backup_USB.sh` | [Backup_USB.md](Backup_USB.md) | The USB-destination counterpart to `Backup_NAS.sh` — mirrors the local root filesystem to a dated folder on a locally mounted USB backup drive, carrying additional "v6" reliability fixes to the logging pipeline and stats extraction. |
@@ -19,13 +19,13 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## System Backup Jobs
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Backup_Crontabs.sh` | [Backup_Crontabs.md](Backup_Crontabs.md) | Saves every user's crontab to its own dated file (restorable with `crontab -u`), with optional system-cron inclusion, dry-run, and age-based cleanup of old backup files. |
 
 ## USB Mount Management
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Backup_USB_Mount.sh` | [Backup_USB_Mount.md](Backup_USB_Mount.md) | Creates the backup mount point if missing and mounts the backup USB drive (identified by partition UUID) at `/mnt/usb/Backup`, printing a confirmation on success. |
 | `Backup_USB_Umount.sh` | [Backup_USB_Umount.md](Backup_USB_Umount.md) | Unmounts the backup USB drive from `/mnt/usb/Backup` and ejects it (identified by partition UUID), printing a confirmation on success. |
 

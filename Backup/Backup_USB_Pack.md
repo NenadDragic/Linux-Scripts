@@ -12,7 +12,7 @@ sudo ./Backup_USB_Pack.sh [dry-run|-n] [-y]
 ```
 
 | Argument | Meaning |
-|---|---|
+| --- | --- |
 | `dry-run`, `-n`, `--dry-run` | Show the plan only — nothing is changed |
 | `-y`, `--yes` | Do not ask for confirmation |
 | `-h`, `--help` | Show help |
@@ -35,7 +35,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `BACKUP_ROOT` | `/mnt/usb/Backup` | Backup root; can be overridden from the environment |
 | `ARCHIVE_SUFFIX` | `.gz` | Archive name: `YYYY-MM-DD.gz` |
 | `LOG_DIR` | `$BACKUP_ROOT/Log/archive` | Where the run log is written |

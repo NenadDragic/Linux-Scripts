@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## GNU Screen Session Management
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Create_New_Session.sh` | [Create_New_Session.md](Create_New_Session.md) | Prompts the user for a name and starts a new GNU `screen` session with it (`screen -S "$session_name"`). |
 | `List_Sessions_LogOn.sh` | [List_Sessions_LogOn.md](List_Sessions_LogOn.md) | Lists all running `screen` sessions (`screen -ls`), then prompts for a session ID and reattaches to it (`screen -r $session_id`). |
 | `Detach_Session.sh` | [Detach_Session.md](Detach_Session.md) | Lists all running `screen` sessions, prompts for a session ID, and detaches from it via `screen -X detach` (equivalent to pressing `Ctrl+A d` inside the session). |
@@ -15,7 +15,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## SSH Host Selection
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `Hosts.sh` | [Hosts.md](Hosts.md) | Lets you fuzzy-pick an SSH host alias from `~/.ssh/config` using `fzf`, then connects to it with `ssh`. |
 
 ---

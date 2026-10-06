@@ -7,7 +7,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## VPN Management
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `VPN.sh` | [VPN.md](VPN.md) | A thin wrapper around `wg-quick` and `wg` that brings a WireGuard interface up, shows its status, or tears it down, via three subcommands (`up`, `show`, `down`). |
 
 ---

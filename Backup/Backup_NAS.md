@@ -24,7 +24,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `SOURCE_DIR` | `/` | Root filesystem being backed up |
 | `CFG_FILE` | `$SCRIPT_DIR/Backup.cfg`, falls back to `/etc/Backup.cfg` | Location of the config file that supplies `Hostname=` |
 | `DEST_BASE` | `/mnt/NetBackup/${HOSTNAME_FROM_CFG}` | Base destination directory on the NAS mount |

@@ -66,7 +66,7 @@ tmux-rotate.sh -s prod,monitor -i 30 -c /dev/pts/3
 Flag kan blandes med menuen. Angiver du fx kun `-i 20`, spørges der stadig om sessioner og klient.
 
 | Flag | Betydning |
-|------|-----------|
+| --- | --- |
 | `-s` | Kommasepareret liste af sessionsnavne. Springer menuen over |
 | `-i` | Sekunder mellem skift |
 | `-c` | Klient der skal rotere (fx `/dev/pts/3`) |

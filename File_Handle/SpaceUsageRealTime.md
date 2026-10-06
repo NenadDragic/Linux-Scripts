@@ -16,7 +16,7 @@ Run from any working directory; no root required. Stop monitoring with `Ctrl+C` 
 Options:
 
 | Option | Meaning |
-|---|---|
+| --- | --- |
 | `--interval N`, `-i N` | Seconds between measurements (default: `60`). Must be a positive integer. |
 | `--hjaelp`, `-h` | Print the help text and exit. |
 
@@ -28,7 +28,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `INTERVAL` | `60` | Seconds between measurements; overridable with `--interval` |
 | `EXCLUDE_FS` | `tmpfs`, `devtmpfs`, `squashfs`, `overlay`, `efivarfs` | Filesystem types hidden from the drive list (pseudo-filesystems, not real storage) |
 

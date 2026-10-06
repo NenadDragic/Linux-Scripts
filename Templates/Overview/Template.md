@@ -17,13 +17,13 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## <Category 1, e.g. "Log4j Detection">
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `<ScriptName.ext>` | [<ScriptName.md>](<ScriptName.md>) | <One-sentence summary matching the script's own doc.> |
 
 ## <Category 2, e.g. "System Maintenance">
 
 | Script | Doc | Summary |
-|---|---|---|
+| --- | --- | --- |
 | `<ScriptName.ext>` | [<ScriptName.md>](<ScriptName.md>) | <One-sentence summary matching the script's own doc.> |
 
 ---

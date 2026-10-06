@@ -22,7 +22,7 @@ Prerequisites:
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `EXPECTED_MD5` | `e0baa6edf1482789a19a5e1380bb4132` | MD5 hash the entered password must match before the script proceeds |
 
 ---
