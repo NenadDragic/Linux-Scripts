@@ -35,7 +35,7 @@ Both `fra_folder` and `til_folder` are shipped as obvious placeholder paths and 
 
 ### Step 1 – Validate the argument
 
-If `$1` is not `run`, `find`, or `dryrun`, it prints a usage line (`Brug: <script> [run|find|dryrun]`) and exits with status 1.
+The argument is converted to lowercase first, so `run`, `Run` and `RUN` are all accepted. If it is not `run`, `find`, or `dryrun`, it prints a usage line (`Brug: <script> [run|find|dryrun]`) and exits with status 1.
 
 ### Step 2 – Verify the source folder exists
 

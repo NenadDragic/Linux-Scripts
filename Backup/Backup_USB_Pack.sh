@@ -97,10 +97,17 @@ DRY_RUN=false
 ASSUME_YES=false
 for arg in "$@"; do
     case "$arg" in
-        dry-run|-n|--dry-run) DRY_RUN=true ;;
+        -n|--dry-run) DRY_RUN=true ;;
         -y|--yes) ASSUME_YES=true ;;
         -h|--help) usage; exit 0 ;;
-        *) echo "FEJL: Ukendt argument: $arg" >&2; usage >&2; exit 2 ;;
+        *)
+            # Ordet dry-run må skrives med store eller små bogstaver (Dry-run, DRY-RUN)
+            if [ "${arg,,}" = "dry-run" ]; then
+                DRY_RUN=true
+            else
+                echo "FEJL: Ukendt argument: $arg" >&2; usage >&2; exit 2
+            fi
+            ;;
     esac
 done
 
@@ -561,8 +568,8 @@ if ! $ASSUME_YES; then
         exit 1
     fi
     read -r -p "Fortsæt? Hver mappe slettes først når dens arkiv er valideret. [j/N] " answer
-    case "$answer" in
-        j|J|ja|Ja|JA|y|Y|yes) ;;
+    case "${answer,,}" in
+        j|ja|y|yes) ;;
         *) echo "Afbrudt — intet ændret."; exit 0 ;;
     esac
 fi

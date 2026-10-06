@@ -33,7 +33,7 @@ Checks `[ "$#" -lt 2 ]`; if fewer than 2 arguments were passed, prints a Danish 
 
 ### Step 3 – Dispatch on command
 
-A `case "$COMMAND"` statement:
+The command is converted to lowercase first (with `tr`, so it also works when run with `sh`), so `up`, `Up` and `UP` are all accepted. The interface name is kept as typed, since WireGuard config names (`/etc/wireguard/<name>.conf`) are case-sensitive. Then a `case "$COMMAND"` statement:
 
 - `up` → `sudo wg-quick up "$INTERFACE"`
 - `show` → `sudo wg show "$INTERFACE"`

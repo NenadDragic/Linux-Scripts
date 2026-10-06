@@ -13,7 +13,7 @@ require_tools "exiftool:libimage-exiftool-perl"
 
 # Converts DNG files to JPG by extracting the embedded full-size preview JPEG
 # (exiftool), then runs
-# Sort_photos_Dates.sh (sort into YYYY-MM-DD/CameraModel/), places DNG
+# Sort_Photos_Dates.sh (sort into YYYY-MM-DD/CameraModel/), places DNG
 # originals in a DNG/ subfolder next to their converted JPG, then runs
 # Sort_photos_Types.sh inside every resulting YYYY-MM-DD/CameraModel/
 # folder (sort into ORG/MOV/MP4/CR2/HEIC).
@@ -23,10 +23,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # --- Tjek at hjaelpescriptsene ligger ved siden af dette script ------
-for hjaelpescript in Sort_photos_Dates.sh Sort_photos_Types.sh; do
+for hjaelpescript in Sort_Photos_Dates.sh Sort_photos_Types.sh; do
     if [ ! -f "$SCRIPT_DIR/$hjaelpescript" ]; then
         echo "ERROR: $hjaelpescript not found in $SCRIPT_DIR" >&2
-        echo "Sort_Total.sh must be in the same folder as Sort_photos_Dates.sh and Sort_photos_Types.sh." >&2
+        echo "Sort_Total.sh must be in the same folder as Sort_Photos_Dates.sh and Sort_photos_Types.sh." >&2
         echo "Run e.g.: bash ~/git/Linux-Scripts/Pic/Sort_Total.sh" >&2
         exit 1
     fi
@@ -96,7 +96,7 @@ else
 
         # Apple ProRAW (iPhone) kan ikke laeses af darktable 4.2 (LJPEG predictor 7),
         # saa vi tager det indlejrede JPEG-preview i fuld oploesning. Det har allerede
-        # dato, kameramodel og GPS, saa Sort_photos_Dates.sh kan sortere den.
+        # dato, kameramodel og GPS, saa Sort_Photos_Dates.sh kan sortere den.
         # -m ignorerer den harmloese "Not decoding some large array(s)"-advarsel.
         if exiftool -m -b -PreviewImage "$f" > "$jpg" 2>/dev/null && [ -s "$jpg" ]; then
 
@@ -120,7 +120,7 @@ echo "  Step 0 done in $(fmt_tid $((SECONDS - step_start)))"
 
 echo "=== Step 1: Sorting by date and camera model ==="
 step_start=$SECONDS
-bash "$SCRIPT_DIR/Sort_photos_Dates.sh"
+bash "$SCRIPT_DIR/Sort_Photos_Dates.sh"
 echo "  Step 1 done in $(fmt_tid $((SECONDS - step_start)))"
 
 echo "=== Step 1b: Placing DNG originals next to their converted JPGs ==="

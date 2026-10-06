@@ -10,8 +10,9 @@
 #    ./MoveDocToArchive.sh run      → Udfør flytning
 # ============================================================
 
-# --- Validér argument ---
-if [[ "$1" != "run" && "$1" != "find" && "$1" != "dryrun" ]]; then
+# --- Validér argument (store og små bogstaver er ligegyldige: run, Run, RUN) ---
+TILSTAND="${1,,}"
+if [[ "$TILSTAND" != "run" && "$TILSTAND" != "find" && "$TILSTAND" != "dryrun" ]]; then
     echo "Brug: $(basename "$0") [run|find|dryrun]"
     exit 1
 fi
@@ -31,7 +32,7 @@ fi
 mapfile -d '' filer < <(find "$fra_folder" -maxdepth 1 -type f -name "*2008-??-??*" -print0)
 
 # --- Find-tilstand: preview og afslut ---
-if [[ "$1" == "find" ]]; then
+if [[ "$TILSTAND" == "find" ]]; then
     if [[ ${#filer[@]} -eq 0 ]]; then
         echo "Ingen filer matcher mønsteret."
     else
@@ -42,7 +43,7 @@ if [[ "$1" == "find" ]]; then
 fi
 
 # --- Dryrun-tilstand: simuler uden at røre filer ---
-if [[ "$1" == "dryrun" ]]; then
+if [[ "$TILSTAND" == "dryrun" ]]; then
     if [[ ${#filer[@]} -eq 0 ]]; then
         echo "Ingen filer matcher mønsteret."
         exit 0

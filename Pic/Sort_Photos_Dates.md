@@ -24,13 +24,13 @@ sudo apt-get install libimage-exiftool-perl
 **1.** Make the script executable:
 
 ```console
-chmod +x Sort_photos_Dates.sh
+chmod +x Sort_Photos_Dates.sh
 ```
 
 **2.** Copy the script into the folder containing your image and video files and run it:
 
 ```console
-bash Sort_photos_Dates.sh
+bash Sort_Photos_Dates.sh
 ```
 
 > **Note:** The script must be run with `bash`, not `sh`, as it uses bash-specific commands (`shopt`).
@@ -49,7 +49,7 @@ Checks whether `libheif-examples` is installed (via `dpkg`) and whether `exiftoo
 
 ### Step 2 – Normalize File Extensions to Uppercase
 
-All supported files are renamed so their extension is uppercase (e.g. `.jpg` → `.JPG`, `.png` → `.PNG`). Only the following file types are processed — all other files in the folder are left untouched:
+All supported files are renamed so their extension is uppercase (e.g. `.jpg` → `.JPG`, `.Mov` → `.MOV`). Extensions are matched in any mix of upper and lower case (`nocaseglob`). Only the following file types are processed — all other files in the folder are left untouched:
 
 ```
 JPG  JPEG  PNG  MOV  HEIC  MP4  CR2

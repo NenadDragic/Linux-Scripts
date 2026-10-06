@@ -13,7 +13,7 @@ sudo ./Backup_USB_Pack.sh [dry-run|-n] [-y]
 
 | Argument | Meaning |
 | --- | --- |
-| `dry-run`, `-n`, `--dry-run` | Show the plan only — nothing is changed |
+| `dry-run`, `-n`, `--dry-run` | Show the plan only — nothing is changed. The word `dry-run` may be written in any case (`Dry-run`, `DRY-RUN`); the flags are case-sensitive |
 | `-y`, `--yes` | Do not ask for confirmation |
 | `-h`, `--help` | Show help |
 
@@ -56,7 +56,7 @@ Looks for `<root>/<host>/YYYY-MM-DD/` folders with a valid date, skipping `Log`,
 
 ### Step 3 – Show the plan and confirm
 
-Prints each folder with its backup status and what will happen to it: skipped because a backup is running right now, skipped because it is empty, an existing archive is validated, or the folder is packed. In `dry-run` mode it stops here. Without `-y` it asks `[j/N]`, and refuses to run without a terminal.
+Prints each folder with its backup status and what will happen to it: skipped because a backup is running right now, skipped because it is empty, an existing archive is validated, or the folder is packed. In `dry-run` mode it stops here. Without `-y` it asks `[j/N]` (`j`, `ja`, `y` or `yes` in any case continues), and refuses to run without a terminal.
 
 ### Step 4 – Pack, validate, delete
 

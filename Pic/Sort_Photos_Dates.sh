@@ -21,8 +21,9 @@ require_tools "heif-convert:libheif-examples" "exiftool:libimage-exiftool-perl"
 # uses EXIF:CreateDate. Prints nothing if the file has no date.
 file_date() {
     local f="$1" d
-    case "${f##*.}" in
-        MOV|MP4|mov|mp4)
+    local ext="${f##*.}"
+    case "${ext^^}" in
+        MOV|MP4)
             d=$(exiftool -b -n -s -M -Keys:CreationDate "$f" 2>/dev/null)
             [ -z "$d" ] && d=$(exiftool -b -n -s -M -QuickTime:CreateDate "$f" 2>/dev/null)
             ;;
@@ -73,10 +74,10 @@ n_move_problems=0      # not moved: name already taken / mv failed
 # ─────────────────────────────────────────────
 # STEP 2: Normalize file extensions to uppercase
 #         Only processes: JPG, JPEG, PNG, MOV, HEIC, MP4, CR2
+#         in any case (.jpg, .Jpg, .JPG …) via nocaseglob
 # ─────────────────────────────────────────────
-for f in *.jpg *.jpeg *.png *.mov *.heic *.mp4 *.cr2 \
-          *.JPG *.JPEG *.PNG *.MOV *.HEIC *.MP4 *.CR2; do
-    [ -e "$f" ] || continue
+shopt -s nocaseglob nullglob
+for f in *.JPG *.JPEG *.PNG *.MOV *.HEIC *.MP4 *.CR2; do
     ext="${f##*.}"
     base="${f%.*}"
     upper_ext=$(echo "$ext" | tr 'a-z' 'A-Z')
@@ -86,6 +87,7 @@ for f in *.jpg *.jpeg *.png *.mov *.heic *.mp4 *.cr2 \
         echo "Renamed $f → ${base}.${upper_ext}"
     fi
 done
+shopt -u nocaseglob nullglob
 
 # ─────────────────────────────────────────────
 # STEP 3: Convert HEIC to JPEG
@@ -277,7 +279,7 @@ done
 find . -mindepth 1 -type d -empty -delete
 
 echo
-echo "─── Sort_photos_Dates.sh summary ───"
+echo "─── Sort_Photos_Dates.sh summary ───"
 echo "HEIC → JPG:      $n_heic_converted converted, $n_heic_reused reused an existing JPG, $n_heic_failed failed"
 echo "Sorted:          $n_photos_sorted photo(s), $n_videos_sorted standalone video(s) ($n_files_moved files moved in total)"
 echo "Not sorted:      $n_no_metadata without metadata, $n_move_problems not moved (name taken / error)"

@@ -21,7 +21,9 @@ if [ "$#" -lt 2 ]; then
 
 fi
 
-COMMAND=$1
+# Kommandoen må skrives med store eller små bogstaver (up, Up, UP). Interface-navnet
+# beholdes som skrevet, da WireGuard skelner (/etc/wireguard/<navn>.conf).
+COMMAND=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')
 
 INTERFACE=$2
 
