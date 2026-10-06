@@ -24,15 +24,19 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Ensure wkhtmltopdf is installed
+
 The `install_wkhtmltopdf()` function checks with `command -v wkhtmltopdf`; if it isn't found, it prints a message and runs `sudo apt install wkhtmltopdf -y`. This function is called unconditionally at the top of the script, every run.
 
 ### Step 2 – Compute today's date
+
 `date_today=$(date +%Y-%m-%d)` captures the current date in `YYYY-MM-DD` format, used later to build output filenames.
 
 ### Step 3 – Create the output folder
+
 `mkdir -p PDF` ensures a `PDF/` subfolder exists in the current directory (no error if it's already there).
 
 ### Step 4 – Read URL/filename pairs and convert
+
 The script reads `Lookup.txt` line by line with `while IFS=' ' read -r url filename`. For each line:
 
 - Builds `output_file="${filename}_${date_today}.pdf"`

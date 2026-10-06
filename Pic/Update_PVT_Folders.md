@@ -29,12 +29,15 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify Convert.sh is available
+
 Checks `[ -x "$CONVERT_SCRIPT" ]`; if `Convert.sh` doesn't exist or isn't executable at that exact path, prints an error and exits with status `1`.
 
 ### Step 2 – Find all .PVT files
+
 Runs `find . -name "*.PVT" -type f`, recursively from the current directory, piping the results line-by-line into a `while IFS= read -r file` loop.
 
 ### Step 3 – Process each match
+
 For every `.PVT` file found, echoes `Processing file: $file`, then runs `"$CONVERT_SCRIPT" "$file"`.
 
 ---

@@ -30,18 +30,23 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Prompt for and validate the password
+
 Reads a password silently (`read -s`), computes its MD5 with `md5sum`, and compares it to `EXPECTED_MD5`. If it doesn't match, prints "Forkert adgangskode." and exits with status 1.
 
 ### Step 2 – Loop over every `.7z` file
+
 Iterates `for file in *.7z`. Inside the loop it checks whether the glob actually matched a real file (`[ ! -f "$file" ]`); if no `.7z` files are present, it prints "Ingen .7z-filer fundet..." and exits with status 1 on the first iteration.
 
 ### Step 3 – Create a destination folder
+
 For each archive, derives `filename` by stripping the `.7z` suffix (`${file%.7z}`) and runs `mkdir -p "$filename"` to (re)create the destination folder.
 
 ### Step 4 – Extract the archive
+
 Runs `7zz x -p"$password" "$file" -o"$filename"` to extract the archive's contents into that folder using the supplied password.
 
 ### Step 5 – Report success or failure per file
+
 Checks `$?` after the extraction and prints a per-file success message or a "FEJL" message suggesting the password may be wrong, then continues to the next archive.
 
 ---

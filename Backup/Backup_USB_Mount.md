@@ -30,9 +30,11 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Ensure the mount point exists
+
 Runs `sudo mkdir -p "$MOUNT_POINT"` to create `/mnt/usb/Backup` if it doesn't already exist.
 
 ### Step 2 – Mount the drive by UUID
+
 Runs `sudo mount UUID="$UUID" "$MOUNT_POINT"`. Only if that succeeds (the two commands are chained with `&&`) does it print `Mounted OK: /mnt/usb/Backup`.
 
 ---

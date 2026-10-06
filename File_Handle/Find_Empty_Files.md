@@ -23,6 +23,7 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Recursive search for zero-byte files
+
 The script runs a single command:
 
 ```bash

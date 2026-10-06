@@ -24,9 +24,11 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Build and present the host list
+
 `grep -i "^Host " ~/.ssh/config` pulls out lines starting with `Host `, `grep -v "*"` filters out wildcard entries (e.g. `Host *`), `awk '{print $2}'` extracts the alias, and `sort -f` sorts the list case-insensitively. The result is piped into `fzf --height 40% --reverse --border --header="Vælg SSH host:"` for interactive selection, and the chosen value is stored in `$target`.
 
 ### Step 2 – Connect, or report nothing chosen
+
 If `$target` is non-empty, it prints "Forbinder til $target..." and runs `ssh "$target"`. If the user pressed Esc / selected nothing, it prints "Ingen host valgt." instead.
 
 ---

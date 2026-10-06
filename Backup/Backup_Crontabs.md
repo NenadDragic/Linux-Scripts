@@ -49,24 +49,31 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Parse options and validate
+
 Parses flags with `getopts`, validates `-k` is a non-negative integer, and confirms `crontab` is installed.
 
 ### Step 2 – Build the user list
+
 If no `-u` was given, enumerates all users via `getent passwd` (covers local and NSS/LDAP/AD-backed accounts). If not running as root, overrides this to just the invoking user (`id -un`) and forces `INCLUDE_SYSTEM=0`, with a warning to stderr.
 
 ### Step 3 – Prepare the output directory
+
 Sets `umask 077` and (unless dry-run) creates `OUTDIR` with `chmod 700`.
 
 ### Step 4 – Save each user's crontab
+
 For each user, runs `crontab -l -u <user>`; skips users with no crontab or whose crontab is only blank lines/comments. Otherwise sanitizes the username into a safe filename (replacing anything outside `[A-Za-z0-9._@-]` with `_`) and writes `crontab_<user>_<YYYY-MM-DD>.txt` with `chmod 600` (or logs what would be written, in dry-run mode).
 
 ### Step 5 – Save system cron (optional)
+
 If `-s` was passed, concatenates `/etc/crontab` and every file in `/etc/cron.d/`, each prefixed with a `### <path>` header, and saves it as `crontab_system_<date>.txt` via the same save routine.
 
 ### Step 6 – Prune old backups (optional)
+
 If `-k` is greater than `0` and not in dry-run, deletes files in `OUTDIR` matching `crontab_*_YYYY-MM-DD.txt` older than `KEEP_DAYS` days, logging each deletion.
 
 ### Step 7 – Summary
+
 Prints a final count of files written and users skipped (phrased as a dry-run preview if `-n` was used).
 
 ---

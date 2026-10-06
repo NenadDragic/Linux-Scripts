@@ -42,9 +42,11 @@ Prerequisites:
 <Break the actual control flow into numbered steps. Mirror the real order of operations in the script — loops, remote calls, filters, classification logic, output generation. Name real cmdlets/APIs used (e.g. `Get-WinEvent`, `Invoke-Command`, `Get-ADDomainController`).>
 
 ### Step 1 – <What happens first>
+
 <Description grounded in the actual code.>
 
 ### Step 2 – <Next step>
+
 <Description.>
 
 ---

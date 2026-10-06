@@ -23,9 +23,11 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Print banner
+
 The script echoes `Files without extensions:`.
 
 ### Step 2 – Search for dot-less filenames
+
 It then runs:
 
 ```bash

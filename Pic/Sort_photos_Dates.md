@@ -44,9 +44,11 @@ The script will process all supported files in the current directory and sort th
 The script runs in six steps:
 
 ### Step 1 – Check Dependencies
+
 Checks whether `libheif-examples` is installed (via `dpkg`) and whether `exiftool` is available (via `command -v`). Any missing packages are collected and installed in a single `apt-get install` call.
 
 ### Step 2 – Normalize File Extensions to Uppercase
+
 All supported files are renamed so their extension is uppercase (e.g. `.jpg` → `.JPG`, `.png` → `.PNG`). Only the following file types are processed — all other files in the folder are left untouched:
 
 ```
@@ -54,6 +56,7 @@ JPG  JPEG  PNG  MOV  HEIC  MP4  CR2
 ```
 
 ### Step 3 – Convert HEIC to JPEG
+
 All `.HEIC` files are converted to `.JPG` at maximum quality (`-q 100`) using `heif-convert`. A second normalization pass runs afterwards, as `heif-convert` outputs lowercase `.jpg` extensions.
 
 File numbers are often reused (e.g. `IMG_0020.HEIC` from 2024 and `IMG_0020.JPG` from 2026 are different photos), so an existing JPG/JPEG with the same name is **never overwritten**:
@@ -61,6 +64,7 @@ File numbers are often reused (e.g. `IMG_0020.HEIC` from 2024 and `IMG_0020.JPG`
 - different capture date → the converted file gets the unique name `<name>_HEIC.JPG`
 
 ### Step 4 – Sort JPG/JPEG/PNG + Related Files into Date/Camera Folder Structure
+
 For each `.JPG`, `.JPEG`, or `.PNG` image file:
 - The camera model and capture date are read from EXIF metadata using `exiftool`
 - A folder structure is created in the format `YYYY-MM-DD/CameraModel/`
@@ -83,6 +87,7 @@ For each `.JPG`, `.JPEG`, or `.PNG` image file:
 ```
 
 ### Step 5 – Sort Remaining MOV and MP4 Files
+
 Handles every MOV/MP4 still in the folder, i.e. those that were not paired with a photo of the same capture date in Step 4 (no photo with that name, or a photo of the same number from another day). PNG files are not handled here — every PNG is already its own anchor in Step 4, since Step 4's file glob includes PNG. For each remaining MOV or MP4:
 - Camera model is read from `QuickTime:Model`, with a fallback to `QuickTime:Make` if `Model` is empty. Date is read from `QuickTime:CreateDate`
 - The file is moved into the same `YYYY-MM-DD/CameraModel/` folder structure
@@ -95,9 +100,11 @@ Handles every MOV/MP4 still in the folder, i.e. those that were not paired with 
 ```
 
 ### Step 6 – Remove Empty Directories
+
 Any empty directories left in the current folder are automatically deleted.
 
 ### Progress and Summary
+
 Steps 3, 4 and 5 print a progress tag in front of each file: `[123/2805 | 00:03:12 | ETA 00:12:00]` = files handled / total, time spent in this step, and estimated time left. The ETA is based on the average speed so far. When the script finishes it prints a summary: HEIC converted/reused/failed, photos and videos sorted, files moved in total, files without metadata, not-moved files and total time.
 
 `heif-convert`'s own `decoding image... x%` output is hidden; it is only shown if a conversion fails (counted as `failed`).

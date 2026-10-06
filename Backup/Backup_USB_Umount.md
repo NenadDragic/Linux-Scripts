@@ -30,12 +30,15 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Unmount the Drive
+
 Runs `sudo umount "$MOUNT_POINT"`.
 
 ### Step 2 – Eject the Drive
+
 Only if the unmount succeeded (chained with `&&`), runs `sudo eject "/dev/disk/by-uuid/$UUID"` to spin down/release the device.
 
 ### Step 3 – Confirm
+
 Only if both prior steps succeeded, prints `USB sikkert fjernet` ("USB safely removed").
 
 ---

@@ -23,9 +23,11 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Print opening banner
+
 Echoes `Searching for files with lowercase letter extensions in $(pwd)` followed by a separator line of dashes.
 
 ### Step 2 – Regex search for lowercase-only extensions
+
 Runs:
 
 ```bash
@@ -35,6 +37,7 @@ find . -type f -regextype posix-extended -regex '.*\.[a-z]+'
 `-type f` restricts results to regular files. `-regex '.*\.[a-z]+'` requires the *entire* path to match: any characters (`.*`, which also absorbs directory separators, so subdirectories are included), followed by a dot, followed by one or more lowercase letters `a`–`z` and nothing after them. This effectively matches on the file's final extension, including multi-dot names (e.g. `archive.tar.gz` matches because it ends in `.gz`).
 
 ### Step 3 – Print completion footer
+
 Prints a separator line and `Search complete`.
 
 ---

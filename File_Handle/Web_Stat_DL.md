@@ -24,6 +24,7 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Sync reports down
+
 Runs a single command:
 
 ```bash

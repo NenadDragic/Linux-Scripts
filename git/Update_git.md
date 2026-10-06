@@ -23,15 +23,19 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Prompt for a commit message
+
 The script uses `read -p "Enter commit message: " message` to interactively ask the user for a commit message and stores it in the `message` variable.
 
 ### Step 2 – Stage all changes
+
 It runs `git add -A`, staging every new, modified, and deleted file in the repository.
 
 ### Step 3 – Commit
+
 It runs `git commit -am "$message"`, committing the staged changes with the message entered in Step 1.
 
 ### Step 4 – Push
+
 It runs `git push`, pushing the new commit to the remote/branch already configured for the current repository.
 
 ---

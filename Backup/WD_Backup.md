@@ -54,15 +54,19 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Parse options
+
 Reads the options listed above. An unknown option prints the help text and exits with code `2`.
 
 ### Step 2 – Set up the log
+
 Creates `~/wd-backup-logs/wd-backup-<YYYYMMDD-HHMMSS>.log` in the home directory of the invoking user (`SUDO_USER`), falling back to `/tmp` if the directory can't be created. The log file is chowned to that user.
 
 ### Step 3 – Check prerequisites
+
 Exits if `rsync` or `findmnt` is missing. Warns and switches to raw numbers if `perl` is missing. Exits unless running as root (or `--maal` was given).
 
 ### Step 4 – Find or mount the drive
+
 Unless `--maal` was given:
 
 1. If a filesystem with `FS_UUID` is already mounted, that mount point is used and left alone.
@@ -73,15 +77,19 @@ Unless `--maal` was given:
 With `--maal`, the given directory must exist and is used as the destination, with a warning.
 
 ### Step 5 – Mount the NAS shares
+
 For each selected job whose source is not already a mount point, runs `../File_Handle/SMB.sh <Share> mount` and checks the result with `mountpoint` (SMB.sh returns `0` even on failure). Exits if `SMB.sh` can't be found. An `EXIT` trap unmounts again only the shares the script mounted itself.
 
 ### Step 6 – Build the rsync command
+
 Base command: `rsync -aH --partial --human-readable --info=progress2` plus the excludes. ACLs (`-A`) and extended attributes (`-X`) are left out on purpose, because the NAS shares don't expose them and rsync fails with `Permission denied (13)`. `--outbuf=N` keeps progress flowing when output is piped through `perl`. `--spejl` and `--torloeb` add their flags as described above.
 
 ### Step 7 – Optional space check (`--plads`)
+
 Runs `du` on each selected source (skipping `#recycle` and `@eaDir`), prints the size per job, the total and the free space on the drive, and exits with an error if the total is larger than the free space.
 
 ### Step 8 – Optional count (`--mangler` / `--tael-foerst`)
+
 For each selected job (skipping missing or empty sources, same as the copy), runs `rsync -aH --dry-run --stats --no-inc-recursive` with the same excludes (plus `--delete --delete-excluded` with `--spejl`). This compares size and mtime exactly like a real run but transfers no data. With `perl`, a status line on the terminal shows first how many files have been found on the source, then the comparison progress in percent, what is missing so far and an estimated time left.
 
 From rsync's `--stats` it reads files and bytes to transfer, total files and bytes, and (with `--spejl`) regular files to delete, and prints a table `JOB / FILER / DATA [/ SLET]` as *missing/total*, plus a total row when more than one job ran, the time the count took, the free space on the drive and the log path. Files where only permissions or owner differ are not counted as missing. rsync code `23` gives a warning that the numbers are a minimum; other failures mark the count as failed.
@@ -89,6 +97,7 @@ From rsync's `--stats` it reads files and bytes to transfer, total files and byt
 With `--mangler` the script stops here (closing the drive if `--luk` was given). With `--tael-foerst` it continues to the copy, and jobs where rsync found nothing to create, update or delete are marked as having nothing to do.
 
 ### Step 9 – Run each job
+
 For every entry in `JOBS` (or only the one matching `--kun`):
 
 - Skips the job if the source directory does not exist, or if it is empty (so an empty or unmounted source can never empty the drive in mirror mode).
@@ -99,12 +108,15 @@ For every entry in `JOBS` (or only the one matching `--kun`):
 - Maps rsync's exit code (read from `PIPESTATUS[0]`): `0` and `24` (files vanished during the run) → OK; `23` → partial transfer; `20` → interrupted by the user, and the remaining jobs are skipped; anything else → failed.
 
 ### Step 10 – Summary
+
 Prints a table of job / status / time — with `--tael-foerst` also the amount the count found missing — the total time, the free space on the drive and the log path. Each result is also written to the log.
 
 ### Step 11 – Optional close (`--luk`)
+
 If the script mounted the drive itself, it syncs, unmounts it, and locks it again if it was the one that opened the LUKS container. A drive that was already mounted before the run is left mounted, with a warning.
 
 ### Step 12 – Exit code
+
 Exits `1` (with a warning) if no job ran, or if any job's status was not `OK` or `INTET NYT`; otherwise exits `0`. The EXIT trap then unmounts the shares the script mounted.
 
 ---

@@ -44,9 +44,11 @@ Prerequisites:
 <Break the actual control flow into numbered steps, mirroring the real order of operations — loops over files, external commands invoked, filters applied, output structure produced.>
 
 ### Step 1 – <What happens first>
+
 <Description grounded in the actual code.>
 
 ### Step 2 – <Next step>
+
 <Description.>
 
 ---

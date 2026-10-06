@@ -25,18 +25,23 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Stop the Flightradar24 service
+
 Runs `sudo systemctl stop fr24feed` to stop the running feeder before making changes.
 
 ### Step 2 – Remove the old package
+
 Runs `sudo dpkg -r fr24feed` to remove the currently installed `fr24feed` package (configuration files are kept, since `-r` is a non-purging removal).
 
 ### Step 3 – Download the new package
+
 Runs `wget` to fetch `fr24feed_1.0.28-1_amd64.deb` from `https://repo-feed.flightradar24.com/linux_x86_64_binaries/`, saving it into the current working directory.
 
 ### Step 4 – Install the new package
+
 Runs `sudo dpkg -i fr24feed_1.0.28-1_amd64.deb` to install the downloaded package.
 
 ### Step 5 – Start the Flightradar24 service
+
 Runs `sudo systemctl start fr24feed` to bring the feeder back up on the new version.
 
 ---

@@ -51,6 +51,7 @@ Prerequisites:
 ## What the Script Does
 
 ### `mount`
+
 1. Requires root and a connected drive (`/dev/disk/by-uuid/<LUKS_UUID>` must exist).
 2. If the filesystem is already mounted anywhere (e.g. under `/media/...` by the desktop), reports that and stops.
 3. Uses an already open LUKS mapping if there is one (desktop's `luks-<uuid>` or `wd-backup`); otherwise runs `cryptsetup open` with the key file, or with a passphrase prompt.
@@ -58,6 +59,7 @@ Prerequisites:
 5. Prints size, used, available and percentage.
 
 ### `status`
+
 Prints a small table: connected (with device and size), unlocked (with mapper), mounted (every mount point, filesystem type, rw/ro), and space used. As root it adds the processes using the mount and the SMART health result (`smartctl -d sat`, which may not be readable through the USB bridge). Without root it only hints that sudo gives more.
 
 Exit codes for `status`, usable from other scripts:
@@ -69,6 +71,7 @@ Exit codes for `status`, usable from other scripts:
 | `3` | Not connected |
 
 ### `umount`
+
 1. Requires root. If the drive is not connected, reports that and exits `0`.
 2. Runs `sync`, then unmounts every mount of the filesystem, last-mounted first. If one cannot be unmounted, it lists the processes using it (via `fuser`) and exits `1`.
 3. Closes the LUKS mapping, whatever it is called.

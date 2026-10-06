@@ -37,18 +37,23 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Parse options
+
 Reads `--interval`/`-i` (validated as a positive integer) and `--hjaelp`/`-h`. An unknown option prints the help text and exits with code `2`.
 
 ### Step 2 – List all drives
+
 Runs `df -h --output=source,fstype,size,used,avail,pcent,target`, excluding the filesystem types in `EXCLUDE_FS`, and prints the result as a numbered table (source, type, size, used, available, use%, mount point). Exits with an error if `df` returns no rows at all.
 
 ### Step 3 – Choose a drive
+
 Prompts for a number in range; re-prompts on anything else (non-numeric, `0`, or out of range) until a valid choice is made.
 
 ### Step 4 – Derive the log file name
+
 Builds a filesystem-safe name from the chosen mount point's last path component (`/` itself becomes `root`), falling back to the device name if that comes out empty. The log is written to `~/<name>-usage.log`.
 
 ### Step 5 – Monitor
+
 Prints what's being monitored, the interval, and the log path, then prints a header row (`TIDSPUNKT  BRUGT LEDIGT BRUGT%`) followed by one aligned row per measurement, forever:
 
 ```bash

@@ -24,12 +24,15 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Uppercase every entry in the folder
+
 `for f in *; do mv "$f" "$(echo "$f" | tr 'a-z' 'A-Z')"; done` renames **every** file and directory in the current working directory to its uppercase form — not limited to images.
 
 ### Step 2 – Convert HEIC to JPEG
+
 `for f in *.HEIC` now matches because Step 1 already uppercased extensions. Each matched file is converted with `heif-convert -q 100 "$f" "${f%.HEIC}.JPG"`, producing a quality-100 JPEG with the same base name. The original `.HEIC` file is **not** deleted.
 
 ### Step 3 – Uppercase pass again
+
 `rename 'y/a-z/A-Z/' *` re-applies an uppercase transliteration to everything in the folder. Since names are already uppercase after Step 1, this is functionally redundant as written, but it is present in the script.
 
 ---

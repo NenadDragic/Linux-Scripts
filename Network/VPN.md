@@ -24,12 +24,15 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Validate argument count
+
 Checks `[ "$#" -lt 2 ]`; if fewer than 2 arguments were passed, prints a Danish usage line (`Brug: $0 ...`) and exits with status `1`.
 
 ### Step 2 – Parse arguments
+
 `COMMAND=$1` and `INTERFACE=$2` capture the subcommand and the target WireGuard interface name.
 
 ### Step 3 – Dispatch on command
+
 A `case "$COMMAND"` statement:
 
 - `up` → `sudo wg-quick up "$INTERFACE"`

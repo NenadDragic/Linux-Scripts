@@ -29,18 +29,23 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Clear the terminal
+
 The script starts with `clear`, wiping the terminal screen before printing any output.
 
 ### Step 2 – Iterate over each entry in `~/git`
+
 It loops over every entry directly inside `base_dir` (`~/git` by default).
 
 ### Step 3 – Filter to directories only
+
 For each entry, it checks `[ -d "$dir" ]` and skips anything that isn't a directory.
 
 ### Step 4 – Filter to Git repositories
+
 It `cd`s into the directory and checks whether it contains a `.git` subdirectory; non-Git directories are skipped.
 
 ### Step 5 – Print status
+
 For each directory that is a Git repository, it prints `Running git status in $dir`, runs `git status`, and then prints a blank line as a separator before moving to the next repository.
 
 ---

@@ -25,30 +25,39 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 0 – Root check and setup
+
 Exits with an error if `$EUID -ne 0`. Initializes `REBOOT_NEEDED=false` and `START_TIME`. Reads `/etc/os-release` (if present) for `OS_NAME`/`OS_VERSION`, and reads `/proc/device-tree/model` (if present) to print the Pi hardware model, e.g. "Raspberry Pi 4 Model B Rev 1.4". Warns (non-fatal) if `/proc/device-tree/model` is missing, since that means the script can't confirm it's actually running on a Pi. Runs under `set -euo pipefail`, so most unguarded command failures abort the whole script.
 
 ### Step 1/7 – APT package update
+
 `apt-get update -qq`, then `DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y` with `--force-confdef`/`--force-confold` (keeps existing config files on conflicts, no prompts), then `apt-get install -f -y -qq` to fix any broken dependencies. On Raspberry Pi OS this also pulls in kernel/`raspberrypi-kernel` updates via the normal APT path.
 
 ### Step 2/7 – APT cleanup
+
 `apt-get autoremove -y -qq` followed by `apt-get autoclean -qq`.
 
 ### Step 3/7 – Firmware (rpi-eeprom-update)
+
 If `rpi-eeprom-update` is present: runs it to check for EEPROM/bootloader updates, looking for "UPDATE AVAILABLE" in the output; if found, runs `rpi-eeprom-update -a` to stage the update and sets `REBOOT_NEEDED=true` (EEPROM updates only take effect after a reboot). Skipped with a warning if the tool isn't installed. This replaces the `fwupd`-based firmware step used in the Ubuntu variants, since Raspberry Pi boot/EEPROM firmware is managed separately from `fwupd`/LVFS.
 
 ### Step 4/7 – Snap
+
 If `snap` is present: `snap refresh` updates all snaps, then the script lists disabled snap revisions (`snap list --all | awk '/disabled/{print $1, $3}'`) and removes each with `snap remove "$snapname" --revision="$revision"`. Skipped with a warning if `snap` isn't installed — the warning notes this is normal, since Snap isn't part of a stock Raspberry Pi OS install.
 
 ### Step 5/7 – Python pip (user-level)
+
 Resolves the real (non-root) user via `logname`. If found and `pip3` is present: upgrades pip itself for that user (`sudo -u "$REAL_USER" pip3 install --upgrade pip --quiet`), then lists outdated pip packages (`pip3 list --outdated --format=freeze`, excluding editable `-e` installs) and upgrades them via `xargs -r sudo -u "$REAL_USER" pip3 install --upgrade --quiet`.
 
 ### Step 6/7 – npm global packages
+
 If `npm` is present: `npm install -g npm --silent` (self-update), then `npm update -g --silent`.
 
 ### Step 7/7 – updatedb
+
 If `updatedb` is present: runs it to refresh the `locate` database; otherwise warns to install `mlocate` or `plocate`.
 
 ### Step 8 – Reboot check & summary
+
 Checks for `/var/run/reboot-required` and sets `REBOOT_NEEDED=true` if it exists (in addition to any EEPROM update from step 3). Computes elapsed time from `START_TIME`, prints a completion summary with duration and timestamp, and — if a reboot is needed — recommends running `sudo reboot`.
 
 ---

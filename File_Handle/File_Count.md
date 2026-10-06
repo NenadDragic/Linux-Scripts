@@ -23,15 +23,19 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Resolve and validate the target folder
+
 Sets `folder_path` to the current directory (`$(pwd)`) and checks with `[ ! -d "$folder_path" ]` that it exists, printing "Error: Folder not found!" and exiting with status 1 if not (in practice this check can never fail, since `pwd` always returns an existing directory).
 
 ### Step 2 – List all files recursively
+
 Runs `find "$folder_path" -type f` to gather every regular file under the current directory into `files`.
 
 ### Step 3 – Extract and count extensions
+
 Pipes the file list through `awk -F'.' '{print $NF}'` to take the text after the last dot in each full path, then `sort | uniq -c | sort -n` to count occurrences of each extension and sort the counts ascending (least common first).
 
 ### Step 4 – Print the result
+
 Prints "File Extensions Count:" followed by the sorted count table.
 
 ---

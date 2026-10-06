@@ -1,6 +1,7 @@
 # Git – Sammenlign lokal repo mod GitHub
 
 ## 1. Hent seneste info fra remote (uden at merge)
+
 ```bash
 git fetch origin
 ```
@@ -9,16 +10,19 @@ Opdaterer din lokale viden om remote uden at ændre dine filer.
 ---
 
 ## 2. Se commits der er på GitHub men ikke lokalt
+
 ```bash
 git log HEAD..origin/main --oneline
 ```
 
 ## 3. Se commits der er lokalt men ikke på GitHub
+
 ```bash
 git log origin/main..HEAD --oneline
 ```
 
 ## 4. Se begge veje på én gang
+
 ```bash
 git log --oneline --left-right HEAD...origin/main
 ```
@@ -28,6 +32,7 @@ git log --oneline --left-right HEAD...origin/main
 ---
 
 ## 5. Se faktiske filforskelle (diff)
+
 ```bash
 # Fuldt diff af filindhold
 git diff origin/main
@@ -39,6 +44,7 @@ git diff --stat origin/main
 ---
 
 ## 6. Hurtig status – er du foran/bagud?
+
 ```bash
 git status
 ```
@@ -47,6 +53,7 @@ Eksempel output: `Your branch is ahead of 'origin/main' by 2 commits`
 ---
 
 ## Typisk workflow
+
 ```bash
 git fetch origin                                    # Hent remote-info
 git status                                          # Hurtig oversigt
@@ -57,6 +64,7 @@ git diff origin/main                                # Filindhold-forskel
 ---
 
 ## Nyttige flag
+
 | Flag | Beskrivelse |
 | --- | --- |
 | `--oneline` | Kompakt visning – én linje pr. commit |
@@ -68,6 +76,7 @@ git diff origin/main                                # Filindhold-forskel
 ---
 
 ## Skift `main` ud hvis din branch hedder noget andet
+
 ```bash
 git fetch origin
 git log HEAD...origin/master --oneline --left-right   # ældre repos

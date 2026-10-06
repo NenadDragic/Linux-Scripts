@@ -32,24 +32,31 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Root check
+
 Compares `whoami` to `root`; if they don't match, prints "Please run as root." and exits with status `1`.
 
 ### Step 2 – Define paths and date
+
 Sets `backup_dir` and captures the current date as `YYYY-MM-DD` into `date`.
 
 ### Step 3 – Back up drive 1 (`/dev/nvme0n1p1`)
+
 Prints "Backing up drive 1...", looks up the partition type name via `lsblk -no parttypename`, then copies the partition to `"$backup_dir/$drive_type $date.img"` **twice in a row**: first via `pv -tpreb ... | dd of=... bs=4M` (progress shown by `pv`), then immediately again via a plain `dd if=... of=... bs=4M status=progress` reading the same source into the same destination file.
 
 ### Step 4 – Back up drive 2 (`/dev/nvme0n1p2`)
+
 Identical pattern to Step 3, for the second partition.
 
 ### Step 5 – Back up drive 3 (`/dev/nvme0n1p3`)
+
 Identical pattern to Step 3, for the third partition.
 
 ### Step 6 – Dead code
+
 A fourth, near-identical block (again targeting `/dev/nvme0n1p3`) is present at the end of the script but entirely commented out — it has no effect.
 
 ### Step 7 – Completion message
+
 Prints "Backup complete!".
 
 ---

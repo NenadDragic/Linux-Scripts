@@ -32,12 +32,15 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Determine and create the output directory
+
 Sets `OUTDIR` from the first argument (or `$HOME/testfiles` if none given) and runs `mkdir -p "$OUTDIR"`.
 
 ### Step 2 – Announce the plan
+
 Prints "Opretter $COUNT filer á ${SIZE_MB} MB i: $OUTDIR".
 
 ### Step 3 – Generate the files
+
 Loops `for i in $(seq 1 $COUNT)`, and for each iteration runs:
 
 ```bash
@@ -47,9 +50,11 @@ dd if=/dev/urandom of="$OUTDIR/file_$(printf "%04d" $i).bin" bs=1M count=$SIZE_M
 writing a `SIZE_MB`-megabyte file of random data named `file_0001.bin`, `file_0002.bin`, etc. `dd`'s stderr (progress info) is discarded.
 
 ### Step 4 – Progress reporting
+
 Every 100th file (`i % 100 == 0`) prints a "$i / $COUNT færdig..." progress line. With the default `COUNT=1` this never triggers.
 
 ### Step 5 – Final summary
+
 Prints "Færdig!" together with the total size of `OUTDIR` as reported by `du -sh`.
 
 ---

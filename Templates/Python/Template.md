@@ -41,9 +41,11 @@ Prerequisites:
 <Break the actual control flow into numbered steps, mirroring the real order of operations — what it reads, what libraries/APIs it calls, what transformation happens, what it outputs.>
 
 ### Step 1 – <What happens first>
+
 <Description grounded in the actual code.>
 
 ### Step 2 – <Next step>
+
 <Description.>
 
 ---

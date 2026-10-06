@@ -26,12 +26,15 @@ Requires `bash` and `git` on the `PATH`. Make it executable once with `chmod +x 
 ## What the Script Does
 
 ### Step 1 – Pick the base folder
+
 Detects the shell environment via `uname -s`. Under Git Bash/MSYS/Cygwin on Windows it defaults to `/h/git`; on any other `uname` result (Linux, macOS, WSL) it defaults to `$HOME/Git`. If a first argument is given, it overrides this default entirely. Exits with an error if the resulting folder doesn't exist.
 
 ### Step 2 – Find repositories
+
 Iterates every immediate subdirectory of the base folder and keeps only the ones containing a `.git` folder — nested repos deeper than one level are not discovered. If none are found, it says so and exits cleanly (not an error).
 
 ### Step 3 – Sync each repo in a subshell
+
 For each repo, runs the sync logic inside a `( ... )` subshell so a `cd` or early `exit` in one repo's checks can't affect the others or leak the working directory change to the rest of the script:
 1. `git fetch origin --quiet` to update remote-tracking refs.
 2. Resolves `local_rev` (`HEAD`), `remote_rev` (`@{u}`), and `base_rev` (their merge-base). If there's no upstream (`remote_rev` empty), it prints a message and moves on to the next repo.
@@ -41,6 +44,7 @@ For each repo, runs the sync logic inside a `( ... )` subshell so a `cd` or earl
 6. **Diverged** (neither of the above): both sides have unique commits — reported as needing manual merge/rebase; the script never attempts one itself.
 
 ### Step 4 – Summary
+
 If the loop never matched any `.git` subdirectory, prints a final "no repos found" message (this only fires when Step 2 found nothing at all, not per-repo).
 
 ---

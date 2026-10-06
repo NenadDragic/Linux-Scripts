@@ -30,12 +30,15 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Prompt for and validate the password
+
 Reads a password silently (`read -s`), computes its MD5 with `md5sum`, and compares it to the hardcoded `EXPECTED_MD5`. If it doesn't match, prints "Forkert adgangskode." and exits with status 1.
 
 ### Step 2 – Loop over every subfolder
+
 Iterates `for dir in */` over all subdirectories of the current directory.
 
 ### Step 3 – Compress each subfolder's contents
+
 For each subfolder, strips the trailing slash to get `folder_name`, then runs, in a subshell:
 
 ```bash
@@ -45,6 +48,7 @@ For each subfolder, strips the trailing slash to get `folder_name`, then runs, i
 This creates (or updates, if it already exists) a `.7z` archive named `$folder_name.7z` in the current directory, containing the subfolder's contents. `-mhe` encrypts the archive headers (filenames included) in addition to the file contents, and `-p"$password"` supplies the password non-interactively.
 
 ### Step 4 – Report success or failure per folder
+
 Checks `$?` after the 7zz call and prints a per-folder success or "FEJL" (error) message, then continues to the next folder. A failure on one folder does not stop the loop.
 
 ---

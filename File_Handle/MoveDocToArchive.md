@@ -34,21 +34,27 @@ Both `fra_folder` and `til_folder` are shipped as obvious placeholder paths and 
 ## What the Script Does
 
 ### Step 1 – Validate the argument
+
 If `$1` is not `run`, `find`, or `dryrun`, it prints a usage line (`Brug: <script> [run|find|dryrun]`) and exits with status 1.
 
 ### Step 2 – Verify the source folder exists
+
 If `fra_folder` is not a directory, it prints an error and exits with status 1.
 
 ### Step 3 – Collect matching files
+
 `mapfile -d '' filer < <(find "$fra_folder" -maxdepth 1 -type f -name "*2008-??-??*" -print0)` gathers, non-recursively, every regular file directly inside `fra_folder` whose name contains the literal substring `2008-` followed by two digits, a dash, and two more digits.
 
 ### Step 4 – `find` mode: preview
+
 If no files matched, it prints that nothing matches; otherwise it prints each matching path. No files are touched, and the script exits 0.
 
 ### Step 5 – `dryrun` mode: simulate
+
 Creates `til_folder` with `mkdir -p` if it doesn't exist (this is a real side effect even though the mode is called "dry"). It compares the device IDs of `fra_folder` and `til_folder` (`stat -c %d`) to report whether checksum validation would be used, then loops over the matched files reporting, for each, whether it would be skipped (a same-named file already exists at the destination) or moved — printing running counts of both. No files are actually moved or copied.
 
 ### Step 6 – `run` mode: perform the move
+
 Creates `til_folder` if missing, determines whether source and destination are on the same filesystem (skip checksums) or different filesystems (use checksums), and opens `logfil` with a header. For each matched file: if a same-named file already exists at the destination it is skipped and logged; otherwise, if checksumming is active, a SHA-256 checksum is taken before the move. The file is moved with `mv`; on success, if checksumming is active, a new SHA-256 checksum is taken after the move and compared to the pre-move checksum, logging `OK` or `CHECKSUM FEJL` accordingly (with no rollback on mismatch — the file has already been moved either way); if `mv` itself fails, a `FEJL ved flytning` line is logged. After the loop, a summary line and completion timestamp are appended to the log, and a matching summary is printed to the console along with the log's path.
 
 ---

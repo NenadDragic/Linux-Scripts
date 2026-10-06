@@ -23,12 +23,15 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Enumerate all files
+
 `find . -type f` recursively lists every regular file under the current directory as a full relative path (e.g. `./photos/img.JPG`).
 
 ### Step 2 – Strip everything up to the last dot
+
 Each path is piped through `sed -e 's/.*\.//'`. The greedy pattern `.*\.` consumes everything up to and including the *last* dot on the line, leaving only the text after it (in the typical case, the file extension).
 
 ### Step 3 – Sort and deduplicate
+
 `sort -u` sorts the remaining lines alphabetically and removes duplicates, so the final output is the set of unique values found in Step 2, printed to stdout.
 
 ---

@@ -23,14 +23,17 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify root privileges
+
 Checks whether `whoami` returns `root`; if not, it prints "Please run as root." and exits with status `1` without doing anything else.
 
 ### Step 2 – Present the menu
+
 Prints two numbered options and reads a single value into `choice`:
 - `1` – read the system/chassis serial number
 - `2` – read the baseboard (motherboard) serial number
 
 ### Step 3 – Run the selected command
+
 Based on `choice`:
 - `1` runs `sudo dmidecode -t system | grep Serial`
 - `2` runs `sudo dmidecode -t baseboard | grep Serial`

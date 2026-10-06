@@ -23,9 +23,11 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Print banner
+
 The script echoes: `Finding files in the current directory and its subdirectories whose filenames begin with a capital letter...`
 
 ### Step 2 – Restricted regex search
+
 It then runs:
 
 ```bash

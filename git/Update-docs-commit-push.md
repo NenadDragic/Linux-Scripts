@@ -17,12 +17,15 @@ Requires `bash`, `git`, and the [Claude Code CLI](https://claude.com/claude-code
 ## What the Script Does
 
 ### Step 1 – Locate the repo and verify prerequisites
+
 Resolves the repo root via `git rev-parse --show-toplevel` and `cd`s into it, exiting with an error if the current directory isn't inside a git repo. Checks that `claude` is on the `PATH` via `command -v claude`, exiting with an error and no further action if it isn't.
 
 ### Step 2 – Build the prompt
+
 Assembles a fixed, multi-line Danish prompt (via a heredoc) instructing Claude to: find script files of any language, anywhere in the repo (all folders/subfolders, excluding `.git`), without a matching `.md`; read a couple of existing `.md` files (e.g. in `PowerShell/`) to match their structure (title/summary, Usage, Configuration table, "What the Script Does" steps, Notes); write new docs based only on what each script's code actually does; skip — rather than guess at, rename, or move — any script that's empty, whose content clearly doesn't match its filename, or whose file extension doesn't match the language it's actually written in (e.g. a `.py` file containing PowerShell code), explaining the situation in the final summary instead; update the right overview file with each new/fixed script in the right section (`Tools/README.md` for scripts under `Tools/`, the root `Overview.md` under the matching language heading for everything else); stage only the relevant files (not `git add -A`/`git add .`); make one commit and push to `origin`; and finish with a short summary of what was committed versus skipped. If nothing is missing documentation, it's told to say so and make no commit.
 
 ### Step 3 – Run Claude Code non-interactively
+
 Invokes `claude -p "$prompt" --permission-mode acceptEdits --allowedTools "Read Write Edit Glob Grep Bash(git *)"`. `-p` runs it print-mode/non-interactive (no back-and-forth), `--permission-mode acceptEdits` auto-accepts file edits without prompting, and `--allowedTools` restricts what it can do to reading/writing files and running `git` commands — it cannot invoke arbitrary shell commands or other tools.
 
 ---

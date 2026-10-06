@@ -48,21 +48,27 @@ Per-share settings (hardcoded in a `case` statement, not meant to be edited per 
 ## What the Script Does
 
 ### Step 1 – Parse arguments
+
 Reads `SHARE_NAME` (`$1`) and `ACTION` (`$2`, lowercased via `${2,,}`). If either is empty, prints a usage message listing the available shares and exits with status 1.
 
 ### Step 2 – Resolve the share
+
 Matches the lowercased `SHARE_NAME` against a `case` statement for `dashcam`, `dragic`, or `netbackup`, setting `REAL_NAME` and `CRED_FILE` accordingly. Any other value prints an error ("Ugyldigt share-navn") and exits with status 1.
 
 ### Step 3 – Build paths
+
 Constructs `LOCAL_MOUNT_POINT="${MOUNT_BASE_DIR}/${REAL_NAME}"` and `REMOTE_PATH="//${REMOTE_SERVER}/${REAL_NAME}"`.
 
 ### Step 4 – Mount
+
 If `ACTION` is `mount`: creates the mount point with `mkdir -p`, builds the mount options string (`credentials=...,uid=...,gid=...,vers=3.0`), and runs `mount -t cifs "$REMOTE_PATH" "$LOCAL_MOUNT_POINT" -o "$MOUNT_OPTIONS"`. Reports success or failure based on the exit code.
 
 ### Step 5 – Unmount
+
 If `ACTION` is `umount` or `unmount`: runs `umount "$LOCAL_MOUNT_POINT"` and reports success or failure based on the exit code.
 
 ### Step 6 – Invalid action
+
 Any other `ACTION` value prints "Ugyldig handling" and exits with status 1.
 
 ---

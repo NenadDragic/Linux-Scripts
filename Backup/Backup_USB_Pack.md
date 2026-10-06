@@ -47,15 +47,19 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Pre-flight
+
 Checks root, that `BACKUP_ROOT` is an absolute path that exists, and that it is on a separately mounted disk (`findmnt`), not the root filesystem.
 
 ### Step 2 – Find dated folders
+
 Looks for `<root>/<host>/YYYY-MM-DD/` folders with a valid date, skipping `Log`, `lost+found` and symlinks.
 
 ### Step 3 – Show the plan and confirm
+
 Prints each folder with its backup status and what will happen to it: skipped because a backup is running right now, skipped because it is empty, an existing archive is validated, or the folder is packed. In `dry-run` mode it stops here. Without `-y` it asks `[j/N]`, and refuses to run without a terminal.
 
 ### Step 4 – Pack, validate, delete
+
 For each folder (holding the backup script's lock for that date):
 
 1. Packs the folder with `tar` (`--numeric-owner --xattrs`) into `YYYY-MM-DD.gz`. An existing archive is never overwritten — it is validated instead.
@@ -66,6 +70,7 @@ For each folder (holding the backup script's lock for that date):
 6. Only if all checks pass is the folder deleted. Otherwise the folder is kept and the unfinished archive is removed.
 
 ### Step 5 – Summary
+
 Logs how many folders were archived, skipped and failed, plus free space. Exits `1` if any folder failed.
 
 ---

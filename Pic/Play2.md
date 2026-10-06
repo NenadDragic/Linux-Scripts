@@ -22,27 +22,35 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Iterate over JPG/JPEG files
+
 `for filename in *.JPG *.JPEG`. The `shopt -s nocaseglob` line is present but **commented out**, so — unlike `Play.sh`, where it is active — this loop is case-sensitive and only matches literal `.JPG`/`.JPEG` extensions.
 
 ### Step 2 – Skip unmatched glob
+
 `[ -e "$filename" ] || continue` skips the iteration if the glob didn't expand (e.g. no JPG/JPEG files present). `Play.sh` does not have this guard.
 
 ### Step 3 – Derive the base filename
+
 `baseFilename=$(basename "$filename" .JPG)` then `basename "$baseFilename" .JPEG` strips a trailing `.JPG` or `.JPEG`, leaving the name with no extension.
 
 ### Step 4 – Extract camera model
+
 `exiftool -b -n -s -M -EXIF:Model "$filename"`, stripped of whitespace with `tr -d '[:space:]'`, then sanitized with `sed 's/[^a-zA-Z1-9]/_/g'` — any character that is not a letter or the digits 1–9 becomes an underscore.
 
 ### Step 5 – Extract creation date
+
 `exiftool -b -n -s -M -EXIF:createdate "$filename" | cut -d' ' -f1` takes just the date portion (before the first space).
 
 ### Step 6 – Skip on missing metadata
+
 If `cameraModel` or `creationDate` is empty, prints `Warning: Could not extract metadata from $filename` and continues to the next file.
 
 ### Step 7 – Create the target directory
+
 `targetDir="${creationDate}/${cameraModel}"`, created with `mkdir -p`.
 
 ### Step 8 – Copy every sibling file with the same base name
+
 For each extension in `JPG JPEG MOV HEIC MP4 CR2`, if `"${baseFilename}.${ext}"` exists, it is copied (`cp`, not moved) into `$targetDir`, printing a success or error message per file.
 
 ---

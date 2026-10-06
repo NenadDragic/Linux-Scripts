@@ -25,18 +25,23 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Update and upgrade the system
+
 Runs `sudo apt-get update`, `sudo apt-get upgrade -y`, and `sudo apt-get dist-upgrade -y` to refresh the package index and bring all installed packages up to date.
 
 ### Step 2 – Install required packages
+
 Runs `sudo apt-get install -y dkms git realtek-rtl88xxau-dkms` to install the DKMS framework, Git, and the Realtek RTL88xxAU DKMS driver package.
 
 ### Step 3 – Clone the driver source
+
 Runs `git clone https://github.com/aircrack-ng/rtl8812au.git` and `cd rtl8812au`, checking out the aircrack-ng project's RTL8812AU driver source into a new subfolder of the current directory.
 
 ### Step 4 – Build and install the driver
+
 Runs `make` to build the driver from source, then `sudo make install` to install it.
 
 ### Step 5 – Print monitor-mode setup instructions
+
 Echoes the three commands needed to put the `wlan1` interface into monitor mode (`sudo ip link set wlan1 down`, `sudo iw dev wlan1 set type monitor`, `sudo ip link set wlan1 up`) and a link to a Hackernoon article on configuring the AWUS036ACH on Kali Linux. These commands are only printed, not executed.
 
 ---

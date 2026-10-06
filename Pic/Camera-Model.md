@@ -23,9 +23,11 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Iterate over JPG/JPEG files
+
 Loops with `for filename in *.JPG *.JPEG`. `nocaseglob` is not enabled, so the glob is case-sensitive and only matches files whose extension is literally `.JPG` or `.JPEG` (lowercase `.jpg`/`.jpeg` are ignored).
 
 ### Step 2 – Extract metadata per file
+
 For each match, runs three `exiftool -b -n -s -M …` calls and pipes each through `cut`:
 
 - `-FileName` → `cut -d ':' -f 1` for the filename
@@ -35,6 +37,7 @@ For each match, runs three `exiftool -b -n -s -M …` calls and pipes each throu
 Because `-b` already strips the tag label from exiftool's output, these `cut` filters mostly pass the raw values straight through unchanged — they only trim something if the value itself happens to contain a colon.
 
 ### Step 3 – Print the result
+
 Joins the three extracted values into `"$filename $cameraModel $creationDate"` and echoes one line per file.
 
 ---

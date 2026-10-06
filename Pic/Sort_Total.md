@@ -24,6 +24,7 @@ Run it from the folder containing your image and video files, with `Sort_photos_
 ## What the Script Does
 
 ### Step 0 – Convert DNG to JPG (embedded preview)
+
 For every `.dng`/`.DNG` file in the current folder:
 
 - Checks that `exiftool` is installed, and installs it via `apt` if missing (`libimage-exiftool-perl`).
@@ -33,6 +34,7 @@ For every `.dng`/`.DNG` file in the current folder:
 - Re-runs are safe: if `<name>_DNG.jpg` already exists, conversion is skipped.
 
 ### Step 1 – Sort by Date and Camera Model
+
 Runs `Sort_photos_Dates.sh` unchanged. Produces a folder structure:
 
 ```
@@ -44,12 +46,15 @@ YYYY-MM-DD/
 ```
 
 ### Step 1b – Place DNG Originals
+
 Each kept DNG original is moved into a `DNG/` subfolder next to the JPG it was converted to. The script locates the sorted `<name>_DNG.JPG` by filename, so the DNG always lands in the exact same `YYYY-MM-DD/CameraModel/` folder regardless of how `Sort_photos_Dates.sh` names its folders. If the sorted JPG cannot be found (e.g. conversion failed), the DNG is left in place with a warning.
 
 ### Step 1c – Remove the Temporary Suffix
+
 Now that every file is in its final `YYYY-MM-DD/CameraModel/` folder, the temporary unique names are shortened again: `IMG_0020_DNG.JPG` → `IMG_0020.JPG` (and `IMG_0020_HEIC.JPG` → `IMG_0020.JPG`). This runs before Step 2, so the copy in `ORG/` gets the clean name too. If `IMG_0020.JPG` already exists in that folder (e.g. a JPG of the same shot), nothing is overwritten: the suffixed name is kept and a warning is printed.
 
 ### Step 2 – Sort Each Folder by File Type
+
 For every `YYYY-MM-DD/CameraModel/` folder created in Step 1, runs `Sort_photos_Types.sh` inside it, producing:
 
 ```
@@ -67,9 +72,11 @@ YYYY-MM-DD/
 ```
 
 ### Step 3 – Clean Up
+
 Deletes any empty `YYYY-MM-DD` or `CameraModel` directories left behind.
 
 ### Progress, Timing and Summary
+
 Step 0 and Step 2 print `[done/total | elapsed | ETA]` for every DNG file / date-camera folder, every step prints `Step N done in HH:MM:SS`, and `Sort_photos_Dates.sh` prints its own progress and summary (see `Sort_photos_Dates.md`). At the very end a summary shows: DNG converted/skipped/failed, DNG originals placed, JPG suffixes removed, folders sorted by type and the total run time.
 
 ---

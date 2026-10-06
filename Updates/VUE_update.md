@@ -31,27 +31,34 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify root privileges
+
 The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits with status `1` without doing anything.
 
 ### Step 2 – Download the archive
+
 Derives `filename` from the `url` variable using `basename`, then runs `wget $url` to download the archive into the current working directory, and prints "Download completed."
 
 ### Step 3 – Extract the archive
+
 Runs `tar -xzf $filename` to extract the downloaded tarball into the current working directory, and prints "File extracted."
 
 ### Step 4 – Install VueScan files
+
 Copies three files — assumed to now exist in the current directory from the extraction — into their system locations:
 - `vuescan.svg` → `/usr/share/icons/hicolor/scalable/apps/`
 - `vuescan.rul` → `/lib/udev/rules.d/60-vuescan.rules`
 - `vuescan` → `/usr/bin/`
 
 ### Step 5 – Purge conflicting packages
+
 Runs `sudo apt purge ippusbxd` and `sudo apt purge ipp-usb`, removing both packages (and their configuration) since they are known to conflict with VueScan's USB scanner access.
 
 ### Step 6 – Reload udev rules
+
 Runs `sudo udevadm control --reload-rules` so the newly installed `60-vuescan.rules` udev rule takes effect without a reboot.
 
 ### Step 7 – Completion message
+
 Prints "Script completed successfully."
 
 ---

@@ -37,33 +37,43 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Resolve hostname from config
+
 Determines its own directory, looks for `Backup.cfg` there or at `/etc/Backup.cfg`, extracts the `Hostname=` value (stripped of CR/whitespace) with `grep`/`cut`/`sed`. Exits with an error if no hostname can be read.
 
 ### Step 2 – Root check
+
 Exits with an error unless running as UID 0.
 
 ### Step 3 – Dependency check
+
 Confirms `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` are all on `PATH`, exiting if any is missing. Detects whether `stdbuf` is available (optional).
 
 ### Step 4 – Dry-run flag
+
 If the first argument is `dry-run`, sets `DRY_RUN="--dry-run"` and prints a banner warning no files will change.
 
 ### Step 5 – Verify NAS destination is mounted
+
 Checks that `$DEST_BASE` (`/mnt/NetBackup/<hostname>`) exists; exits with an error if not. Unlike the USB variants of this script, it does **not** create this directory itself.
 
 ### Step 6 – Prepare logging and acquire a per-date lock
+
 Computes today's date and `$DEST_PATH`, creates the NFS log directory and local log directory, creates today's destination folder, writes the rsync exclude list to a temp file, and takes an `flock` lock (via file descriptor 9) on `/var/lock/rsync_backup_<date>.lock` so two runs for the same date can't overlap — exits if the lock is already held. Registers a cleanup trap that removes the temp excludes file and releases the lock on exit.
 
 ### Step 7 – Run rsync
+
 Temporarily disables `errexit`/`pipefail` so a non-zero rsync exit code (e.g. `23`) doesn't kill the script early. Runs `rsync -aHX --numeric-ids --delete-delay --info=progress2,stats2 --prune-empty-dirs --exclude-from=<file> "$SOURCE_DIR" "$DEST_PATH"`, piping output through `tee` into a process substitution that converts `\r` to `\n` and appends to the local log. Captures rsync's exit code from `PIPESTATUS[0]`, then restores strict mode.
 
 ### Step 8 – Append the local log to the NFS/USB daily log
+
 Tries, in order: a plain `cat >>` append; on failure, gathers diagnostics (`stat`, `mount`, `dmesg`) into the local log, then tries an atomic merge (concatenate old + new into a temp file, `mv` over the original); if the destination log is missing/unreadable, tries a direct `cp`; if that still fails, tries appending as the log directory's owning user via `runuser`; as a last resort, copies the local log into the log directory under a unique filename. The local temp log is deleted once it has been successfully written to the shared log; otherwise it's kept and a warning is logged.
 
 ### Step 9 – Extract stats and write a status file
+
 Pulls the log's first 11 lines and everything from `Number of files:` onward. On success (`rsync_exit -eq 0`), greps `Total transferred file size` / `Number of regular files transferred` from the log and writes `$STATUS_FILE_NFS` (falling back to a local `.status` file if that write fails) containing status, timestamps, counts, size, and the log excerpt. Prints a success summary to stdout.
 
 ### Step 10 – Handle failure
+
 On non-zero rsync exit, writes a `FAILED` status file with the same primary/fallback logic, and — unless this was a dry run — attempts `rmdir` on the (expected-empty) destination date folder before exiting `1`.
 
 ---

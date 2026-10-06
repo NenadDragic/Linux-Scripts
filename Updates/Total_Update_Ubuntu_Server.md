@@ -25,30 +25,39 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 0 – Root check and setup
+
 Exits with an error if `$EUID -ne 0`. Initializes `REBOOT_NEEDED=false` and `START_TIME`. Reads `/etc/os-release` (if present) for `OS_NAME`/`OS_VERSION` and warns (non-fatal) if the detected `NAME` doesn't contain "ubuntu". Also warns (non-fatal) if it detects a graphical desktop (`Xorg` on PATH, or `$XDG_CURRENT_DESKTOP` set), suggesting [Total_Update_Ubuntu.sh](Total_Update_Ubuntu.sh) instead since that variant also handles Flatpak. Runs under `set -euo pipefail`, so most unguarded command failures abort the whole script.
 
 ### Step 1/7 – APT package update
+
 `apt-get update -qq`, then `DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y` with `--force-confdef`/`--force-confold` (keeps existing config files on conflicts, no prompts), then `apt-get install -f -y -qq` to fix any broken dependencies.
 
 ### Step 2/7 – APT cleanup
+
 `apt-get autoremove -y -qq` followed by `apt-get autoclean -qq`.
 
 ### Step 3/7 – Snap
+
 If `snap` is present: `snap refresh` updates all snaps, then the script lists disabled snap revisions (`snap list --all | awk '/disabled/{print $1, $3}'`) and removes each with `snap remove "$snapname" --revision="$revision"`. Skipped with a warning if `snap` isn't installed. Ubuntu Server cloud images ship `snapd` by default (used for `lxd`, `core`, etc.), so this step is normally active.
 
 ### Step 4/7 – Firmware (fwupd)
+
 If `fwupdmgr` is present: `fwupdmgr refresh --force` refreshes metadata (non-fatal on failure), then checks `fwupdmgr get-updates` for the string "Upgrade"; if found, runs `fwupdmgr update -y` and sets `REBOOT_NEEDED=true`. Skipped with a warning if fwupd isn't installed — the warning notes this is typical for VMs/cloud instances, where there's no real firmware to flash.
 
 ### Step 5/7 – Python pip (user-level)
+
 Resolves the real (non-root) user via `logname`. If found and `pip3` is present: upgrades pip itself for that user (`sudo -u "$REAL_USER" pip3 install --upgrade pip --quiet`), then lists outdated pip packages (`pip3 list --outdated --format=freeze`, excluding editable `-e` installs) and upgrades them via `xargs -r sudo -u "$REAL_USER" pip3 install --upgrade --quiet`.
 
 ### Step 6/7 – npm global packages
+
 If `npm` is present: `npm install -g npm --silent` (self-update), then `npm update -g --silent`.
 
 ### Step 7/7 – updatedb
+
 If `updatedb` is present: runs it to refresh the `locate` database; otherwise warns to install `mlocate` or `plocate`.
 
 ### Step 8 – Reboot check & summary
+
 Checks for `/var/run/reboot-required` and sets `REBOOT_NEEDED=true` if it exists. Computes elapsed time from `START_TIME`, prints a completion summary with duration and timestamp, and — if a reboot is needed — recommends running `sudo reboot`.
 
 ---

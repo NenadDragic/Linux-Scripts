@@ -26,20 +26,25 @@ Prerequisites:
 `set -e` is active, so the script aborts on the first unhandled command failure. `main()` runs the following functions in order, each logged with a `[$(date +'%Y-%m-%d %H:%M:%S')]` timestamp prefix via the `log()` helper:
 
 ### Step 1 – `remove_old_version`
+
 Runs `sudo apt remove --purge -y libheif1 libheif-dev` and `sudo apt autoremove -y`, both suffixed with `|| true` so a "package not installed" failure does not stop the script.
 
 ### Step 2 – `install_dependencies`
+
 Runs `sudo apt update`, then `sudo apt install -y build-essential cmake pkg-config libaom-dev libx265-dev libjpeg-dev libpng-dev libde265-dev libtool autoconf automake`.
 
 ### Step 3 – `build_latest_version`
+
 - Removes `/tmp/libheif-build` if it already exists, then recreates it and `cd`s in.
 - Clones `libheif` from GitHub into that directory, fetches all tags, and determines the latest one with `git describe --tags $(git rev-list --tags --max-count=1)`.
 - Checks out that tag, creates a `build` subdirectory, configures with `cmake -DCMAKE_BUILD_TYPE=Release ..`, compiles with `make -j$(nproc)`, then installs with `sudo make install` and refreshes the linker cache with `sudo ldconfig`.
 
 ### Step 4 – `verify_installation`
+
 Checks whether `heif-info` is now on `PATH`. If found, logs `heif-info --version`; otherwise logs a warning that the command was not found.
 
 ### Step 5 – `cleanup`
+
 Removes `/tmp/libheif-build`.
 
 ---

@@ -31,9 +31,11 @@ Only add the block to scripts that use tools beyond the standard base system (co
 ## What the Script Does
 
 ### Step 1 – Check each tool
+
 For every argument, looks the tool up with `command -v`, and also in `/usr/local/sbin`, `/usr/sbin` and `/sbin`, so tools like `cryptsetup` are found for normal users whose `PATH` has no `sbin`.
 
 ### Step 2 – Report and stop
+
 If anything is missing, prints the missing tools and a single `sudo apt install <packages>` line (each package listed once) to stderr, then calls `exit 1`, which ends the calling script.
 
 ---

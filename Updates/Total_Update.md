@@ -24,24 +24,31 @@ Prerequisites:
 ## What the Script Does
 
 ### Step 1 – Verify root privileges
+
 The script compares `$(whoami)` to `root`. If the current user is not root, it prints `Please run as root.\n` and exits with status `1` without doing anything.
 
 ### Step 2 – Update the APT package index
+
 Runs `apt -y update` to refresh the local package index from configured repositories.
 
 ### Step 3 – Upgrade installed packages
+
 Runs `apt -y upgrade` to upgrade all installed packages to their latest available versions without removing packages.
 
 ### Step 4 – Full/dist upgrade
+
 Runs `apt -y dist-upgrade`, which additionally handles changed dependencies, potentially installing or removing packages as needed.
 
 ### Step 5 – Remove unneeded packages
+
 Runs `apt autoremove` (no `-y`) to remove packages that were automatically installed as dependencies and are no longer needed.
 
 ### Step 6 – Clean the local package cache
+
 Runs `apt autoclean` to delete cached `.deb` files for packages that can no longer be downloaded.
 
 ### Step 7 – Rebuild the locate database
+
 Runs `updatedb` to refresh the file-path database used by the `locate` command.
 
 ---
