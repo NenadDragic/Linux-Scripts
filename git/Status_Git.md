@@ -17,6 +17,7 @@ Prerequisites:
 
 - `git` installed.
 - Read access to `~/git` and to each repository inside it.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`
 
 ### Configuration (top of script)
 

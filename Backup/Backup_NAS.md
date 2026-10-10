@@ -20,6 +20,7 @@ Prerequisites:
 - A config file named `Backup.cfg` must exist next to the script (`$SCRIPT_DIR/Backup.cfg`) or at `/etc/Backup.cfg`, containing a line `Hostname=<name>` (see the `Backup.cfg` in this folder, which sets `Hostname=Debian_Laptop`).
 - `/mnt/NetBackup/<hostname>` must already exist/be mounted — the script only checks for it and exits with an error if it isn't; it does not mount or create it.
 - `/mnt/usb/Backup` is expected to be mounted too, since the log directory lives under it.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rsync`, `runuser`
 
 ### Configuration (top of script)
 

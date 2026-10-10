@@ -18,6 +18,7 @@ Prerequisites:
 - `heif-convert` (from a libheif tools/examples package) must be installed.
 - The `rename` utility (Perl-style `rename 'y/a-z/A-Z/' *`) must be installed.
 - Standard `tr`/`mv` (present on any Linux system).
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `heif-convert`, `rename`
 
 ---
 

@@ -17,6 +17,7 @@ Prerequisites:
 
 - Sudo privileges for the invoking user (for `mkdir` and `mount`).
 - The specific backup USB partition (matched by hardcoded UUID) must be physically connected.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `sudo`
 
 ### Configuration (top of script)
 

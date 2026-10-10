@@ -19,6 +19,7 @@ Prerequisites:
 - `apt` (Debian/Ubuntu-based system) for the package purge step.
 - Must be run as root — the script checks `whoami` and exits otherwise.
 - The `url` variable at the top of the script must be edited to point at a real VueScan `.tar.gz` download — as shipped it points at a placeholder (`https://example.com/somefile.tar.gz`) and will fail.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `wget`, `sudo`
 
 ### Configuration (top of script)
 

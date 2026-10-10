@@ -34,6 +34,7 @@ Prerequisites:
 - `fuser` (package `psmisc`) is optional — used to show which processes keep the drive busy.
 - `smartctl` (`smartmontools`) is optional — used by `status` when run as root.
 - `udisksctl` (`udisks2`) is only needed for `--sluk`; if missing the script warns and the drive is still locked and safe to remove.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `cryptsetup`
 
 ### Configuration (top of script)
 

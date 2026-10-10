@@ -10,7 +10,7 @@ Calls the Claude Code CLI with a fixed prompt that finds script files of any lan
 ./update-docs-commit-push.sh
 ```
 
-Requires `bash`, `git`, and the [Claude Code CLI](https://claude.com/claude-code) (`claude`) on the `PATH`, logged in on the machine that runs it. Make it executable once with `chmod +x update-docs-commit-push.sh`, or run it directly with `bash update-docs-commit-push.sh`. It takes no arguments or configuration — the prompt sent to Claude is fixed in the script.
+Requires `bash`, `git`, and the [Claude Code CLI](https://claude.com/claude-code) (`claude`) on the `PATH`, logged in on the machine that runs it. Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`. Make it executable once with `chmod +x update-docs-commit-push.sh`, or run it directly with `bash update-docs-commit-push.sh`. It takes no arguments or configuration — the prompt sent to Claude is fixed in the script.
 
 ---
 

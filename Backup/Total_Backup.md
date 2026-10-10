@@ -19,6 +19,7 @@ Prerequisites:
 - Must be run as root.
 - The directory referred to by `backup_dir` must already exist and be mounted; the script never creates it.
 - The specific block devices `/dev/nvme0n1p1`, `/dev/nvme0n1p2`, and `/dev/nvme0n1p3` must exist on the machine it's run on.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `pv`
 
 ### Configuration (top of script)
 

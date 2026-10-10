@@ -17,6 +17,7 @@ Prerequisites:
 
 - `git` installed and the current directory must already be inside a Git repository with a configured remote.
 - Push access (credentials/SSH key) to that remote.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`
 
 ---
 

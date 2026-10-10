@@ -24,6 +24,7 @@ Prerequisites:
 - `cifs-utils` (provides `mount.cifs`) must be installed for `mount -t cifs` to work.
 - A credentials file must already exist at the hardcoded path for the chosen share (see Configuration) containing the SMB username/password.
 - The remote CIFS server must be reachable at the hardcoded IP address.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `mount.cifs`
 
 ### Configuration (top of script)
 

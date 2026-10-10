@@ -8,6 +8,7 @@ tmux har ingen indbygget timer til at skifte session. Scriptet kalder derfor `tm
 
 - bash 4+ (bruger `mapfile`)
 - tmux (testet med 3.4)
+- Dependency-tjek: scriptet starter med at source den delte `lib/require_tools.sh` (findes ved at gå op fra scriptets egen mappe) og stopper med et `apt install`-forslag, hvis `tmux` mangler
 - Mindst én klient tilknyttet tmux, dvs. en terminal hvor `tmux attach` kører
 
 ## Installation

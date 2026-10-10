@@ -18,6 +18,7 @@ Prerequisites:
 - WireGuard tools installed (`wg-quick`, `wg`)
 - `sudo` access — every branch invokes `sudo wg-quick ...` or `sudo wg ...`
 - A valid WireGuard interface/config name that `wg-quick` recognizes (e.g. matching `/etc/wireguard/<INTERFACE>.conf`)
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `sudo`, `wg-quick`, `wg`
 
 ---
 

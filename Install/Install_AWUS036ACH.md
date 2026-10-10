@@ -19,6 +19,7 @@ Prerequisites:
 - Root privileges (the package management and driver install commands use `sudo`, so the script should be run with `sudo` or as root).
 - Build tooling implied by `make` (a C compiler / kernel headers), which is expected to already be present or pulled in as a dependency of `dkms`/`realtek-rtl88xxau-dkms`.
 - `git`, `dkms`, and `realtek-rtl88xxau-dkms` — the script installs these itself via `apt-get` if missing.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `sudo`, `git`, `make`
 
 ---
 

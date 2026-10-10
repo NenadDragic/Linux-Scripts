@@ -21,6 +21,11 @@ Important details about the real behavior:
 
 ## Usage
 
+Prerequisites:
+
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rename`
+- No `sudo`: run it as the user who owns the files
+
 1. Make sure you have permission to execute the script. If not, run the following command to grant permission:
 
 ```bash

@@ -17,6 +17,7 @@ Prerequisites:
 
 - `dmidecode` installed.
 - Must be run as root (the script checks `whoami` and exits immediately if it isn't `root`), typically via `sudo`.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `sudo`, `dmidecode`
 
 ---
 

@@ -19,6 +19,7 @@ Prerequisites:
 - `sudo`, `systemctl`, `dpkg`, and `wget` available on the system.
 - Network access to `repo-feed.flightradar24.com`.
 - The invoking user must have sudo privileges.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `sudo`, `wget`
 
 ---
 

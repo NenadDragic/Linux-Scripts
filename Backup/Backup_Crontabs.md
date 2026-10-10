@@ -33,6 +33,7 @@ Prerequisites:
 
 - `crontab` command available on `PATH`.
 - Root privileges to read other users' crontabs and to write system cron; running as a non-root user limits the script to that user's own crontab.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `crontab`
 
 ### Configuration (top of script)
 

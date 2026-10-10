@@ -35,6 +35,7 @@ Prerequisites:
 - `perl` is used to format the progress numbers and to show the live status line while counting; if it is missing the script warns and falls back to raw numbers (as if `--raatal` was given). Counting still works without `perl`, but shows no live progress, and `--tael-foerst` can then not detect jobs with nothing to do.
 - The NAS shares are mounted automatically via `../File_Handle/SMB.sh` (`<Share> mount`) if they are not already mounted at `/mnt/NetBackup`, `/mnt/Dragic` and `/mnt/DashCam`, and unmounted again (`<Share> umount`) when the script exits — but only the shares the script mounted itself. Shares that were already mounted are left alone. This happens whether or not the WD drive was already mounted, and respects `--kun`. If a share cannot be mounted, its job is skipped with a warning. Unmounting runs from an `EXIT` trap, so it also happens after fatal errors.
 - The WD drive must be connected. If it is locked, the script either uses the key file (if present) or prompts for the passphrase.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rsync`, `cryptsetup`, `findmnt`
 
 ### Configuration (top of script)
 

@@ -13,6 +13,12 @@ bash Sort_Total.sh
 
 Run it from the folder containing your image and video files, with `Sort_Photos_Dates.sh` and `Sort_photos_Types.sh` present in the same folder as `Sort_Total.sh`.
 
+Prerequisites:
+
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `exiftool`
+- `heif-convert` (package `libheif-examples`), required by `Sort_Photos_Dates.sh`, which runs its own dependency check
+- No `sudo`: run it as the user who owns the files
+
 ### Configuration (top of script)
 
 | Variable | Default | Meaning |
@@ -27,7 +33,7 @@ Run it from the folder containing your image and video files, with `Sort_Photos_
 
 For every `.dng`/`.DNG` file in the current folder:
 
-- Checks that `exiftool` is installed, and installs it via `apt` if missing (`libimage-exiftool-perl`).
+- `exiftool` is already guaranteed by the dependency check at the top of the script; nothing is installed by the script.
 - Extracts the full-size JPEG preview embedded in the DNG with `exiftool -b -PreviewImage` into `<name>_DNG.jpg` (e.g. `IMG_0020_DNG.jpg`). The unique name matters because file numbers are reused across phones/years, so `IMG_0020.DNG` must not become — or overwrite — a different photo's `IMG_0020.JPG`. For Apple ProRAW files from an iPhone this is a full-resolution JPEG (e.g. 8064x6048, Display P3) that already carries date, camera model and GPS, so the date sorting in Step 1 works on it. The file's modification time is set to `DateTimeOriginal`.
 - This replaces the earlier `darktable-cli` development: darktable 4.2 (Debian 12) cannot decode ProRAW (`Unsupported predictor mode: 7`), and `darktable-cli` also holds a database lock (`data.db.lock`) that made concurrent or stuck runs fail.
 - A DNG without an embedded preview is reported and left untouched.
@@ -84,9 +90,8 @@ Step 0 and Step 2 print `[done/total | elapsed | ETA]` for every DNG file / date
 ## Notes
 
 - Reuses `Sort_Photos_Dates.sh` and `Sort_photos_Types.sh` as-is — any future changes to those scripts apply automatically to `Sort_Total.sh`. The DNG handling lives entirely in `Sort_Total.sh`.
-- `Sort_photos_Types.sh` checks/installs `libheif-examples` on every folder it processes; harmless once installed, but noisy on the first run across many folders.
 - Files are paired by base name **and** capture date, and are never overwritten — see `Sort_Photos_Dates.md`. Different photos that share a file number end up in their own date folders, and the temporary `_DNG`/`_HEIC` suffix is removed again in Step 1c (it only stays when the clean name is already taken in that folder).
 - Same copy/move behaviour as the two source scripts: Step 1 moves the JPG/JPEG/PNG and all related files (MOV/MP4/CR2/HEIC) into the date/camera folder; Step 2 then copies (not moves) JPG/JPEG into `ORG` as a backup of the originals and moves MOV/MP4/CR2/HEIC into their type folders. Converted DNG→JPGs are treated as normal JPGs.
 - If two shoots contain files with the same base name (e.g. two different `IMG_0001.DNG`), Step 1b places the DNG next to the first matching JPG it finds — rare with camera numbering, but worth knowing.
-- **Qubes/template note:** if this runs in an AppVM, apt installs do not persist across reboots. Install `libimage-exiftool-perl` once in the `debian-13-xfce` template; the script will then skip the install step.
+- **Qubes/template note:** if this runs in an AppVM, apt installs do not persist across reboots. Install `libimage-exiftool-perl` and `libheif-examples` once in the `debian-13-xfce` template; otherwise the dependency check stops the script.
 - If `Sort_Photos_Dates.sh` is later extended to handle DNG itself, Step 1b will simply skip files that have already been moved.

@@ -18,6 +18,7 @@ Prerequisites:
 - A Debian/APT-based distribution (`apt` must be available).
 - `updatedb` (from the `mlocate`/`plocate` package) must be installed for the last step to succeed.
 - Must be run as root — the script checks `whoami` and exits otherwise.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `updatedb`
 
 ---
 

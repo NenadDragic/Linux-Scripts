@@ -16,6 +16,7 @@ Run it from any directory — it does not operate on files and has no working-di
 Prerequisites:
 
 - GNU `screen` must be installed.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `screen`
 
 ---
 

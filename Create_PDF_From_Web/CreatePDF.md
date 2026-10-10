@@ -18,6 +18,7 @@ Prerequisites:
 - `wkhtmltopdf` — the script checks for it with `command -v wkhtmltopdf` and, if missing, attempts to auto-install it via `sudo apt install wkhtmltopdf -y` (Debian/Ubuntu only; the commented-out `yum` line for Fedora/CentOS is not actually executed)
 - `sudo` access, since the auto-install step uses `sudo apt`
 - A `Lookup.txt` file in the working directory with `url filename` pairs, one per line
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `wkhtmltopdf`
 
 ---
 

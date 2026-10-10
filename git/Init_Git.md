@@ -18,6 +18,7 @@ Prerequisites:
 - `git`, with SSH access configured for GitHub (all clone URLs use the `git@github.com:...` SSH form, so a working SSH key registered with the `NenadDragic` GitHub account is required).
 - Write permission in the current directory.
 - Network access to GitHub.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`
 
 ---
 
@@ -27,7 +28,7 @@ Prerequisites:
 
 The script runs one `git clone` per repository, back to back, with no looping or configuration — the list of repositories is hardcoded in the script itself:
 
-- `Bash`, `bat`, `c-Sharp`, `cpp`, `Cyber-Sec`, `Devices`, `Edora`, `JB-Scripts`, `Learning`, `Linux_Learning`, `Linux-Scripts`, `PowerShell`, `Python`, `RaspberryPi`, `Web-Source`, `Web_source`, `z-os`, `z-os_JB`
+- `Bash`, `bat`, `c-Sharp`, `cpp`, `Cyber-Sec`, `Devices`, `Docs_Downloads`, `Edora`, `JB-Scripts`, `Learning`, `lib`, `Linux_Learning`, `Linux-Scripts`, `PowerShell`, `Python`, `RaspberryPi`, `Web_source`, `z-os`, `z-os_JB`
 
 Each is cloned from `git@github.com:NenadDragic/<repo>.git` into a subdirectory of the same name under the current directory.
 

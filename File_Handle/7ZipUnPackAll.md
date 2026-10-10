@@ -18,6 +18,7 @@ Prerequisites:
 - `7zz` (the 7-Zip CLI binary) must be installed and on `PATH`.
 - The password entered at the prompt must match a hardcoded MD5 hash baked into the script (`EXPECTED_MD5`) — the same hash used in `7ZipAllPack.sh`.
 - Write access to the current directory (extraction folders are created here).
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `7zz`
 
 ### Configuration (top of script)
 

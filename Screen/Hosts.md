@@ -18,6 +18,7 @@ Prerequisites:
 - `fzf` installed
 - `grep`, `awk`, `sort`, `ssh` (standard tools)
 - A `~/.ssh/config` file containing `Host` entries
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `fzf`, `ssh`
 
 ---
 

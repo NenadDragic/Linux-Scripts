@@ -18,6 +18,7 @@ Prerequisites:
 - SSH access (key-based, since the script is non-interactive) to `ElBosso@192.168.1.50`.
 - `rsync` installed locally and on the remote host.
 - The parent of `/home/nenad/Documents/Web-Status` must exist — `rsync` creates the destination directory itself if it's missing, as long as its parent path is already there.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rsync`
 
 ---
 

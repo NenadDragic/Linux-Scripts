@@ -9,13 +9,15 @@ A Bash script that normalizes, converts, and sorts image and video files into a 
 | Tool | Purpose |
 | --- | --- |
 | `exiftool` | Reads EXIF and QuickTime metadata from image and video files |
-| `libheif-examples` | Converts HEIC files to JPEG (auto-installed if missing) |
+| `libheif-examples` | Provides `heif-convert`, which converts HEIC files to JPEG |
 
-Install `exiftool` manually if not already present:
+Nothing is installed automatically. Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `heif-convert`, `exiftool`. Install them with:
 
 ```console
-sudo apt-get install libimage-exiftool-perl
+sudo apt install libheif-examples libimage-exiftool-perl
 ```
+
+The script itself needs no `sudo`; run it as the user who owns the files.
 
 ---
 
@@ -45,7 +47,7 @@ The script runs in six steps:
 
 ### Step 1 – Check Dependencies
 
-Checks whether `libheif-examples` is installed (via `dpkg`) and whether `exiftool` is available (via `command -v`). Any missing packages are collected and installed in a single `apt-get install` call.
+Sources the shared `lib/require_tools.sh` and calls `require_tools` for `heif-convert` (package `libheif-examples`) and `exiftool` (package `libimage-exiftool-perl`). If either is missing, it prints one `sudo apt install` line for the missing packages and stops; nothing is installed by the script.
 
 ### Step 2 – Normalize File Extensions to Uppercase
 
@@ -115,7 +117,7 @@ Steps 3, 4 and 5 print a progress tag in front of each file: `[123/2805 | 00:03:
 
 | Command | Description |
 | --- | --- |
-| `dpkg -l \| grep -q libheif-examples` | Checks if a package is installed without printing output |
+| `require_tools "heif-convert:libheif-examples" ...` | Stops the script with an install hint if a required tool is missing |
 | `tr 'a-z' 'A-Z'` | Converts text to uppercase |
 | `exiftool -b -n -s -M -EXIF:Model` | Reads the camera model from image EXIF metadata (JPG, PNG) |
 | `exiftool -b -n -s -M -EXIF:createdate` | Reads the capture date from image EXIF metadata (JPG, PNG) |

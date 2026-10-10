@@ -18,6 +18,7 @@ Prerequisites:
 - `7zz` (the 7-Zip CLI binary) must be installed and on `PATH`.
 - The password entered at the prompt must match a hardcoded MD5 hash baked into the script (`EXPECTED_MD5`); there is no way to set/change the accepted password without editing the script.
 - Write access to the current directory (archives are written to `../$folder_name.7z` relative to each subfolder, i.e. into the current directory).
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `7zz`
 
 ### Configuration (top of script)
 

@@ -12,7 +12,7 @@ Scans a base folder for git repositories (one level deep) and, for each one, che
 ./sync-from-github.sh /path/to/repos
 ```
 
-Requires `bash` and `git` on the `PATH`. Make it executable once with `chmod +x sync-from-github.sh`, or run it directly with `bash sync-from-github.sh` without changing permissions. Each repo found under the base folder must already have a configured remote-tracking branch (i.e. have been cloned or have `git branch --set-upstream-to` set) — a repo without one is reported and skipped, not treated as an error that stops the rest.
+Requires `bash` and `git` on the `PATH`. Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`. Make it executable once with `chmod +x sync-from-github.sh`, or run it directly with `bash sync-from-github.sh` without changing permissions. Each repo found under the base folder must already have a configured remote-tracking branch (i.e. have been cloned or have `git branch --set-upstream-to` set) — a repo without one is reported and skipped, not treated as an error that stops the rest.
 
 ### Configuration
 

@@ -16,6 +16,7 @@ Run it from any directory — it operates on `screen` sessions, not files.
 Prerequisites:
 
 - GNU `screen` must be installed, with at least one session already running to connect to.
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `screen`
 
 ---
 

@@ -17,6 +17,7 @@ Prerequisites:
 
 - `git`, with any credentials/SSH keys already configured for the remotes of the repositories under `~/git`.
 - Read/write access to `~/git` and to each repository inside it (a `git pull` may need to write to the working tree).
+- Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`
 
 ### Configuration (top of script)
 
