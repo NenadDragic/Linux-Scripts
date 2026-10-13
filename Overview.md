@@ -18,7 +18,7 @@ General-purpose Linux admin/utility scripts, grouped by topic.
 | `Network` | [Overview](Network/Overview.md) | 1 | WireGuard VPN up/down/status wrapper. |
 | `Pic` | [Overview](Pic/Overview.md) | 9 | Photo/video sorting by date and camera model, HEIC/DNG conversion, playback, and library maintenance. |
 | `Screen` | [Overview](Screen/Overview.md) | 4 | GNU `screen` session helpers, plus an SSH host picker. |
-| `Synology` | [Overview](Synology/Overview.md) | 3 | Moves and cleans up NetBackup backups from the USB disk on the NAS, and checks the Task Scheduler scripts in a DSM configuration export against git. |
+| `Synology` | [Overview](Synology/Overview.md) | 2 | Checks the Task Scheduler scripts in a DSM configuration export against git. |
 | `Tmux` | [Overview](Tmux/Overview.md) | 1 | Rotates a tmux client between selected sessions for a dashboard screen. |
 | `Updates` | [Overview](Updates/Overview.md) | 8 | System/package/firmware update scripts across different distros and apps. |
 | `git` | [Overview](git/Overview.md) | 6 | Bulk git maintenance (init/pull/status/commit/sync) across local repos, plus Claude Code-driven doc updates. |
@@ -35,5 +35,5 @@ General-purpose Linux admin/utility scripts, grouped by topic.
 ## Notes
 
 - Every `.sh` script has a matching `.md` file; see [Templates/](Templates/) for the templates used to write them.
-- Scripts that use tools beyond the standard base system start with a dependency-check block that sources [lib/require_tools.sh](lib/require_tools.sh); scripts that only use standard tools have no such block. Exceptions: `Synology/USB_Copy_Clean_Delete.sh` runs on the NAS without the repo's `lib/` and uses the tools built into DSM, and `Synology/nas-dss-check.sh` checks `python3`/`shellcheck` itself with `command -v`.
+- Scripts that use tools beyond the standard base system start with a dependency-check block that sources [lib/require_tools.sh](lib/require_tools.sh); scripts that only use standard tools have no such block. Exception: `Synology/nas-dss-check.sh` checks `python3`/`shellcheck` itself with `command -v`.
 - Several scripts print console output/comments in Danish even though all documentation is written in English — each affected script's own `.md` flags this individually.
