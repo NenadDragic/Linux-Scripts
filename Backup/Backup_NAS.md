@@ -16,7 +16,7 @@ Run as root. Passing `dry-run` as the only argument adds rsync's `--dry-run` fla
 Prerequisites:
 
 - Must be run as root (script checks `id -u -eq 0` and exits otherwise).
-- `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` must be installed — the script checks each and exits if any is missing. `stdbuf` is used if present but is optional.
+- `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` must be installed; only `rsync` and `runuser` are checked (see the dependency check below). `stdbuf` is used if present but is optional.
 - A config file named `Backup.cfg` must exist next to the script (`$SCRIPT_DIR/Backup.cfg`) or at `/etc/Backup.cfg`, containing a line `Hostname=<name>` (see the `Backup.cfg` in this folder, which sets `Hostname=Debian_Laptop`).
 - `/mnt/NetBackup/<hostname>` must already exist/be mounted — the script only checks for it and exits with an error if it isn't; it does not mount or create it.
 - `/mnt/usb/Backup` is expected to be mounted too, since the log directory lives under it.
@@ -47,7 +47,7 @@ Exits with an error unless running as UID 0.
 
 ### Step 3 – Dependency check
 
-Confirms `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` are all on `PATH`, exiting if any is missing. Detects whether `stdbuf` is available (optional).
+Runs first, before everything else: `require_tools rsync runuser` (via `lib/require_tools.sh`) stops the script with an `apt install` hint if either is missing. The other tools are not checked. Later, the script detects whether `stdbuf` is available (optional).
 
 ### Step 4 – Dry-run flag
 

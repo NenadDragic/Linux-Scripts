@@ -16,7 +16,7 @@ Can be run from any directory — it does all of its work in a fixed temporary b
 Prerequisites:
 
 - An `apt`-based Linux distribution with `sudo` access.
-- `git`, `cmake`, and `make` must already be installed — the script checks each with `check_command` and exits with an error if any is missing (it does not install these three itself).
+- `git`, `cmake`, and `make` must already be installed — the dependency check below stops the script if any is missing (it does not install these three itself; `cmake` is reinstalled later as a build dependency).
 - Internet access to clone `https://github.com/strukturag/libheif.git`.
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`, `cmake`, `make`, `sudo`
 

@@ -35,5 +35,5 @@ General-purpose Linux admin/utility scripts, grouped by topic.
 ## Notes
 
 - Every `.sh` script has a matching `.md` file; see [Templates/](Templates/) for the templates used to write them.
-- Scripts that use tools beyond the standard base system start with a dependency-check block that sources [lib/require_tools.sh](lib/require_tools.sh); scripts that only use standard tools have no such block.
+- Scripts that use tools beyond the standard base system start with a dependency-check block that sources [lib/require_tools.sh](lib/require_tools.sh); scripts that only use standard tools have no such block. Exceptions: `Synology/USB_Copy_Clean_Delete.sh` runs on the NAS without the repo's `lib/` and uses the tools built into DSM, and `Synology/nas-dss-check.sh` checks `python3`/`shellcheck` itself with `command -v`.
 - Several scripts print console output/comments in Danish even though all documentation is written in English — each affected script's own `.md` flags this individually.

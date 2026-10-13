@@ -1,4 +1,9 @@
 #!/bin/bash
+# Version:      1.0
+# Date:         2026-10-06
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
+
 # --- Dependency check (auto-inserted) ---
 _d="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 while [ "$_d" != "/" ] && [ ! -f "$_d/lib/require_tools.sh" ]; do _d="$(dirname "$_d")"; done

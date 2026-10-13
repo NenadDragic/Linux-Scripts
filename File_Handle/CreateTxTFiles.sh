@@ -1,4 +1,8 @@
 #!/bin/bash
+# Version:      1.0
+# Date:         2026-03-30
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
 
 OUTDIR="${1:-$HOME/testfiles}"
 COUNT=1

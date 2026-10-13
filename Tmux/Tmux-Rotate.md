@@ -13,10 +13,14 @@ tmux har ingen indbygget timer til at skifte session. Scriptet kalder derfor `tm
 
 ## Installation
 
+Scriptet leder efter `lib/require_tools.sh` ved at gå op fra den mappe, det ligger i. Kopieres `Tmux-Rotate.sh` alene, stopper det med `FEJL: Kunne ikke finde lib/require_tools.sh`. Installér derfor `require_tools.sh` i en `lib`-mappe ved siden af `bin` (kør fra `Tmux/` i repoet):
+
 ```bash
-sudo install -m 755 tmux-rotate.sh /usr/local/bin/tmux-rotate
+sudo install -m 755 Tmux-Rotate.sh /usr/local/bin/tmux-rotate
+sudo install -D -m 644 ../lib/require_tools.sh /usr/local/lib/require_tools.sh
 # eller kun for din bruger:
-install -m 755 tmux-rotate.sh ~/.local/bin/tmux-rotate
+install -m 755 Tmux-Rotate.sh ~/.local/bin/tmux-rotate
+install -D -m 644 ../lib/require_tools.sh ~/.local/lib/require_tools.sh
 ```
 
 ## Brug

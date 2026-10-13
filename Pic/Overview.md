@@ -19,7 +19,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 | Script | Doc | Summary |
 | --- | --- | --- |
 | `Convert.sh` | [Convert.md](Convert.md) | Renames every file and directory in the current folder to uppercase, converts any resulting `.HEIC` files to quality-100 JPEGs with `heif-convert`, then runs a second uppercase-rename pass — a general folder-normalize-and-convert utility, not limited to photos. |
-| `Update_PVT_Folders.sh` | [Update_PVT_Folders.md](Update_PVT_Folders.md) | Recursively finds `*.PVT` files in the current directory tree and invokes `Convert.sh` (via a hardcoded path) once per match found. |
+| `Update_PVT_Folders.sh` | [Update_PVT_Folders.md](Update_PVT_Folders.md) | Recursively finds `*.PVT` files in the current directory tree and invokes `Convert.sh` (from the same folder as the script) once per match found. |
 
 ## Diagnostics/Maintenance
 
@@ -33,8 +33,8 @@ An index of the scripts in this folder and their documentation. Each script has 
 ## Notes
 
 - `Sort_Total.sh` is not a standalone implementation — it calls `Sort_Photos_Dates.sh` and `Sort_photos_Types.sh` directly (they must be present in the same folder), so any future change to those two scripts automatically applies to `Sort_Total.sh` as well.
-- `Play2.sh` is an explicit variant of `Play.sh`: same EXIF-driven date/camera sorting, but it additionally bundles paired MOV/HEIC/MP4/CR2 files with each JPG, adds a guard for "no matching files" that `Play.sh` lacks, and uses a slightly different (and likely unintentionally different) character-sanitizing regex.
+- `Play2.sh` is an explicit variant of `Play.sh`: same EXIF-driven date/camera sorting, but it additionally bundles paired MOV/HEIC/MP4/CR2 files with each JPG, matches only uppercase `.JPG`/`.JPEG` (its `nocaseglob` line is commented out), and uses a slightly different (and likely unintentionally different) character-sanitizing regex.
 - Required external tools recur across the folder: `exiftool` (most scripts, incl. DNG preview extraction in `Sort_Total.sh`), `heif-convert`/`libheif-examples` (HEIC conversion), and the Perl `rename` utility (`Convert.sh`).
 - Destructive/unsafe-by-design scripts: `Convert.sh` renames every file and subdirectory in the working directory to uppercase with no filter and no collision handling (can silently overwrite); `LibHEIF_Update.sh` purges the existing `libheif` packages before the source rebuild even starts.
 - `Convert.sh` ignores any argument passed to it — `Update_PVT_Folders.sh` passes the matched `.PVT` file path, but `Convert.sh` always processes the entire current working directory regardless.
-- Comments and console output across this folder's scripts are documented as English.
+- Console output across this folder's scripts is English; `Sort_Total.sh` has Danish comments.

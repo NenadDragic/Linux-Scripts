@@ -1,4 +1,8 @@
 #!/bin/bash
+# Version:      1.0
+# Date:         2026-09-14
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
 
 # Create the folders
 mkdir -p ORG MOV MP4 CR2 HEIC

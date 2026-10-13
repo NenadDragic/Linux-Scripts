@@ -134,7 +134,7 @@ Steps 3, 4 and 5 print a progress tag in front of each file: `[123/2805 | 00:03:
 
 ## Notes
 
-- Files that cannot be matched to a `.JPG`/`.JPEG` anchor are handled independently in Step 5, as long as their metadata contains a camera model and capture date
+- MOV/MP4 files that cannot be matched to a photo anchor are handled independently in Step 5, as long as their metadata contains a camera model and capture date. Other unpaired files (e.g. a CR2 without a matching JPG, or a HEIC whose conversion failed) are left in place
 - If EXIF or QuickTime metadata (camera model or date) is missing from a file, the file is **skipped** with a warning
 - The script uses `mv` (move), not `cp` (copy), so files are removed from the source folder once sorted. Files that are skipped (missing metadata) stay in place
 - A file is never overwritten: if a file with the same name already exists in the target folder, the source file is left in place with a warning

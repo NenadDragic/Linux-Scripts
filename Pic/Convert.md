@@ -45,5 +45,5 @@ Prerequisites:
 - The source `.HEIC` is kept after conversion (unlike `Sort_Total.sh`'s optional DNG deletion), so both the `.HEIC` and the new `.JPG` remain afterward.
 - **The script ignores any argument passed to it.** `Update_PVT_Folders.sh` calls it as `"$CONVERT_SCRIPT" "$file"`, but `Convert.sh` never references `$1`/`$@` — it always processes every entry of whatever directory is current when it runs, regardless of what filename was passed in.
 - Re-running is mostly idempotent for the uppercase renames (already-uppercase names are unaffected), but the HEIC→JPEG conversion has no existence check, so it will re-convert and overwrite the `.JPG` every time it runs while the `.HEIC` is still present.
-- No error handling for missing tools: if `heif-convert` or `rename` are not installed, the script fails with a plain "command not found" partway through.
+- Missing tools are caught up front: if `heif-convert` or `rename` are not installed, the dependency check stops the script before anything is renamed.
 - Comments are in English.

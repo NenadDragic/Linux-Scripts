@@ -16,4 +16,4 @@ An index of the scripts in this folder and their documentation. Each script has 
 
 - Success/error messages printed for each conversion are in Danish, while the surrounding documentation is in English.
 - Not safe to blindly re-run on the same day: output filenames are deterministic (`filename_date.pdf`), so a same-day re-run silently overwrites an existing file of the same name in `PDF/`.
-- Auto-installs `wkhtmltopdf` via `sudo apt install` if missing, but only supports Debian/Ubuntu (`apt`) — it does nothing on other distros beyond a commented-out, unused `yum` line.
+- Requires `wkhtmltopdf`, checked via the shared `lib/require_tools.sh`; if it is missing the script stops with an `apt install` hint (nothing is installed automatically).

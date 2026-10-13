@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Version:      1.0
+# Date:         2026-09-22
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
+
 # SpaceUsageRealTime.sh — vis alle drev, vælg ét, og log dets forbrug i realtid.
 #
 # Viser først en nummereret liste over alle monterede drev/shares (df -h,

@@ -28,7 +28,7 @@ Prerequisites:
 
 ### Step 2 – Skip unmatched glob
 
-`[ -e "$filename" ] || continue` skips the iteration if the glob didn't expand (e.g. no JPG/JPEG files present). `Play.sh` does not have this guard.
+`[ -e "$filename" ] || continue` skips the iteration if the glob didn't expand (e.g. no JPG/JPEG files present). `Play.sh` has the same guard.
 
 ### Step 3 – Derive the base filename
 
@@ -60,7 +60,7 @@ For each extension in `JPG JPEG MOV HEIC MP4 CR2`, if `"${baseFilename}.${ext}"`
 
 - Files are always **copied**, never moved — originals stay in place, for every one of the six extensions handled.
 - **Sanitizing regex differs from `Play.sh`:** `Play.sh` uses `[^a-zA-Z0-9]` (keeps all digits, including `0`), while `Play2.sh` uses `[^a-zA-Z1-9]` — the digit `0` is **not** in the keep-set and gets replaced with `_`. This looks like it may be an unintentional typo carried over from `Play.sh`, but it is exactly what the code does.
-- Adds the `[ -e "$filename" ] || continue` guard that `Play.sh` lacks, so `Play2.sh` won't error out when the directory has no matching JPG/JPEG files.
+- Like `Play.sh`, it has a `[ -e "$filename" ] || continue` guard, so it won't error out when the directory has no matching JPG/JPEG files.
 - No delete or move step — re-running the script simply re-copies matching files into the same target folders (`cp` silently overwrites), so it is safe to re-run, though not incremental.
 - Does not further sort output by file type into `ORG`/`MOV`/`CR2`/etc. subfolders the way `Sort_photos_Types.sh` / `Sort_Total.sh` do — everything for a given date/camera lands together in one folder.
 - Comments and output messages are in English.

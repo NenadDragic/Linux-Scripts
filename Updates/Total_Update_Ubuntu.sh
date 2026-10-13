@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Version:      1.0
+# Date:         2026-09-22
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
+
 # =============================================================================
 # Total_Update_Ubuntu.sh
 # Total system opdatering af Ubuntu Desktop

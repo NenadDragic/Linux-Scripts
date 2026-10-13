@@ -1,16 +1,16 @@
-# update-docs-commit-push.sh
+# Update-docs-commit-push.sh
 
-Calls the Claude Code CLI with a fixed prompt that finds script files of any language (`.ps1`, `.sh`, `.py`, etc.) anywhere in the repo missing a matching `.md` doc, writes that documentation in the same style as the existing docs, updates the relevant overview file (the root [Overview.md](../Overview.md), or [Tools/README.md](README.md) for scripts under `Tools/`), and then commits and pushes the result to `origin` — all without asking for confirmation along the way. Bash equivalent of [Update-Docs-Commit-Push.ps1](Update-Docs-Commit-Push.ps1); see there for the Windows/PowerShell version of the same logic.
+Calls the Claude Code CLI with a fixed prompt that finds script files of any language (`.ps1`, `.sh`, `.py`, etc.) anywhere in the repo missing a matching `.md` doc, writes that documentation in the same style as the existing docs, updates the relevant overview file (the root [Overview.md](../Overview.md), or `Tools/README.md` for scripts under `Tools/`), and then commits and pushes the result to `origin` — all without asking for confirmation along the way. Bash equivalent of `Update-Docs-Commit-Push.ps1` in the `Tools` folder of the Edora repository, which is the Windows/PowerShell version of the same logic.
 
 ---
 
 ## Usage
 
 ```bash
-./update-docs-commit-push.sh
+./Update-docs-commit-push.sh
 ```
 
-Requires `bash`, `git`, and the [Claude Code CLI](https://claude.com/claude-code) (`claude`) on the `PATH`, logged in on the machine that runs it. Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`. Make it executable once with `chmod +x update-docs-commit-push.sh`, or run it directly with `bash update-docs-commit-push.sh`. It takes no arguments or configuration — the prompt sent to Claude is fixed in the script.
+Requires `bash`, `git`, and the [Claude Code CLI](https://claude.com/claude-code) (`claude`) on the `PATH`, logged in on the machine that runs it. Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`. Make it executable once with `chmod +x Update-docs-commit-push.sh`, or run it directly with `bash Update-docs-commit-push.sh`. It takes no arguments or configuration — the prompt sent to Claude is fixed in the script.
 
 ---
 

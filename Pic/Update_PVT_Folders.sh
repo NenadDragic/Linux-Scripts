@@ -1,4 +1,8 @@
 #!/bin/bash
+# Version:      1.0
+# Date:         2026-10-06
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
 
 # Check if Convert.sh exists and is executable (it lives in the same folder as this script)
 CONVERT_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/Convert.sh"

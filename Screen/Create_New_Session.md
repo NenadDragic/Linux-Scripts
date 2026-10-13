@@ -36,5 +36,5 @@ Prerequisites:
 
 - No validation is performed on the entered name — an empty or unusual value is passed straight through to `screen -S`, which will apply its own defaults/errors.
 - The session name is not sanitized, but it is double-quoted when passed to `screen`, so spaces and most special characters in the name are handled safely.
-- The script does not check whether `screen` is installed before calling it; if it's missing, the shell will report a "command not found" error.
+- If `screen` is missing, the dependency check stops the script with an `apt install` hint before the prompt.
 - The new session is started attached (in the foreground), not detached — the invoking shell is effectively replaced by the screen session until the user detaches from it.

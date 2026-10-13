@@ -1,4 +1,8 @@
 #!/bin/bash
+# Version:      1.0
+# Date:         2024-01-18
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
 
 # Specify the folder path
 folder_path=$(pwd)

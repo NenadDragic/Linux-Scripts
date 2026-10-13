@@ -1,18 +1,18 @@
-# sync-from-github.sh
+# Sync-from-github.sh
 
-Scans a base folder for git repositories (one level deep) and, for each one, checks GitHub for new commits and fast-forwards the local checkout — without ever overwriting local, uncommitted work or attempting to resolve a diverged history. Bash equivalent of [Sync-FromGitHub.ps1](Sync-FromGitHub.ps1); see there for the Windows/PowerShell version of the same logic.
+Scans a base folder for git repositories (one level deep) and, for each one, checks GitHub for new commits and fast-forwards the local checkout — without ever overwriting local, uncommitted work or attempting to resolve a diverged history. Bash equivalent of `Sync-FromGitHub.ps1` in the `Tools` folder of the Edora repository, which is the Windows/PowerShell version of the same logic.
 
 ---
 
 ## Usage
 
 ```bash
-./sync-from-github.sh
+./Sync-from-github.sh
 # or, to check a different base folder:
-./sync-from-github.sh /path/to/repos
+./Sync-from-github.sh /path/to/repos
 ```
 
-Requires `bash` and `git` on the `PATH`. Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`. Make it executable once with `chmod +x sync-from-github.sh`, or run it directly with `bash sync-from-github.sh` without changing permissions. Each repo found under the base folder must already have a configured remote-tracking branch (i.e. have been cloned or have `git branch --set-upstream-to` set) — a repo without one is reported and skipped, not treated as an error that stops the rest.
+Requires `bash` and `git` on the `PATH`. Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `git`. Make it executable once with `chmod +x Sync-from-github.sh`, or run it directly with `bash Sync-from-github.sh` without changing permissions. Each repo found under the base folder must already have a configured remote-tracking branch (i.e. have been cloned or have `git branch --set-upstream-to` set) — a repo without one is reported and skipped, not treated as an error that stops the rest.
 
 ### Configuration
 
@@ -55,5 +55,5 @@ If the loop never matched any `.git` subdirectory, prints a final "no repos foun
 - **Uncommitted local changes always win** — a repo that's behind but dirty is skipped entirely rather than stashed or overwritten, so re-run the script after committing or stashing to actually pick up the update.
 - **Repo discovery is exactly one level deep.** A base folder containing repos nested inside subfolders (e.g. `~/Git/work/some-repo`) won't find `some-repo` — only direct children of the base folder are checked.
 - **`set -uo pipefail` is set but not `-e`** — a failing command inside the per-repo subshell (other than the explicit `exit 1` when `cd` fails) does not abort the whole script; the loop continues to the next repo regardless.
-- Line endings are forced to LF via the repo's [.gitattributes](../.gitattributes) (`*.sh text eol=lf`) so Windows' `autocrlf` can't corrupt the shebang or `case`/`if` blocks when the file is checked out or touched by git locally.
+- Line endings are forced to LF via the repo's [.gitattributes](../.gitattributes) (`* text=auto eol=lf`) so Windows' `autocrlf` can't corrupt the shebang or `case`/`if` blocks when the file is checked out or touched by git locally.
 - Only checks the `origin` remote; a repo with a different or additional remote configured for its upstream branch is not specifically accounted for beyond what `@{u}` already resolves to.

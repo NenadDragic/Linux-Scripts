@@ -16,7 +16,7 @@ Run as root, with the SD card already mounted at `/media/nenad/rootfs/` (e.g. vi
 Prerequisites:
 
 - Must be run as root (script checks `id -u -eq 0` and exits otherwise).
-- `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` must be installed — checked individually, script exits if any is missing. `stdbuf` is used if present but optional.
+- `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` must be installed; only `rsync` and `runuser` are checked (see the dependency check below). `stdbuf` is used if present but optional.
 - A config file named `Backup_SD.cfg` must exist next to the script or at `/etc/Backup_SD.cfg`, containing a line `Hostname=<name>` (see the `Backup_SD.cfg` in this folder, which sets `Hostname=FlightRadar_24`). The script exits immediately with an explicit error if this file isn't found in either location.
 - `/mnt/usb/Backup` must already exist/be mounted (checked via `MOUNT_ROOT`); the hostname subfolder under it is created automatically if missing.
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rsync`, `runuser`
@@ -47,7 +47,7 @@ Exits with an error unless running as UID 0.
 
 ### Step 3 – Dependency check
 
-Confirms `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` are on `PATH`; exits if any is missing. Detects optional `stdbuf`.
+Runs first, before everything else: `require_tools rsync runuser` (via `lib/require_tools.sh`) stops the script with an `apt install` hint if either is missing. The other tools are not checked. Later, the script detects optional `stdbuf`.
 
 ### Step 4 – Dry-run flag
 

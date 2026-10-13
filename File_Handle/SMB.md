@@ -80,5 +80,5 @@ Any other `ACTION` value prints "Ugyldig handling" and exits with status 1.
 - Idempotent-ish: mounting an already-mounted share or unmounting an already-unmounted one will simply produce a `mount`/`umount` error message via the exit-code check — the script does not pre-check current mount state.
 - Hardcoded paths and values: remote server IP (`192.168.1.50`), mount base (`/mnt`), UID/GID (`1000`), CIFS version (`3.0`), and per-share credential file paths under `/home/nenad/` — the username in those paths (`nenad`) is specific to the original machine. Only the file *paths* are hardcoded here; no credential contents are stored in the script itself.
 - `EXTRA_OPTS` is defined per-share but is always an empty string in all three cases, so it currently has no effect (leaves a trailing comma in the constructed mount options string).
-- Requires the `cifs-utils` package (`mount.cifs`) to be installed; the script does not check for or install it.
+- Requires the `cifs-utils` package (`mount.cifs`); the dependency check stops the script with an install hint if it is missing, but nothing is installed automatically.
 - Output messages, including emoji (checkmarks/crosses), are in Danish.

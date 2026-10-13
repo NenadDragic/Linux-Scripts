@@ -15,7 +15,7 @@ Run it from the folder containing the JPG/JPEG photos you want to organize.
 
 Prerequisites:
 
-- `exiftool` must already be installed — the script does not check for or install it.
+- `exiftool` must already be installed — the script checks for it (see below) but does not install it.
 - Write access to the current directory (to create the date/camera-model subfolders and copy files into them).
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `exiftool`
 

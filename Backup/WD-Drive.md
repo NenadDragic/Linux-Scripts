@@ -30,7 +30,7 @@ Option (for `umount` only):
 
 Prerequisites:
 
-- `cryptsetup`, `mount`/`umount`, `lsblk`, `findmnt` and `df` are used without being checked.
+- `mount`/`umount`, `lsblk`, `findmnt` and `df` are used without being checked (`cryptsetup` is checked, see below).
 - `fuser` (package `psmisc`) is optional — used to show which processes keep the drive busy.
 - `smartctl` (`smartmontools`) is optional — used by `status` when run as root.
 - `udisksctl` (`udisks2`) is only needed for `--sluk`; if missing the script warns and the drive is still locked and safe to remove.

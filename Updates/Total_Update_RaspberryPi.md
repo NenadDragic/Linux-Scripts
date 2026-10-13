@@ -18,7 +18,7 @@ Prerequisites:
 - Root privileges (`sudo`)
 - `apt`/`apt-get` (Raspberry Pi OS / Debian base)
 - Optional tools, auto-detected with `command -v` and skipped (not installed) if absent: `rpi-eeprom-update`, `snap`, `pip3`, `npm`, `updatedb` (from `mlocate`/`plocate`)
-- `/etc/os-release` for OS name/version detection and `/proc/device-tree/model` for Pi model detection (both optional — the script warns but continues if either is missing)
+- `/etc/os-release` for OS name/version detection and `/proc/device-tree/model` for Pi model detection (both optional — a missing `/etc/os-release` falls back to a generic "Linux" label, and a missing `/proc/device-tree/model` gives a warning; the script continues either way)
 
 ---
 
