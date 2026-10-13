@@ -23,7 +23,7 @@ Prerequisites:
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `TOOLS` | `mtr`, `bat`, `glances`, `tmux`, `doublecmd-qt`, `doublecmd-plugins`, `cockpit` | Candidate packages, as `package\|Danish description` pairs; edit this array to change what's offered |
+| `TOOLS` | `mtr`, `bat`, `glances`, `tmux`, `doublecmd-qt`, `doublecmd-plugins`, `cockpit`, `attr`, `pigz`, `shellcheck` | Candidate packages, as `package\|Danish description` pairs; edit this array to change what's offered |
 
 ---
 

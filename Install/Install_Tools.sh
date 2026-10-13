@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Version:      1.1
+# Date:         2026-10-13
+# Test Run:
+# Developper:   Nenad(a)dragic(.)com
+
 # Install_Tools.sh – vælg hvilke værktøjer der skal installeres via apt
 set -euo pipefail
 
@@ -11,6 +16,9 @@ TOOLS=(
   "doublecmd-qt|Double Commander – tovindues filhåndtering (Qt-udgave, GUI)"
   "doublecmd-plugins|Plugins til Double Commander (trækkes automatisk med doublecmd-qt)"
   "cockpit|Cockpit – webbaseret administration af serveren (https://<host>:9090)"
+  "attr|Værktøjer til udvidede filattributter (getfattr/setfattr)"
+  "pigz|Parallel gzip – udnytter alle CPU-kerner ved (de)komprimering"
+  "shellcheck|Statisk analyse/lint af shell-scripts"
 )
 
 # --- Rettigheds-validering -------------------------------------------------
