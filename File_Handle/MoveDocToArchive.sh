@@ -134,19 +134,19 @@ for fil in "${filer[@]}"; do
 
     # Beregn checksum før flytning hvis nødvendigt
     if [[ "$brug_checksum" == true ]]; then
-        checksum_før=$(sha256sum "$fil" | awk '{print $1}')
+        checksum_foer=$(sha256sum "$fil" | awk '{print $1}')
     fi
 
     # Flyt filen
     if mv "$fil" "$til_folder/"; then
         if [[ "$brug_checksum" == true ]]; then
             checksum_efter=$(sha256sum "$til_folder/$filnavn" | awk '{print $1}')
-            if [[ "$checksum_før" == "$checksum_efter" ]]; then
+            if [[ "$checksum_foer" == "$checksum_efter" ]]; then
                 echo "OK:            $filnavn  [$checksum_efter]" >> "$logfil"
                 ((antal_ok++))
             else
                 echo "CHECKSUM FEJL: $filnavn" >> "$logfil"
-                echo "  Før:   $checksum_før" >> "$logfil"
+                echo "  Før:   $checksum_foer" >> "$logfil"
                 echo "  Efter: $checksum_efter" >> "$logfil"
                 ((antal_checksum_fejl++))
             fi

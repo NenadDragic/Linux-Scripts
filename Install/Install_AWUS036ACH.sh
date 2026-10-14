@@ -26,7 +26,7 @@ sudo apt-get install -y dkms git realtek-rtl88xxau-dkms
 
 # Clone repository and navigate to directory
 git clone https://github.com/aircrack-ng/rtl8812au.git
-cd rtl8812au
+cd rtl8812au || exit 1
 
 # Make and install the driver
 make

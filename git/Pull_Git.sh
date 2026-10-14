@@ -30,7 +30,7 @@ for dir in "$base_dir"/*; do
     # Check if it's a directory
     if [ -d "$dir" ]; then
         # Change to the directory
-        cd "$dir"
+        cd "$dir" || continue
         
         # Check if it's a git repository
         if [ -d ".git" ]; then

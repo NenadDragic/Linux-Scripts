@@ -58,7 +58,7 @@ build_latest_version() {
     
     # Get latest release tag
     git fetch --tags
-    latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+    latest_tag=$(git describe --tags "$(git rev-list --tags --max-count=1)")
     
     log "Checking out latest version: $latest_tag"
     git checkout "$latest_tag"
@@ -71,7 +71,7 @@ build_latest_version() {
     cmake -DCMAKE_BUILD_TYPE=Release ..
     
     log "Building libheif..."
-    make -j$(nproc)
+    make -j"$(nproc)"
     
     log "Installing libheif..."
     sudo make install
