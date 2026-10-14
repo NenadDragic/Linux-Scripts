@@ -11,7 +11,7 @@ chmod +x Backup_USB_Umount.sh
 ./Backup_USB_Umount.sh
 ```
 
-The script calls `sudo` internally for both `umount` and `eject`, so it can be invoked without prefixing `sudo` as long as the running user has sudo rights (expect a password prompt). Run it before physically disconnecting the backup USB drive, once any backup jobs writing to it (`Backup_USB.sh`, `Backup_SD_USB.sh`) have finished.
+The script calls `sudo` internally for both `umount` and `eject`, so it can be invoked without prefixing `sudo` as long as the running user has sudo rights (expect a password prompt). Run it before physically disconnecting the backup USB drive, once any backup jobs writing to it (`Backup_USB.sh`) have finished.
 
 Prerequisites:
 

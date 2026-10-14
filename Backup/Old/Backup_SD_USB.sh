@@ -19,41 +19,27 @@ require_tools rsync "runuser:util-linux"
 set -euo pipefail
 IFS=$'\n\t'
 
-# === RSYNC BACKUP SCRIPT (REN, INGEN SELVMODIFICERING) ===
-# Læser Hostname fra Backup.cfg, kører rsync og logger lokalt,
+# === RSYNC BACKUP SCRIPT v6 ===
+# Læser hostnavn fra SD-kortets /etc/hostname, kører rsync og logger lokalt,
 # forsøger robust append/merge/cp til NFS-daglog og skriver status på NFS (med lokal fallback).
 #
-# Ændring i v5: forhindrer at scriptet stopper tidligt ved at slå errexit/pipefail fra
-# kun under den lange rsync-pipeline, så vi altid når append/cp-fallback-sektionen,
-# selv hvis rsync returnerer ikke-nul (fx exit 23).
-#
-# Brug: gem som Backup_NAS_Complete_v5.sh ; dos2unix Backup_NAS_Complete_v5.sh ; chmod +x Backup_NAS_Complete_v5.sh
-# Kør som root: sudo ./Backup_NAS_Complete_v5.sh [dry-run]
-
 # -----------------------
-# Konfiguration
-# -----------------------
-SOURCE_DIR="/"
+SOURCE_DIR="/media/nenad/rootfs/"
 
-# Find scriptdir og configfil
-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-CFG_FILE="$SCRIPT_DIR/Backup.cfg"
-if [ ! -f "$CFG_FILE" ]; then
-    CFG_FILE="/etc/Backup.cfg"
-fi
-
-# Læs Hostname fra Backup.cfg og trim CR/LF/spaces
+# Brug SD-kortets eget hostnavn fra dets /etc/hostname (ikke denne maskines)
+SD_HOSTNAME_FILE="${SOURCE_DIR%/}/etc/hostname"
 HOSTNAME_FROM_CFG=""
-if [ -f "$CFG_FILE" ]; then
-    HOSTNAME_FROM_CFG=$(grep -E '^Hostname=' "$CFG_FILE" | head -n1 | cut -d'=' -f2- | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+if [ -f "$SD_HOSTNAME_FILE" ]; then
+    HOSTNAME_FROM_CFG="$(head -n1 "$SD_HOSTNAME_FILE" | cut -d'.' -f1 | tr -d '\r\n[:space:]')"
 fi
 
 if [ -z "$HOSTNAME_FROM_CFG" ]; then
-    echo "FEJL: Kunne ikke finde 'Hostname=' i $CFG_FILE. Ret Backup.cfg så den indeholder 'Hostname=Debian_Laptop' (fx)."
+    echo "FEJL: Kunne ikke læse hostnavn fra $SD_HOSTNAME_FILE. Er SD-kortet monteret på $SOURCE_DIR?"
     exit 1
 fi
 
-DEST_BASE="/mnt/NetBackup/${HOSTNAME_FROM_CFG}"
+# DEST_BASE="/mnt/NetBackup/${HOSTNAME_FROM_CFG}"
+DEST_BASE="/mnt/usb/Backup/${HOSTNAME_FROM_CFG}"
 
 EXCLUDES=(
     "/dev"
@@ -96,10 +82,21 @@ if [ "${1:-}" = "dry-run" ]; then
     echo "--- KØRER DRY-RUN: INGEN FILER VIL BLIVE ÆNDRET ---"
 fi
 
-# Tjek mount
-if [ ! -d "$DEST_BASE" ]; then
-    echo "FEJL: Destinationsmappen $DEST_BASE eksisterer ikke eller er ikke monteret."
+# Tjek at rodmount eksisterer (bekræfter at USB-disken er monteret)
+MOUNT_ROOT="/mnt/usb/Backup"
+if [ ! -d "$MOUNT_ROOT" ]; then
+    echo "FEJL: Mountpunkt $MOUNT_ROOT eksisterer ikke — er USB-disken monteret?"
     exit 1
+fi
+
+# Opret $DEST_BASE (hostname-mappe) automatisk hvis den mangler
+if [ ! -d "$DEST_BASE" ]; then
+    echo "Info: Backup-mappe $DEST_BASE mangler — opretter den nu..."
+    if ! mkdir -p "$DEST_BASE"; then
+        echo "FEJL: Kunne ikke oprette $DEST_BASE."
+        exit 1
+    fi
+    echo "Info: $DEST_BASE oprettet."
 fi
 
 # -----------------------
@@ -108,7 +105,7 @@ fi
 DATE=$(date +%Y-%m-%d)
 DEST_PATH="$DEST_BASE/$DATE"
 
-# NFS logmappe: /mnt/NetBackup/Log/<HOSTNAME>/
+# NFS logmappe: /mnt/usb/Backup/Log/<HOSTNAME>/
 LOG_DIR_NFS="/mnt/usb/Backup/Log/${HOSTNAME_FROM_CFG}"
 mkdir -p "$LOG_DIR_NFS" 2>/dev/null || true
 LOG_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.log"
@@ -119,8 +116,11 @@ LOG_LOCAL_DIR="/var/log/rsync_backup"
 mkdir -p "$LOG_LOCAL_DIR"
 LOG_LOCAL_FILE="$LOG_LOCAL_DIR/rsync_backup_${DATE}_$$.log"
 
-# Opret destinationsmappe (hvis nødvendig)
-mkdir -p "$DEST_PATH" 2>/dev/null || true
+# Opret dato-destinationsmappe (hvis nødvendig)
+if ! mkdir -p "$DEST_PATH"; then
+    echo "FEJL: Kunne ikke oprette backup-destination $DEST_PATH."
+    exit 1
+fi
 
 # -----------------------
 # Write exclude-file to temp in local dir to avoid /dev/fd issues and CRLF
@@ -189,17 +189,24 @@ fi
 
 # -----------------------
 # Run rsync pipeline
-# Important: temporarily disable errexit and pipefail so the script continues
-# even if rsync returns non-zero (we capture rsync_exit and handle it below).
+# v6 FIX: Bruger synkron sed | tee -a i stedet for process substitution (>(stdbuf ...)).
+# Process substitution er ikke synkroniseret — bash venter ikke på den er færdig,
+# hvilket medførte at logfilen var tom/ufuldstændig når append til NFS kørte bagefter.
+# Med sed | tee -a er alle tre kommandoer i en synkron pipeline: bash venter på dem alle.
+#
+# PIPESTATUS-rækkefølge: [0]=rsync [1]=sed [2]=tee
+# Vi fanger stadig rsync's exit code fra PIPESTATUS[0].
+#
+# Midlertidigt slå errexit/pipefail fra så scriptet ikke stopper ved rsync exit 23 o.l.
 # -----------------------
 set +e
 set +o pipefail 2>/dev/null || true
 
-# Run rsync and stream to local log (convert CR to LF for readability)
-# tee to a process substitution that sed's CR to LF and appends to local log.
-"${STDBUF_PREFIX[@]}" "${RSYNC_CMD[@]}" 2>&1 | tee >(stdbuf -oL sed -u 's/\r/\n/g' >> "$LOG_LOCAL_FILE")
+"${STDBUF_PREFIX[@]}" "${RSYNC_CMD[@]}" 2>&1 \
+    | sed -u 's/\r/\n/g' \
+    | tee -a "$LOG_LOCAL_FILE"
 
-# capture rsync exit code from pipeline (rsync is the first element)
+# Capture rsync exit code (index 0 i pipeline)
 rsync_exit=${PIPESTATUS[0]:-1}
 
 # Restore strict mode
@@ -282,7 +289,7 @@ else
         if cp "$LOG_LOCAL_FILE" "$LOG_FILE_NFS" 2>>"$LOG_LOCAL_FILE"; then
             append_success="true"
             echo "Local log er kopieret til $LOG_FILE_NFS (cp fallback)"
-            rm-f "$LOG_LOCAL_FILE" 2>/dev/null || true
+            rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
         else
             echo "Fejl: cp fallback mislykkedes" >> "$LOG_LOCAL_FILE"
         fi
@@ -316,7 +323,7 @@ else
             echo "CP fallback success: lokal log kopieret til $CP_TARGET"
             rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
         else
-            echo "CP fallback mislykkedes; lokal log beholdes: $LOG_LOCAL_FILE" >> "$LOG_LOCAL_FILE"
+            echo "Fejl: cp fallback mislykkedes; lokal log beholdes: $LOG_LOCAL_FILE" >> "$LOG_LOCAL_FILE"
         fi
     fi
 
@@ -354,9 +361,11 @@ LOG_TAIL="$(awk '/^Number of files:/ {found=1} found' "$STATS_SOURCE" 2>/dev/nul
 if [ "$rsync_exit" -eq 0 ]; then
     echo "--- SUCCESS ---"
 
-    STATS=$(grep -E 'Total transferred file size|Number of regular files transferred' "$STATS_SOURCE" | tail -n 2 || true)
-    TOTAL_SIZE=$(echo "$STATS" | grep 'Total transferred file size' | awk '{print $NF}' || true)
-    FILE_COUNT=$(echo "$STATS" | grep 'Number of regular files transferred' | awk '{print $NF}' || true)
+    # v6 FIX: Brug en mere robust grep der matcher rsync's stats-output uanset whitespace-format.
+    # rsync kan outputte tal med komma-separatorer (fx "49,196,532,484"), så vi bruger
+    # en bredere match og udtrækker den SIDSTE kolonne (tail) som værdien.
+    TOTAL_SIZE=$(grep -E '^Total transferred file size:' "$STATS_SOURCE" | tail -n1 | awk '{print $(NF-1), $NF}' || true)
+    FILE_COUNT=$(grep -E '^Number of regular files transferred:' "$STATS_SOURCE" | tail -n1 | awk '{print $NF}' || true)
 
     if [ -n "$TOTAL_SIZE" ] && [ -n "$FILE_COUNT" ]; then
         echo "✅ Backup fuldført: $DATE"

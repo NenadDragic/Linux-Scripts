@@ -20,7 +20,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # === RSYNC BACKUP SCRIPT v6 ===
-# Læser Hostname fra Backup.cfg, kører rsync og logger lokalt,
+# Bruger maskinens hostnavn, kører rsync og logger lokalt,
 # forsøger robust append/merge/cp til NFS-daglog og skriver status på NFS (med lokal fallback).
 #
 # Ændring i v6: Erstatter ustabil process substitution (>(stdbuf ...)) med synkron
@@ -35,30 +35,12 @@ IFS=$'\n\t'
 # -----------------------
 SOURCE_DIR="/"
 
-# Find scriptdir og configfil
-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-CFG_FILE="$SCRIPT_DIR/Backup.cfg"
-if [ ! -f "$CFG_FILE" ]; then
-    CFG_FILE="/etc/Backup.cfg"
-fi
-
-# Pre-flight: Tjek at cfg-filen eksisterer — ellers stop med det samme
-if [ ! -f "$CFG_FILE" ]; then
-    echo "FEJL: Konfigurationsfil 'Backup.cfg' blev ikke fundet."
-    echo "  Søgt i: $SCRIPT_DIR/Backup.cfg"
-    echo "  Søgt i: /etc/Backup.cfg"
-    echo "Opret filen ét af disse steder og sæt mindst: Hostname=<navn>"
-    exit 1
-fi
-
-# Læs Hostname fra Backup.cfg og trim CR/LF/spaces
-HOSTNAME_FROM_CFG=""
-if [ -f "$CFG_FILE" ]; then
-    HOSTNAME_FROM_CFG=$(grep -E '^Hostname=' "$CFG_FILE" | head -n1 | cut -d'=' -f2- | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-fi
+# Brug maskinens eget hostnavn (kort form, uden domæne)
+HOSTNAME_FROM_CFG="$(hostname -s 2>/dev/null || cat /etc/hostname 2>/dev/null || true)"
+HOSTNAME_FROM_CFG="$(printf '%s' "$HOSTNAME_FROM_CFG" | tr -d '\r\n[:space:]')"
 
 if [ -z "$HOSTNAME_FROM_CFG" ]; then
-    echo "FEJL: Kunne ikke finde 'Hostname=' i $CFG_FILE. Ret Backup.cfg så den indeholder 'Hostname=Debian_Laptop' (fx)."
+    echo "FEJL: Kunne ikke bestemme maskinens hostnavn (hostname -s / /etc/hostname)."
     exit 1
 fi
 

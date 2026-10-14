@@ -79,5 +79,5 @@ Logs how many folders were archived, skipped and failed, plus free space. Exits 
 
 - **Destructive:** deletes the backup folders, but only after their archive has been validated. Ctrl-C removes the unfinished archive and leaves the folder untouched.
 - Never touches a date the backup script is working on right now, because it shares that script's lock file.
-- The script's comments and help text still call it `Backup_Archive_v1.sh` and refer to the backup script as `Backup_NAS_Complete_v6.sh`; in this repo the files are `Backup_USB_Pack.sh` and `Backup_USB.sh`/`Backup_NAS.sh`.
+- The script's comments and help text still call it `Backup_Archive_v1.sh` and refer to the backup script as `Backup_NAS_Complete_v6.sh`; in this repo the files are `Backup_USB_Pack.sh` and `Backup_USB.sh`.
 - Comments and console output are in Danish.

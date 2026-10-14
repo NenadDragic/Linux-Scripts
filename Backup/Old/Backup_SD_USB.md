@@ -1,6 +1,6 @@
 # Backup SD USB
 
-Reads a target hostname from a config file, then uses `rsync` to mirror an already-mounted SD card's root filesystem (`/media/nenad/rootfs/`) to a dated folder on a locally mounted USB backup drive (`/mnt/usb/Backup/<hostname>`), with a real-time local log appended to a daily log on the same USB drive and a written status file on success or failure.
+Reads the SD card's own hostname from its `etc/hostname`, then uses `rsync` to mirror an already-mounted SD card's root filesystem (`/media/nenad/rootfs/`) to a dated folder on a locally mounted USB backup drive (`/mnt/usb/Backup/<hostname>`), with a real-time local log appended to a daily log on the same USB drive and a written status file on success or failure.
 
 ---
 
@@ -17,7 +17,7 @@ Prerequisites:
 
 - Must be run as root (script checks `id -u -eq 0` and exits otherwise).
 - `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` must be installed; only `rsync` and `runuser` are checked (see the dependency check below). `stdbuf` is used if present but optional.
-- A config file named `Backup_SD.cfg` must exist next to the script or at `/etc/Backup_SD.cfg`, containing a line `Hostname=<name>` (see the `Backup_SD.cfg` in this folder, which sets `Hostname=FlightRadar_24`). The script exits immediately with an explicit error if this file isn't found in either location.
+- No config file is needed: the destination folder is named after the hostname in the SD card's `/media/nenad/rootfs/etc/hostname`. The script exits with an error if that file can't be read (e.g. the card isn't mounted).
 - `/mnt/usb/Backup` must already exist/be mounted (checked via `MOUNT_ROOT`); the hostname subfolder under it is created automatically if missing.
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rsync`, `runuser`
 
@@ -26,7 +26,7 @@ Prerequisites:
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `SOURCE_DIR` | `/media/nenad/rootfs/` | Mounted SD card root filesystem to back up |
-| `CFG_FILE` | `$SCRIPT_DIR/Backup_SD.cfg`, falls back to `/etc/Backup_SD.cfg` | Location of the config file that supplies `Hostname=` |
+| `SD_HOSTNAME_FILE` | `${SOURCE_DIR}etc/hostname` | The SD card's hostname file, used to name the destination and log folders |
 | `DEST_BASE` | `/mnt/usb/Backup/${HOSTNAME_FROM_CFG}` | Destination folder on the USB backup drive |
 | `MOUNT_ROOT` | `/mnt/usb/Backup` | Sanity check that the USB backup drive is mounted |
 | `EXCLUDES` | array | rsync exclude list: `/dev`, `/lost+found`, `/media`, `/mnt`, `/opt`, `/proc`, `/run`, `/snap`, `/srv`, `/sys`, `/tmp`, `/var/run`, `/var/tmp`, `/boot/*`, `/home/nenad/.cache/*`, `/snap/*.*` |
@@ -39,7 +39,7 @@ Prerequisites:
 
 ### Step 1 – Locate and validate config
 
-Resolves its own directory and looks for `Backup_SD.cfg` there, then at `/etc/Backup_SD.cfg`. If neither exists, prints both searched paths and exits immediately. Extracts `Hostname=` (trimmed of CR/whitespace); exits with an error if it's still empty.
+Reads the first line of the SD card's `etc/hostname` (short name, whitespace stripped); exits with an error if the file is missing or empty.
 
 ### Step 2 – Root check
 

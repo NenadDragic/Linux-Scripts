@@ -1,6 +1,6 @@
 # Backup NAS
 
-Reads a target hostname from a config file, then uses `rsync` to mirror the local root filesystem (`/`) to a dated folder on a NAS mount (`/mnt/NetBackup/<hostname>`), keeping a real-time local log and appending it to a daily log on a separate USB-mounted log share, with a written status file on success or failure.
+Uses the machine's own short hostname (`hostname -s`), then uses `rsync` to mirror the local root filesystem (`/`) to a dated folder on a NAS mount (`/mnt/NetBackup/<hostname>`), keeping a real-time local log and appending it to a daily log on a separate USB-mounted log share, with a written status file on success or failure.
 
 ---
 
@@ -17,7 +17,7 @@ Prerequisites:
 
 - Must be run as root (script checks `id -u -eq 0` and exits otherwise).
 - `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` must be installed; only `rsync` and `runuser` are checked (see the dependency check below). `stdbuf` is used if present but is optional.
-- A config file named `Backup.cfg` must exist next to the script (`$SCRIPT_DIR/Backup.cfg`) or at `/etc/Backup.cfg`, containing a line `Hostname=<name>` (see the `Backup.cfg` in this folder, which sets `Hostname=Debian_Laptop`).
+- No config file is needed: the destination folder is named after the machine's hostname (`hostname -s`).
 - `/mnt/NetBackup/<hostname>` must already exist/be mounted — the script only checks for it and exits with an error if it isn't; it does not mount or create it.
 - `/mnt/usb/Backup` is expected to be mounted too, since the log directory lives under it.
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rsync`, `runuser`
@@ -27,7 +27,7 @@ Prerequisites:
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `SOURCE_DIR` | `/` | Root filesystem being backed up |
-| `CFG_FILE` | `$SCRIPT_DIR/Backup.cfg`, falls back to `/etc/Backup.cfg` | Location of the config file that supplies `Hostname=` |
+| `HOSTNAME_FROM_CFG` | `hostname -s` (falls back to `/etc/hostname`) | Machine name used for the destination and log folders |
 | `DEST_BASE` | `/mnt/NetBackup/${HOSTNAME_FROM_CFG}` | Base destination directory on the NAS mount |
 | `EXCLUDES` | array | rsync exclude list: `/dev`, `/lost+found`, `/media`, `/mnt`, `/opt`, `/proc`, `/run`, `/snap`, `/srv`, `/sys`, `/tmp`, `/var/run`, `/var/tmp`, `/boot/*`, `/home/nenad/.cache/*`, `/snap/*.*` |
 | `LOG_DIR_NFS` | `/mnt/usb/Backup/Log/${HOSTNAME_FROM_CFG}` | Daily rsync log and status file location |
@@ -37,9 +37,9 @@ Prerequisites:
 
 ## What the Script Does
 
-### Step 1 – Resolve hostname from config
+### Step 1 – Resolve hostname
 
-Determines its own directory, looks for `Backup.cfg` there or at `/etc/Backup.cfg`, extracts the `Hostname=` value (stripped of CR/whitespace) with `grep`/`cut`/`sed`. Exits with an error if no hostname can be read.
+Reads the machine's short hostname with `hostname -s` (falling back to `/etc/hostname`), stripped of whitespace. Exits with an error if no hostname can be determined.
 
 ### Step 2 – Root check
 

@@ -11,7 +11,7 @@ chmod +x Backup_USB_Mount.sh
 ./Backup_USB_Mount.sh
 ```
 
-The script calls `sudo` internally for both `mkdir` and `mount`, so it can be invoked without prefixing `sudo` as long as the running user has sudo rights (expect a password prompt). Run it whenever the physical backup USB drive has been connected but not yet mounted — for example, before running `Backup_USB.sh` or `Backup_SD_USB.sh`.
+The script calls `sudo` internally for both `mkdir` and `mount`, so it can be invoked without prefixing `sudo` as long as the running user has sudo rights (expect a password prompt). Run it whenever the physical backup USB drive has been connected but not yet mounted — for example, before running `Backup_USB.sh`.
 
 Prerequisites:
 
