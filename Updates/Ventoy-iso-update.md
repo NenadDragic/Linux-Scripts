@@ -32,7 +32,7 @@ Without `--run` it is a dry run: only small files (keys, signatures, checksum fi
 
 Prerequisites:
 
-- **Run as your normal user, not with `sudo`.** The default `--dest` uses `$USER` and the staging folder uses `$HOME`, and the stick is normally mounted for your user under `/media/$USER/Ventoy`. With `sudo` they point to `root`'s paths. The script does not check this.
+- **Run as your normal user, not with `sudo`.** The default `--dest` uses `$USER` and the staging folder uses `$HOME`, and the stick is normally mounted for your user under `/media/$USER/Ventoy`. With `sudo` they would point to `root`'s paths, so the script stops with exit code `2` when run as root.
 - **Packages:** `curl` and `gnupg` (`gpg`, `gpgconf`). The rest (`flock`, `findmnt`, `lsblk`, `sha256sum`, `sha512sum`, `dd`, `numfmt`, `awk`, `sed`) is in a normal Debian/Ubuntu install. The script checks all of them at startup and stops with `Mangler værktøj: …` if one is missing. It does not use the shared `lib/require_tools.sh`.
 - The Ventoy stick must be mounted and the target folder must be on a partition with the label `Ventoy`, and be writable.
 
@@ -88,7 +88,7 @@ Prints one line per item: `OK`, `KLAR (dry-run)`, `SPRUNGET OVER` or `FEJL`, mar
 | --- | --- |
 | `0` | All items OK, ready (dry run) or skipped |
 | `1` | At least one item failed, a tool is missing, `DEST` is not a Ventoy partition, or another run holds the lock |
-| `2` | Usage error (unknown option or item) |
+| `2` | Usage error (unknown option or item), or run as root |
 
 ---
 
@@ -98,4 +98,4 @@ Prints one line per item: `OK`, `KLAR (dry-run)`, `SPRUNGET OVER` or `FEJL`, mar
 - **Fedora is skipped, not failed,** when the version folder does not exist on the server yet.
 - **A wrong fingerprint is a hard stop.** If a publisher rotates its key, the item fails until the new fingerprint is checked against the publisher's page and added to the script.
 - Not included on purpose: Windows (only time-limited download links), KDE neon (no Desktop User Edition at the moment), FreeBSD, Kali and Kodachi (can be added the same way).
-- The header comment and output are in Danish. The header has its own version line (`1.3`, 2026-10-16) instead of the repository's standard header block, because `--help` prints the whole header.
+- The header comment and output are in Danish. The header has its own version line (`1.4`, 2026-10-25) instead of the repository's standard header block, because `--help` prints the whole header.

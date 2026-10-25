@@ -6,7 +6,7 @@
 #   Intet lægges på nøglen, før verifikationen er bestået, og kopien på
 #   nøglen læses tilbage og sammenlignes med den verificerede fil.
 #
-# Version : 1.3 (2026-10-16)
+# Version : 1.4 (2026-10-25)
 # Udvikler: Nenad(a)dragic(.)com
 #
 # Brug:
@@ -30,6 +30,8 @@
 #   --dest DIR        ISO-mappe på Ventoy (standard: /media/$USER/Ventoy/ISOs)
 #   --staging DIR     Arbejdsmappe (standard: ~/Downloads/iso-staging)
 #   --list            Vis elementer, grupper og versioner, og afslut.
+#
+# Køres som almindelig bruger – IKKE med sudo (stierne bygger på $USER/$HOME).
 #
 # Ikke med (bevidst):
 #   - Windows: Microsoft udleverer kun tidsbegrænsede downloadlinks.
@@ -925,6 +927,12 @@ main() {
     shift
   done
   ((${#SELECTED[@]})) || SELECTED=("${ALL_ITEMS[@]}")
+
+  # Med sudo peger DEST og STAGING på roots stier, og filerne ville ejes af root.
+  if (( EUID == 0 )); then
+    echo "Kør som almindelig bruger, ikke med sudo – Ventoy-nøglen er monteret under /media/\$USER." >&2
+    exit 2
+  fi
 
   local dep
   for dep in curl gpg gpgconf sha256sum sha512sum findmnt lsblk df stat dd numfmt flock awk sed grep; do
