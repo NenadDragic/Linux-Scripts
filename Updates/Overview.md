@@ -15,6 +15,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 | `Total_Update_RaspberryPi.sh` | [Total_Update_RaspberryPi.md](Total_Update_RaspberryPi.md) | Raspberry Pi variant: APT, EEPROM/bootloader firmware via `rpi-eeprom-update` (instead of `fwupd`), Snap, pip, npm, `updatedb`. Reads `/proc/device-tree/model` to identify the Pi hardware. |
 | `IBM_Firmware_Update.sh` | [IBM_Firmware_Update.md](IBM_Firmware_Update.md) | Checks for root privileges, then runs `fwupdmgr get-updates` followed by `fwupdmgr update` to detect and apply available firmware updates for devices on the system. |
 | `Update_Flightradar24.sh` | [Update_Flightradar24.md](Update_Flightradar24.md) | Stops the `fr24feed` service, removes the old Flightradar24 package, downloads and installs a hardcoded `.deb` version (`1.0.28-1`) from the official repository, then restarts the service. |
+| `Ventoy-iso-update.sh` | [Ventoy-iso-update.md](Ventoy-iso-update.md) | Downloads new releases of ~20 Linux ISOs (Debian, Fedora, Ubuntu, Tails, Qubes and more), verifies each against the publisher's pinned OpenPGP key fingerprint, copies it to a Ventoy USB stick and reads the copy back. Dry run by default; `--run` does it. Run as a normal user, not with `sudo`. |
 | `VUE_update.sh` | [VUE_update.md](VUE_update.md) | Downloads, extracts, and installs VueScan on a Linux system as root — copying the icon, udev rule, and binary into place, purging conflicting `ippusbxd`/`ipp-usb` packages, and reloading udev rules. |
 
 ---
