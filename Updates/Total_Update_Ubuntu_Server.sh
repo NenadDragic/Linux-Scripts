@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Version:      1.0
-# Date:         2026-09-22
+# Version:      1.1
+# Date:         2026-11-13
 # Test Run:
 # Developper:   Nenad(a)dragic(.)com
 
 # =============================================================================
 # Total_Update_Ubuntu_Server.sh
 # Total system opdatering af Ubuntu Server
-# Opdaterer: APT pakker, Snap, firmware, Python pip, npm (global),
+# Opdaterer: APT pakker, Snap, firmware, npm (global),
 #            rydder op efter sig selv og genstarter om nødvendigt.
 # Kræver: sudo-adgang
 # =============================================================================
@@ -65,7 +65,7 @@ fi
 # ─────────────────────────────────────────
 #  1. APT – pakker fra repositorier
 # ─────────────────────────────────────────
-section "1/7 · APT — pakke-opdatering"
+section "1/6 · APT — pakke-opdatering"
 
 info "Opdaterer pakkeliste..."
 apt-get update -qq
@@ -84,7 +84,7 @@ ok "Afhængigheder løst"
 # ─────────────────────────────────────────
 #  2. APT – oprydning
 # ─────────────────────────────────────────
-section "2/7 · APT — oprydning"
+section "2/6 · APT — oprydning"
 
 info "Fjerner forældede pakker (autoremove)..."
 apt-get autoremove -y -qq
@@ -97,12 +97,15 @@ ok "Cache renset"
 # ─────────────────────────────────────────
 #  3. Snap
 # ─────────────────────────────────────────
-section "3/7 · Snap — opdatering"
+section "3/6 · Snap — opdatering"
 
 if command -v snap &>/dev/null; then
   info "Opdaterer alle Snap-pakker..."
-  snap refresh
-  ok "Snap opdateret"
+  if snap refresh; then
+    ok "Snap opdateret"
+  else
+    warn "Snap refresh fejlede (fx Snap Store utilgængelig) – fortsætter"
+  fi
 
   # Fjern gamle snap-revisioner (holder kun seneste 2)
   info "Fjerner gamle Snap-revisioner..."
@@ -119,7 +122,7 @@ fi
 # ─────────────────────────────────────────
 #  4. Firmware (fwupd)
 # ─────────────────────────────────────────
-section "4/7 · Firmware — fwupd"
+section "4/6 · Firmware — fwupd"
 
 if command -v fwupdmgr &>/dev/null; then
   info "Henter firmware-metadata..."
@@ -139,32 +142,9 @@ else
 fi
 
 # ─────────────────────────────────────────
-#  5. Python pip (bruger-niveau)
+#  5. npm globale pakker
 # ─────────────────────────────────────────
-section "5/7 · Python pip — bruger-pakker"
-
-REAL_USER=$(logname 2>/dev/null || echo "")
-if [[ -n "$REAL_USER" ]] && command -v pip3 &>/dev/null; then
-  info "Opgraderer pip3 for bruger: $REAL_USER..."
-  sudo -u "$REAL_USER" pip3 install --upgrade pip --quiet 2>/dev/null || true
-
-  info "Opgraderer forældede pip3-pakker..."
-  OUTDATED=$(sudo -u "$REAL_USER" pip3 list --outdated --format=freeze 2>/dev/null \
-             | grep -v '^\-e' | cut -d= -f1 || true)
-  if [[ -n "$OUTDATED" ]]; then
-    echo "$OUTDATED" | xargs -r sudo -u "$REAL_USER" pip3 install --upgrade --quiet
-    ok "pip3-pakker opgraderet"
-  else
-    ok "Ingen forældede pip3-pakker"
-  fi
-else
-  warn "pip3 ikke fundet eller ingen bruger – springer over"
-fi
-
-# ─────────────────────────────────────────
-#  6. npm globale pakker
-# ─────────────────────────────────────────
-section "6/7 · npm — globale pakker"
+section "5/6 · npm — globale pakker"
 
 if command -v npm &>/dev/null; then
   info "Opdaterer npm selv..."
@@ -177,9 +157,9 @@ else
 fi
 
 # ─────────────────────────────────────────
-#  7. updatedb (locate-database)
+#  6. updatedb (locate-database)
 # ─────────────────────────────────────────
-section "7/7 · updatedb — fil-lokations-database"
+section "6/6 · updatedb — fil-lokations-database"
 
 if command -v updatedb &>/dev/null; then
   info "Opdaterer locate-database..."

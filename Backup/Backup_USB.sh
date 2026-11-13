@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Version:      1.0
-# Date:         2026-09-14
+# Version:      1.1
+# Date:         2026-11-13
 # Test Run:
 # Developper:   Nenad(a)dragic(.)com
 
@@ -14,7 +14,7 @@ fi
 # shellcheck source=/dev/null
 source "$_d/lib/require_tools.sh"
 unset _d
-require_tools rsync "runuser:util-linux"
+require_tools rsync "runuser:util-linux" "mountpoint:util-linux"
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -92,6 +92,12 @@ fi
 MOUNT_ROOT="/mnt/usb/Backup"
 if [ ! -d "$MOUNT_ROOT" ]; then
     echo "FEJL: Mountpunkt $MOUNT_ROOT eksisterer ikke — er USB-disken monteret?"
+    exit 1
+fi
+# Mappen findes også, når disken IKKE er monteret (Backup_USB_Mount.sh opretter den).
+# Uden dette tjek ville hele backuppen blive skrevet til rodfilsystemet og fylde systemdisken.
+if ! mountpoint -q "$MOUNT_ROOT"; then
+    echo "FEJL: $MOUNT_ROOT er ikke et monteringspunkt — USB-disken er ikke monteret (kør Backup_USB_Mount.sh)."
     exit 1
 fi
 

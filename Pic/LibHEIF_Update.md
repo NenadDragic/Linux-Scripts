@@ -1,6 +1,6 @@
 # LibHEIF Update Script
 
-Removes any distro-packaged `libheif1`/`libheif-dev`, then builds and installs the latest tagged release of `libheif` from source (via `git`, `cmake`, `make`) on a Debian/Ubuntu-style system. This is a general system-maintenance script, not tied to a specific photo folder.
+Builds and installs the latest tagged release of `libheif` from source (via `git`, `cmake`, `make`) on a Debian/Ubuntu-style system, and afterwards removes the distro-packaged `libheif1`/`libheif-dev` — but only if that doesn't drag other programs with it. This is a general system-maintenance script, not tied to a specific photo folder.
 
 ---
 
@@ -26,19 +26,25 @@ Prerequisites:
 
 `set -e` is active, so the script aborts on the first unhandled command failure. `main()` runs the following functions in order, each logged with a `[$(date +'%Y-%m-%d %H:%M:%S')]` timestamp prefix via the `log()` helper:
 
-### Step 1 – `remove_old_version`
-
-Runs `sudo apt remove --purge -y libheif1 libheif-dev` and `sudo apt autoremove -y`, both suffixed with `|| true` so a "package not installed" failure does not stop the script.
-
-### Step 2 – `install_dependencies`
+### Step 1 – `install_dependencies`
 
 Runs `sudo apt update`, then `sudo apt install -y build-essential cmake pkg-config libaom-dev libx265-dev libjpeg-dev libpng-dev libde265-dev libtool autoconf automake`.
 
-### Step 3 – `build_latest_version`
+### Step 2 – `build_latest_version`
 
 - Removes `/tmp/libheif-build` if it already exists, then recreates it and `cd`s in.
 - Clones `libheif` from GitHub into that directory, fetches all tags, and determines the latest one with `git describe --tags $(git rev-list --tags --max-count=1)`.
 - Checks out that tag, creates a `build` subdirectory, configures with `cmake -DCMAKE_BUILD_TYPE=Release ..`, compiles with `make -j$(nproc)`, then installs with `sudo make install` and refreshes the linker cache with `sudo ldconfig`.
+
+### Step 3 – `remove_old_version`
+
+Runs only after the new version is built and installed. Simulates the removal first (`apt-get -s remove libheif1 libheif-dev`) and reads which packages apt would remove:
+
+- nothing → logs that no distro packages are installed;
+- only `libheif*` packages → runs `sudo apt-get remove --purge -y libheif1 libheif-dev` and `sudo ldconfig`;
+- anything else (image viewers, thumbnailers, ImageMagick … that depend on `libheif1`) → lists those packages and removes **nothing**. The source build in `/usr/local` takes precedence over the distro copy in both `PATH` and the linker search order, so keeping the distro package is harmless.
+
+There is no `apt autoremove` any more.
 
 ### Step 4 – `verify_installation`
 
@@ -52,10 +58,10 @@ Removes `/tmp/libheif-build`.
 
 ## Notes
 
-- **Destructive by design:** existing `libheif1`/`libheif-dev` packages are purged before the source build even starts. If the clone, build, or install step fails, the system can be left without any `libheif` until the script is run again successfully.
+- Up to v1.0 the distro packages were purged with `-y` (plus `apt autoremove -y`) *before* the build. That could uninstall every program depending on `libheif1`, and a failed build left the system without any `libheif`. Since v1.1 the build comes first and the removal is skipped whenever it would take other packages with it.
 - Requires working (and likely interactive, unless cached) `sudo` for several steps — it will prompt for a password if not already authenticated.
 - The build working directory `/tmp/libheif-build` is hardcoded; it is wiped and recreated at the start of `build_latest_version` and removed again in `cleanup`, so nothing persists between runs.
 - "Latest version" means the most recent reachable git tag (`git rev-list --tags --max-count=1`), not necessarily the highest semantic version if tags were not created in chronological order.
-- Safe to re-run in the sense that each run starts by removing the old package/build state, but every run does a full rebuild from source, which is time-consuming.
+- Safe to re-run: each run starts from a fresh build folder, but every run does a full rebuild from source, which is time-consuming.
 - Not photo-folder specific — this is a standalone dependency installer that the other scripts in this folder (e.g. `Convert.sh`, `Sort_Total.sh`) rely on indirectly for HEIC support.
 - Comments are in English.

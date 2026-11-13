@@ -1,6 +1,6 @@
 #!/bin/bash
-# Version:      1.0
-# Date:         2026-09-14
+# Version:      1.1
+# Date:         2026-11-13
 # Test Run:
 # Developper:   Nenad(a)dragic(.)com
 
@@ -16,20 +16,25 @@ source "$_d/lib/require_tools.sh"
 unset _d
 require_tools "7zz:7zip"
 
-# MD5-summen for den korrekte adgangskode
-EXPECTED_MD5="e0baa6edf1482789a19a5e1380bb4132"
-
-# Spørg brugeren om adgangskoden
-read -s -p "Indtast adgangskode: " password
+# Adgangskoden indtastes to gange, så en tastefejl ikke giver arkiver, der ikke kan åbnes igen.
+# (Tidligere blev den sammenlignet med en MD5-sum i scriptet - en usaltet MD5 i et git-repo
+#  kan gættes offline, så den er fjernet.)
+read -r -s -p "Indtast adgangskode: " password
+echo
+read -r -s -p "Gentag adgangskode:  " password2
 echo
 
-# Valider adgangskoden ved at sammenligne MD5-summen
-if [ "$(echo -n "$password" | md5sum | awk '{print $1}')" != "$EXPECTED_MD5" ]; then
-    echo "Forkert adgangskode. Scriptet afsluttes."
+if [ -z "$password" ]; then
+    echo "Tom adgangskode. Scriptet afsluttes."
     exit 1
 fi
+if [ "$password" != "$password2" ]; then
+    echo "De to adgangskoder er ikke ens. Scriptet afsluttes."
+    exit 1
+fi
+unset password2
 
-echo "Adgangskode valideret. Starter komprimering..."
+echo "Adgangskoder er ens. Starter komprimering..."
 
 # Loop igennem alle undermapper i det aktuelle bibliotek
 for dir in */; do

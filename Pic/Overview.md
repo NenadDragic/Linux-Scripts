@@ -26,7 +26,7 @@ An index of the scripts in this folder and their documentation. Each script has 
 | Script | Doc | Summary |
 | --- | --- | --- |
 | `Camera-Model.sh` | [Camera-Model.md](Camera-Model.md) | Reads every `.JPG`/`.JPEG` file in the current directory and prints filename, camera model, and creation date from EXIF metadata via `exiftool`; a read-only diagnostic listing that never copies, moves, renames, or deletes files. |
-| `LibHEIF_Update.sh` | [LibHEIF_Update.md](LibHEIF_Update.md) | Removes any distro-packaged `libheif1`/`libheif-dev`, then builds and installs the latest tagged `libheif` release from source via `git`/`cmake`/`make`; a standalone dependency installer for HEIC support used indirectly by `Convert.sh` and `Sort_Total.sh`. |
+| `LibHEIF_Update.sh` | [LibHEIF_Update.md](LibHEIF_Update.md) | Builds and installs the latest tagged `libheif` release from source via `git`/`cmake`/`make`, then removes the distro-packaged `libheif1`/`libheif-dev` only if no other package would be removed with them; a standalone dependency installer for HEIC support used indirectly by `Convert.sh` and `Sort_Total.sh`. |
 
 ---
 
@@ -35,6 +35,6 @@ An index of the scripts in this folder and their documentation. Each script has 
 - `Sort_Total.sh` is not a standalone implementation — it calls `Sort_Photos_Dates.sh` and `Sort_photos_Types.sh` directly (they must be present in the same folder), so any future change to those two scripts automatically applies to `Sort_Total.sh` as well.
 - `Play2.sh` is an explicit variant of `Play.sh`: same EXIF-driven date/camera sorting, but it additionally bundles paired MOV/HEIC/MP4/CR2 files with each JPG, matches only uppercase `.JPG`/`.JPEG` (its `nocaseglob` line is commented out), and uses a slightly different (and likely unintentionally different) character-sanitizing regex.
 - Required external tools recur across the folder: `exiftool` (most scripts, incl. DNG preview extraction in `Sort_Total.sh`), `heif-convert`/`libheif-examples` (HEIC conversion), and the Perl `rename` utility (`Convert.sh`).
-- Destructive/unsafe-by-design scripts: `Convert.sh` renames every file and subdirectory in the working directory to uppercase with no filter and no collision handling (can silently overwrite); `LibHEIF_Update.sh` purges the existing `libheif` packages before the source rebuild even starts.
+- Destructive/unsafe-by-design scripts: `Convert.sh` renames every file and subdirectory in the working directory to uppercase with no filter and no collision handling (can silently overwrite); `LibHEIF_Update.sh` removes the distro `libheif` packages after a successful source build, but only when apt's simulation shows nothing else would be uninstalled.
 - `Convert.sh` ignores any argument passed to it — `Update_PVT_Folders.sh` passes the matched `.PVT` file path, but `Convert.sh` always processes the entire current working directory regardless.
 - Console output across this folder's scripts is English; `Sort_Total.sh` has Danish comments.

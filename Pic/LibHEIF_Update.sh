@@ -1,6 +1,6 @@
 #!/bin/bash
-# Version:      1.0
-# Date:         2026-09-14
+# Version:      1.1
+# Date:         2026-11-13
 # Test Run:
 # Developper:   Nenad(a)dragic(.)com
 
@@ -24,11 +24,29 @@ log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
 }
 
-# Function to remove old versions
+# Function to remove the distro packages - called AFTER the new version is built and installed,
+# so a failed build never leaves the system without libheif.
+# Other programs (image viewers, thumbnailers, ImageMagick ...) often depend on libheif1, and
+# "apt remove libheif1" would uninstall them too. The removal is therefore simulated first:
+# if anything other than libheif packages would go, nothing is removed. That is fine - the new
+# build lives in /usr/local, which comes before /usr in both PATH and the linker search order.
 remove_old_version() {
-    log "Removing old versions of libheif..."
-    sudo apt remove --purge -y libheif1 libheif-dev || true
-    sudo apt autoremove -y || true
+    local would_remove others
+    would_remove=$(LC_ALL=C apt-get -s remove libheif1 libheif-dev 2>/dev/null | awk '/^Remv /{print $2}' || true)
+    if [ -z "$would_remove" ]; then
+        log "No distro libheif packages installed - nothing to remove."
+        return 0
+    fi
+    others=$(printf '%s\n' "$would_remove" | grep -v '^libheif' || true)
+    if [ -n "$others" ]; then
+        log "Keeping the distro libheif packages: removing them would also uninstall:"
+        printf '%s\n' "$others" | sed 's/^/    /'
+        log "The new build in /usr/local takes precedence, so this is safe."
+        return 0
+    fi
+    log "Removing distro libheif packages: $(printf '%s ' $would_remove)"
+    sudo apt-get remove --purge -y libheif1 libheif-dev
+    sudo ldconfig
 }
 
 # Function to install dependencies
@@ -98,9 +116,9 @@ cleanup() {
 main() {
     log "Starting libheif update process..."
     
-    remove_old_version
     install_dependencies
     build_latest_version
+    remove_old_version
     verify_installation
     cleanup
     

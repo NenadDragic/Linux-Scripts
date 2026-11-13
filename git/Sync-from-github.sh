@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Version:      1.0
-# Date:         2026-10-06
+# Version:      1.1
+# Date:         2026-11-13
 # Test Run:
 # Developper:   Nenad(a)dragic(.)com
 
@@ -20,7 +20,7 @@ require_tools git
 #
 # Base-mappe (kan overstyres med et argument: ./Sync-from-github.sh /anden/sti):
 #   Windows (Git Bash): H:\git  (/h/git)
-#   Linux:               ~/Git
+#   Linux:               ~/git
 
 set -uo pipefail
 
@@ -29,7 +29,7 @@ case "$(uname -s)" in
         default_base="/h/git"
         ;;
     *)
-        default_base="$HOME/Git"
+        default_base="$HOME/git"
         ;;
 esac
 

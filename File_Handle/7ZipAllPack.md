@@ -16,23 +16,21 @@ Run it from the parent directory that contains the subfolders you want to archiv
 Prerequisites:
 
 - `7zz` (the 7-Zip CLI binary) must be installed and on `PATH`.
-- The password entered at the prompt must match a hardcoded MD5 hash baked into the script (`EXPECTED_MD5`); there is no way to set/change the accepted password without editing the script.
+- The password is typed twice at the prompt and both entries must match; any non-empty password is accepted.
 - Write access to the current directory (archives are written to `../$folder_name.7z` relative to each subfolder, i.e. into the current directory).
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `7zz`
 
 ### Configuration (top of script)
 
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `EXPECTED_MD5` | `e0baa6edf1482789a19a5e1380bb4132` | MD5 hash the entered password must match before the script proceeds |
+None — the script has no hardcoded variables. (Up to v1.0 it embedded an MD5 hash of the accepted password; that was removed in v1.1 because an unsalted MD5 in a git repo can be brute-forced offline.)
 
 ---
 
 ## What the Script Does
 
-### Step 1 – Prompt for and validate the password
+### Step 1 – Prompt for the password twice
 
-Reads a password silently (`read -s`), computes its MD5 with `md5sum`, and compares it to the hardcoded `EXPECTED_MD5`. If it doesn't match, prints "Forkert adgangskode." and exits with status 1.
+Reads the password silently twice (`read -r -s`). Exits with status 1 if it is empty ("Tom adgangskode.") or if the two entries differ ("De to adgangskoder er ikke ens."). The double entry guards against a typo producing archives that can't be opened again.
 
 ### Step 2 – Loop over every subfolder
 
@@ -57,7 +55,9 @@ Checks `$?` after the 7zz call and prints a per-folder success or "FEJL" (error)
 ## Notes
 
 - Destructive/overwrite behavior: no source files are deleted or moved. However, if a `$folder_name.7z` archive already exists, `7zz a` adds/updates entries in it rather than starting fresh — re-running the script does not guarantee a clean rebuild of the archive.
-- The accepted password is fixed via an MD5 hash in the script; changing the password requires editing `EXPECTED_MD5`.
+- The script no longer knows the "right" password: whatever is typed (twice, identically) is used. Make sure it is the one you intend to use for `7ZipUnPackAll.sh` later.
+- The password is passed to `7zz` as `-p<password>` and is therefore visible in the process list (`ps`) while an archive is being written — avoid running it on a shared machine.
+- The old MD5 hash is still in the git history; treat the password it belonged to as exposed.
 - Output messages ("Indtast adgangskode", "Komprimerer...", "FEJL", etc.) are in Danish.
 - Requires the `7zz` binary specifically (not `7z` or `p7zip`); if it isn't installed the script will fail on every folder.
 - No dry-run/preview mode — running it immediately starts compressing every subfolder found.

@@ -18,7 +18,7 @@ Prerequisites:
 - Must be run as root (script checks `id -u -eq 0` and exits otherwise).
 - `rsync`, `tee`, `sed`, `flock`, `mktemp`, `stat`, `runuser`, `cp`, `mv` must be installed; only `rsync` and `runuser` are checked (see the dependency check below). `stdbuf` is used if present but optional.
 - No config file is needed: the destination folder is named after the machine's hostname (`hostname -s`).
-- `/mnt/usb/Backup` must already exist/be mounted (checked via `MOUNT_ROOT`); the hostname subfolder under it is created automatically if missing.
+- `/mnt/usb/Backup` must be a real mount point (checked with `mountpoint -q` on `MOUNT_ROOT`; an existing but unmounted folder aborts the script, so a backup can never land on the root filesystem); the hostname subfolder under it is created automatically if missing.
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `rsync`, `runuser`
 
 ### Configuration (top of script)
@@ -55,7 +55,7 @@ If the first argument is `dry-run`, sets `DRY_RUN="--dry-run"` and prints a warn
 
 ### Step 5 – Verify USB drive is mounted, create destination folders
 
-Checks `/mnt/usb/Backup` (`MOUNT_ROOT`) exists, exiting with an error if not. If `$DEST_BASE` doesn't exist, creates it with `mkdir -p` and prints an info message; exits with an error if creation fails.
+Checks `/mnt/usb/Backup` (`MOUNT_ROOT`) exists and — via `mountpoint -q` — that a filesystem is actually mounted there, exiting with an error if either check fails. If `$DEST_BASE` doesn't exist, creates it with `mkdir -p` and prints an info message; exits with an error if creation fails.
 
 ### Step 6 – Prepare logging and acquire a per-date lock
 
@@ -87,3 +87,4 @@ On non-zero rsync exit, writes a `FAILED` status file with the same fallback log
 - Both the backup data and its logs live on the same `/mnt/usb/Backup` mount here, unlike the retired `Old/Backup_NAS.sh` where the NAS destination and the log share are two separate mounts.
 - Hardcoded/environment-specific paths: `/mnt/usb/Backup` (destination and logs), `/var/log/rsync_backup`, `/var/lock`, and `/home/nenad/.cache/*` in the exclude list (hardcodes username `nenad`).
 - All `echo` output and inline comments in the script are in Danish; this document is in English.
+- Since v1.1 the script refuses to run when `/mnt/usb/Backup` exists but nothing is mounted there. `Backup_USB_Mount.sh` creates that folder itself, so before this check a run without the USB drive wrote the whole backup to the system disk.

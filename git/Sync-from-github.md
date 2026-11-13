@@ -19,7 +19,7 @@ Requires `bash` and `git` on the `PATH`. Dependency check: the script starts by 
 | Value | Default | Meaning |
 | --- | --- | --- |
 | `$1` (optional argument) | none | Overrides the base folder to scan; if omitted, falls back to the OS-based default below |
-| Default base folder | `/h/git` in Git Bash on Windows (`MINGW*`/`MSYS*`/`CYGWIN*`), `$HOME/Git` everywhere else | Folder whose immediate subdirectories are checked for `.git` folders |
+| Default base folder | `/h/git` in Git Bash on Windows (`MINGW*`/`MSYS*`/`CYGWIN*`), `$HOME/git` everywhere else | Folder whose immediate subdirectories are checked for `.git` folders |
 
 ---
 
@@ -27,7 +27,7 @@ Requires `bash` and `git` on the `PATH`. Dependency check: the script starts by 
 
 ### Step 1 – Pick the base folder
 
-Detects the shell environment via `uname -s`. Under Git Bash/MSYS/Cygwin on Windows it defaults to `/h/git`; on any other `uname` result (Linux, macOS, WSL) it defaults to `$HOME/Git`. If a first argument is given, it overrides this default entirely. Exits with an error if the resulting folder doesn't exist.
+Detects the shell environment via `uname -s`. Under Git Bash/MSYS/Cygwin on Windows it defaults to `/h/git`; on any other `uname` result (Linux, macOS, WSL) it defaults to `$HOME/git`. If a first argument is given, it overrides this default entirely. Exits with an error if the resulting folder doesn't exist.
 
 ### Step 2 – Find repositories
 
@@ -53,7 +53,7 @@ If the loop never matched any `.git` subdirectory, prints a final "no repos foun
 
 - **Only fast-forward pulls are ever performed** (`--ff-only`); the script will never create a merge commit, rebase, or force anything — any situation it can't safely fast-forward is left for the user to resolve by hand.
 - **Uncommitted local changes always win** — a repo that's behind but dirty is skipped entirely rather than stashed or overwritten, so re-run the script after committing or stashing to actually pick up the update.
-- **Repo discovery is exactly one level deep.** A base folder containing repos nested inside subfolders (e.g. `~/Git/work/some-repo`) won't find `some-repo` — only direct children of the base folder are checked.
+- **Repo discovery is exactly one level deep.** A base folder containing repos nested inside subfolders (e.g. `~/git/work/some-repo`) won't find `some-repo` — only direct children of the base folder are checked.
 - **`set -uo pipefail` is set but not `-e`** — a failing command inside the per-repo subshell (other than the explicit `exit 1` when `cd` fails) does not abort the whole script; the loop continues to the next repo regardless.
 - Line endings are forced to LF via the repo's [.gitattributes](../.gitattributes) (`* text=auto eol=lf`) so Windows' `autocrlf` can't corrupt the shebang or `case`/`if` blocks when the file is checked out or touched by git locally.
 - Only checks the `origin` remote; a repo with a different or additional remote configured for its upstream branch is not specifically accounted for beyond what `@{u}` already resolves to.

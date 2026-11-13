@@ -16,23 +16,21 @@ Run it from the directory containing the `.7z` files you want to extract.
 Prerequisites:
 
 - `7zz` (the 7-Zip CLI binary) must be installed and on `PATH`.
-- The password entered at the prompt must match a hardcoded MD5 hash baked into the script (`EXPECTED_MD5`) — the same hash used in `7ZipAllPack.sh`.
+- The password used when the archives were created (see `7ZipAllPack.sh`).
 - Write access to the current directory (extraction folders are created here).
 - Dependency check: the script starts by sourcing the shared `lib/require_tools.sh` (found by walking up from the script's own folder) and stops with an `apt install` hint if any of these are missing: `7zz`
 
 ### Configuration (top of script)
 
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `EXPECTED_MD5` | `e0baa6edf1482789a19a5e1380bb4132` | MD5 hash the entered password must match before the script proceeds |
+None — the script has no hardcoded variables. (Up to v1.0 it embedded an MD5 hash of the accepted password; that was removed in v1.1 because an unsalted MD5 in a git repo can be brute-forced offline.)
 
 ---
 
 ## What the Script Does
 
-### Step 1 – Prompt for and validate the password
+### Step 1 – Prompt for the password
 
-Reads a password silently (`read -s`), computes its MD5 with `md5sum`, and compares it to `EXPECTED_MD5`. If it doesn't match, prints "Forkert adgangskode." and exits with status 1.
+Reads the password silently (`read -r -s`) and exits with status 1 if it is empty ("Tom adgangskode."). The password is not validated up front — `7zz` itself rejects a wrong password for each archive (Step 5 then prints "FEJL").
 
 ### Step 2 – Loop over every `.7z` file
 
@@ -57,6 +55,8 @@ Checks `$?` after the extraction and prints a per-file success message or a "FEJ
 - Destructive/overwrite behavior: no `-y`/`-aoa` overwrite flag is passed to `7zz x`, so if the destination folder already contains files with the same names, `7zz` may prompt interactively for overwrite confirmation — in a non-interactive run this could stall or fail rather than silently overwrite.
 - Idempotency: re-running is not fully safe — `mkdir -p` won't fail if the folder exists, but extracting into a folder that already has partial/previous contents can trigger the overwrite prompt described above.
 - No source `.7z` files are deleted after extraction.
-- The accepted password is fixed via an MD5 hash in the script; changing it requires editing `EXPECTED_MD5`.
+- A wrong password is only detected per archive by `7zz`; each failed archive leaves an (empty or partial) folder behind.
+- The password is passed to `7zz` as `-p<password>` and is therefore visible in the process list (`ps`) while an archive is being extracted.
+- The old MD5 hash is still in the git history; treat the password it belonged to as exposed.
 - Output messages are in Danish.
 - Requires the `7zz` binary specifically (not `7z` or `p7zip`).
