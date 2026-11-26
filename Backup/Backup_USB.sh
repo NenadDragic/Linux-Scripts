@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Version:      1.1
-# Date:         2026-11-13
+# Version:      1.2
+# Date:         2026-11-26
 # Test Run:
 # Developper:   Nenad(a)dragic(.)com
 
@@ -21,14 +21,22 @@ IFS=$'\n\t'
 
 # === RSYNC BACKUP SCRIPT v6 ===
 # Bruger maskinens hostnavn, kører rsync og logger lokalt,
-# forsøger robust append/merge/cp til NFS-daglog og skriver status på NFS (med lokal fallback).
+# forsøger robust append/merge/cp til dagsloggen på USB-disken og skriver status der (med lokal fallback).
+# (Variabelnavne med _NFS er historiske fra NAS-versionen; de peger på USB-disken.)
 #
 # Ændring i v6: Erstatter ustabil process substitution (>(stdbuf ...)) med synkron
-# sed | tee -a pipeline, så logfilen er fuldt skrevet inden append til NFS-daglog.
+# sed | tee -a pipeline, så logfilen er fuldt skrevet inden append til dagsloggen.
 # Derved undgås race condition der medførte tom/ufuldstændig logfil ved første kørsel.
 #
-# Brug: gem som Backup_NAS_Complete_v6.sh ; dos2unix Backup_NAS_Complete_v6.sh ; chmod +x Backup_NAS_Complete_v6.sh
-# Kør som root: sudo ./Backup_NAS_Complete_v6.sh [dry-run]
+#
+# Ændring i v1.2: Logfilen indeholder ikke længere progress-linjer, men en liste over
+# ændrede filer (--itemize-changes) + statistik. Progress vises kun på skærmen ved manuel
+# kørsel. Status-filen bygges ud fra denne kørsels log (ikke hele dagsloggen). rsync
+# exit 24 (filer forsvandt undervejs) tælles som succes med advarsel. Tomme mapper og
+# mountpunkter (/dev, /proc, /sys, /run, /tmp, /mnt, /media) bevares, og /boot tages med.
+#
+# Brug: chmod +x Backup_USB.sh
+# Kør som root: sudo ./Backup_USB.sh [dry-run]
 
 # -----------------------
 # Konfiguration
@@ -47,24 +55,45 @@ fi
 # DEST_BASE="/mnt/NetBackup/${HOSTNAME_FROM_CFG}"
 DEST_BASE="/mnt/usb/Backup/${HOSTNAME_FROM_CFG}"
 
+# Mapper der ender på /* bevares som tomme mapper i backuppen (vigtigt ved restore),
+# kun deres indhold springes over.
 EXCLUDES=(
-    "/dev"
     "/lost+found"
-    "/media"
-    "/mnt"
     "/opt"
-    "/proc"
-    "/run"
     "/snap"
     "/srv"
-    "/sys"
-    "/tmp"
-    "/var/run"
-    "/var/tmp"
 
-    "/boot/*"
-    "/home/nenad/.cache/*"
-    "/snap/*.*"
+    "/dev/*"
+    "/media/*"
+    "/mnt/*"
+    "/proc/*"
+    "/run/*"
+    "/sys/*"
+    "/tmp/*"
+    "/var/tmp/*"
+
+    # Swap-filer (op til flere GB, skal aldrig gendannes)
+    "/swap.img"
+    "/swapfile"
+
+    # Caches (kan genskabes; /var/cache indeholder bl.a. hentede apt-pakker)
+    "/var/cache/*"
+    "/root/.cache/*"
+    "/home/*/.cache/*"
+
+    # Browser- og Electron-app-cacher (Chrome, Chromium, VS Code, Claude, Discord m.fl.).
+    # Genskabes automatisk; ændrer sig konstant og giver ellers "file has vanished" (rsync kode 24).
+    # Bemærk: Sessions, IndexedDB, Local Storage o.l. med rigtige data tages stadig med.
+    # ** matcher på tværs af mapper, så det virker for alle apps og browserprofiler.
+    "/home/*/.config/**/Cache/"
+    "/home/*/.config/**/Code Cache/"
+    "/home/*/.config/**/GPUCache/"
+    "/home/*/.config/**/CacheStorage/"
+    "/home/*/.config/**/ScriptCache/"
+    "/home/*/.config/**/CachedData/"
+    "/home/*/.config/**/*ShaderCache/"
+    "/home/*/.config/**/*Dawn*Cache/"
+    "/home/*/.config/*/Safe Browsing/"
 )
 
 # -----------------------
@@ -117,7 +146,7 @@ fi
 DATE=$(date +%Y-%m-%d)
 DEST_PATH="$DEST_BASE/$DATE"
 
-# NFS logmappe: /mnt/usb/Backup/Log/<HOSTNAME>/
+# Logmappe på USB-disken: /mnt/usb/Backup/Log/<HOSTNAME>/
 LOG_DIR_NFS="/mnt/usb/Backup/Log/${HOSTNAME_FROM_CFG}"
 mkdir -p "$LOG_DIR_NFS" 2>/dev/null || true
 LOG_FILE_NFS="$LOG_DIR_NFS/rsync_backup_$DATE.log"
@@ -141,22 +170,32 @@ EXCLUDE_FILE=$(mktemp "$LOG_LOCAL_DIR/rsync_excludes_XXXXXX") || EXCLUDE_FILE="/
 printf "%s\n" "${EXCLUDES[@]}" | tr -d '\r' > "$EXCLUDE_FILE"
 
 # -----------------------
-# Lock for at undgå samtidige runs for samme dato
+# Lock for at undgå samtidige runs (fast navn, så en kørsel kl. 23:59 og 00:01 ikke overlapper)
 # -----------------------
-LOCKFILE="/var/lock/rsync_backup_${DATE}.lock"
+LOCKFILE="/var/lock/rsync_backup.lock"
 mkdir -p /var/lock
 exec 9>"$LOCKFILE"
 if ! flock -n 9; then
-    echo "Et andet backup-job kører allerede for dato $DATE. Afslutter."
+    echo "Et andet backup-job kører allerede. Afslutter."
     rm -f "$EXCLUDE_FILE" 2>/dev/null || true
     exec 9>&- || true
     exit 1
 fi
 
-# Cleanup trap (fjerner kun exclude tempfil og frigiver lås; lokal log fjernes senere ved succes)
+# Ryd gamle lokale logs og exclude-filer op (efterladt af afbrudte eller fejlede kørsler)
+find "$LOG_LOCAL_DIR" -maxdepth 1 -type f \
+    \( -name 'rsync_backup_*' -o -name 'rsync_excludes_*' \) \
+    -mtime +30 -delete 2>/dev/null || true
+
+# Cleanup trap: fjerner exclude tempfil, frigiver lås, og fjerner den lokale log
+# hvis den er kommet sikkert over på backup-disken (ellers beholdes den).
+append_success="false"
 cleanup() {
     local rc=$?
     rm -f "$EXCLUDE_FILE" 2>/dev/null || true
+    if [ "${append_success:-false}" = "true" ]; then
+        rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
+    fi
     flock -u 9 2>/dev/null || true
     exec 9>&- 2>/dev/null || true
     return $rc
@@ -176,20 +215,30 @@ START_TIME=$(date '+%Y-%m-%d %H:%M:%S')
     echo "Destination: $DEST_PATH"
     echo "Dry-run: ${DRY_RUN:-nej}"
     echo "Local log: $LOG_LOCAL_FILE"
-    echo "NFS log (daglig): $LOG_FILE_NFS"
+    echo "USB log (daglig): $LOG_FILE_NFS"
     echo "Exclude-fil: $EXCLUDE_FILE"
     echo "-----------------------------------------"
 } >> "$LOG_LOCAL_FILE"
 
 echo "Starter rsync backup fra $SOURCE_DIR til $DEST_PATH"
 echo "Lokal realtime log: $LOG_LOCAL_FILE"
-echo "Daglig NFS-log: $LOG_FILE_NFS (append'es når rsync er færdig)"
+echo "Daglig log på USB-disken: $LOG_FILE_NFS (append'es når rsync er færdig)"
 
 # -----------------------
 # Build rsync cmd array
 # -----------------------
-RSYNC_CMD=(rsync $DRY_RUN -aHX --numeric-ids --delete-delay --info=progress2,stats2 \
-    --prune-empty-dirs --exclude-from="$EXCLUDE_FILE" \
+# Progress vises kun når scriptet køres i en terminal (ikke fra cron). Progress-linjer
+# skrives aldrig i logfilen — den får kun ændrede filer (--itemize-changes), fejl og statistik.
+if [ -t 1 ]; then
+    RSYNC_INFO="--info=progress2,stats2"
+    SHOW_PROGRESS=1
+else
+    RSYNC_INFO="--info=stats2"
+    SHOW_PROGRESS=0
+fi
+
+RSYNC_CMD=(rsync ${DRY_RUN:+"$DRY_RUN"} -aHX --numeric-ids --delete-delay "$RSYNC_INFO" \
+    --itemize-changes --exclude-from="$EXCLUDE_FILE" \
     "$SOURCE_DIR" "$DEST_PATH")
 
 # Use stdbuf prefix if available
@@ -203,10 +252,15 @@ fi
 # Run rsync pipeline
 # v6 FIX: Bruger synkron sed | tee -a i stedet for process substitution (>(stdbuf ...)).
 # Process substitution er ikke synkroniseret — bash venter ikke på den er færdig,
-# hvilket medførte at logfilen var tom/ufuldstændig når append til NFS kørte bagefter.
+# hvilket medførte at logfilen var tom/ufuldstændig når append til dagsloggen kørte bagefter.
 # Med sed | tee -a er alle tre kommandoer i en synkron pipeline: bash venter på dem alle.
 #
-# PIPESTATUS-rækkefølge: [0]=rsync [1]=sed [2]=tee
+# v1.2: tee er erstattet af awk, som sorterer linjerne:
+#   - progress-linjer  -> kun skærmen (overskriver samme linje med \r)
+#   - itemize-linjer   -> kun logfilen (én linje pr. ændret/slettet fil)
+#   - alt andet        -> både skærm og logfil (fejl, advarsler, statistik)
+#
+# PIPESTATUS-rækkefølge: [0]=rsync [1]=sed [2]=awk
 # Vi fanger stadig rsync's exit code fra PIPESTATUS[0].
 #
 # Midlertidigt slå errexit/pipefail fra så scriptet ikke stopper ved rsync exit 23 o.l.
@@ -216,7 +270,17 @@ set +o pipefail 2>/dev/null || true
 
 "${STDBUF_PREFIX[@]}" "${RSYNC_CMD[@]}" 2>&1 \
     | sed -u 's/\r/\n/g' \
-    | tee -a "$LOG_LOCAL_FILE"
+    | awk -v logf="$LOG_LOCAL_FILE" -v showprog="$SHOW_PROGRESS" '
+        # Tomme linjer opstår mellem \r-progress og almindelige linjer; spring dem over når progress er slået til
+        showprog == 1 && $0 == "" { next }
+        /^ *[0-9][0-9,]* +[0-9]+% / { printf "\r%s", $0; fflush(); inprog = 1; next }
+        /^([<>ch.][fdLDS]|\*deleting )/ { print >> logf; fflush(logf); next }
+        {
+            if (inprog) { printf "\n"; inprog = 0 }
+            print; fflush()
+            print >> logf; fflush(logf)
+        }
+        END { if (inprog) printf "\n" }'
 
 # Capture rsync exit code (index 0 i pipeline)
 rsync_exit=${PIPESTATUS[0]:-1}
@@ -236,26 +300,24 @@ END_TIME=$(date '+%Y-%m-%d %H:%M:%S')
 } >> "$LOG_LOCAL_FILE"
 
 # -----------------------
-# Append local log to NFS daily log (robust fallback: append -> merge temp -> cp unique -> attempt runuser append)
+# Append local log to daily log on the USB drive (robust fallback: append -> merge temp -> cp unique -> attempt runuser append)
 # -----------------------
-append_success="false"
 {
     echo
-    echo "----- APPENDING LOCAL LOG TO NFS LOG -----"
+    echo "----- APPENDING LOCAL LOG TO USB LOG -----"
     echo "Tidspunkt: $(date '+%Y-%m-%d %H:%M:%S')"
     echo "Local log: $LOG_LOCAL_FILE"
-    echo "NFS log: $LOG_FILE_NFS"
+    echo "USB log: $LOG_FILE_NFS"
     echo "------------------------------------------"
 } >> "$LOG_LOCAL_FILE"
 
-# Ensure NFS log dir exists (again)
+# Ensure log dir on the USB drive exists (again)
 mkdir -p "$LOG_DIR_NFS" 2>/dev/null || true
 
 # 1) Prøv enkel append
 if cat "$LOG_LOCAL_FILE" >> "$LOG_FILE_NFS" 2>>"$LOG_LOCAL_FILE"; then
     append_success="true"
     echo "Local log er append'et til $LOG_FILE_NFS"
-    rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
 else
     echo "ADVARSEL: Append fejlede som $(whoami). Prøver atomic merge fallback..." >> "$LOG_LOCAL_FILE"
 
@@ -264,11 +326,11 @@ else
         echo "Diagnose: permissions og mount info:"
         stat -c "Owner: %U  Group: %G  Perms: %A" "$LOG_DIR_NFS" 2>/dev/null || true
         stat -c "Logfile: %n owner=%U group=%G perms=%A" "$LOG_FILE_NFS" 2>/dev/null || true
-        mount | grep "/mnt/NetBackup" || true
+        mount | grep "$MOUNT_ROOT" || true
         dmesg | tail -n 20 || true
     } >> "$LOG_LOCAL_FILE" 2>/dev/null
 
-    # 2) Hvis NFS-logfilen findes og er læsbar, lav en midlertidig merged fil og mv den over (atomisk)
+    # 2) Hvis dagsloggen findes og er læsbar, lav en midlertidig merged fil og mv den over (atomisk)
     TMP_MERGE=""
     if TMP_MERGE="$(mktemp "$LOG_DIR_NFS/rsync_log_merge_XXXXXX" 2>/dev/null)" 2>/dev/null || TMP_MERGE="$(mktemp 2>/dev/null)"; then
         if [ -r "$LOG_FILE_NFS" ]; then
@@ -276,7 +338,6 @@ else
                 if mv -f "$TMP_MERGE" "$LOG_FILE_NFS" 2>>"$LOG_LOCAL_FILE"; then
                     append_success="true"
                     echo "Local log merged ind i $LOG_FILE_NFS via temp+mv"
-                    rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
                 else
                     echo "Fejl: mv af $TMP_MERGE -> $LOG_FILE_NFS mislykkedes" >> "$LOG_LOCAL_FILE"
                     rm -f "$TMP_MERGE" 2>/dev/null || true
@@ -287,11 +348,10 @@ else
             fi
         else
             # 3) Hvis original ikke læsbar/eksisterer, som fallback prøv at kopiere (cp) direkte til daglig fil
-            echo "Original NFS-log ikke læsbar eller mangler; forsøger cp (overskriver/creator)..." >> "$LOG_LOCAL_FILE"
+            echo "Dagsloggen på USB-disken er ikke læsbar eller mangler; forsøger cp (overskriver/opretter)..." >> "$LOG_LOCAL_FILE"
             if cp "$LOG_LOCAL_FILE" "$LOG_FILE_NFS" 2>>"$LOG_LOCAL_FILE"; then
                 append_success="true"
                 echo "Local log er kopieret til $LOG_FILE_NFS (cp fallback)"
-                rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
             else
                 echo "Fejl: cp fallback mislykkedes" >> "$LOG_LOCAL_FILE"
             fi
@@ -301,7 +361,6 @@ else
         if cp "$LOG_LOCAL_FILE" "$LOG_FILE_NFS" 2>>"$LOG_LOCAL_FILE"; then
             append_success="true"
             echo "Local log er kopieret til $LOG_FILE_NFS (cp fallback)"
-            rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
         else
             echo "Fejl: cp fallback mislykkedes" >> "$LOG_LOCAL_FILE"
         fi
@@ -315,7 +374,6 @@ else
             if runuser -u "$owner" -- sh -c "cat '$LOG_LOCAL_FILE' >> '$LOG_FILE_NFS'" 2>>"$LOG_LOCAL_FILE"; then
                 append_success="true"
                 echo "Local log blev append'et til $LOG_FILE_NFS som $owner"
-                rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
             else
                 echo "Fallback append som $owner mislykkedes." >> "$LOG_LOCAL_FILE"
             fi
@@ -324,7 +382,7 @@ else
         fi
     fi
 
-    # 5) Sidste, sikker cp-fallback: opret en unik fil i NFS-log-dir med lokal log (bevarer begge)
+    # 5) Sidste, sikker cp-fallback: opret en unik fil i logmappen med lokal log (bevarer begge)
     if [ "$append_success" != "true" ]; then
         BASENAME=$(basename "$LOG_LOCAL_FILE")
         CP_TARGET="$LOG_DIR_NFS/$BASENAME"
@@ -333,7 +391,6 @@ else
             append_success="true"
             LOG_FILE_NFS="$CP_TARGET"
             echo "CP fallback success: lokal log kopieret til $CP_TARGET"
-            rm -f "$LOG_LOCAL_FILE" 2>/dev/null || true
         else
             echo "Fejl: cp fallback mislykkedes; lokal log beholdes: $LOG_LOCAL_FILE" >> "$LOG_LOCAL_FILE"
         fi
@@ -341,25 +398,24 @@ else
 
     # Hvis stadig ikke success, behold lokal log og skriv advarsel
     if [ "$append_success" != "true" ]; then
-        echo "ADVARSEL: Kunne ikke skrive/merge/log kopiere til NFS ($LOG_FILE_NFS). Lokal log beholdes: $LOG_LOCAL_FILE" >> "$LOG_LOCAL_FILE"
+        echo "ADVARSEL: Kunne ikke skrive/merge/log kopiere til USB-disken ($LOG_FILE_NFS). Lokal log beholdes: $LOG_LOCAL_FILE" >> "$LOG_LOCAL_FILE"
         {
             echo
-            echo "!!! ADVARSEL: Kunne ikke appende/merge eller kopiere lokal log til NFS ($LOG_FILE_NFS)."
-            echo "Kontroller permissions, NFS/CIFS server, mount options (root_squash/forceuid), og SELinux."
-            echo "Som sidste udvej kan du manuelt kopiere $LOG_LOCAL_FILE til NFS."
+            echo "!!! ADVARSEL: Kunne ikke appende/merge eller kopiere lokal log til USB-disken ($LOG_FILE_NFS)."
+            echo "Kontroller at USB-disken er monteret og skrivbar (permissions, ledig plads, mount-options)."
+            echo "Som sidste udvej kan du manuelt kopiere $LOG_LOCAL_FILE til USB-disken."
             echo "-----------------------------------------"
         } >> "$LOG_LOCAL_FILE"
     fi
 fi
 
 # -----------------------
-# Vælg logkilde for statistik
+# Logkilde for statistik
+# v1.2: Brug altid DENNE kørsels lokale log (den slettes først i cleanup-trap'en).
+# Dagsloggen på disken kan indeholde flere kørsler, så head/awk ville ellers vise
+# header fra dagens første kørsel og statistik fra alle kørsler.
 # -----------------------
-if [ "$append_success" = "true" ]; then
-    STATS_SOURCE="$LOG_FILE_NFS"
-else
-    STATS_SOURCE="$LOG_LOCAL_FILE"
-fi
+STATS_SOURCE="$LOG_LOCAL_FILE"
 
 # Udtræk de øverste 11 linjer (header) fra logfilen
 LOG_HEAD="$(head -n 11 "$STATS_SOURCE" 2>/dev/null || true)"
@@ -367,11 +423,22 @@ LOG_HEAD="$(head -n 11 "$STATS_SOURCE" 2>/dev/null || true)"
 # Udtræk alt fra "Number of files:" og ned (statistik-blok)
 LOG_TAIL="$(awk '/^Number of files:/ {found=1} found' "$STATS_SOURCE" 2>/dev/null || true)"
 
+# Advarsler/fejl fra rsync (fx "file has vanished") — med i status-filen
+LOG_WARNINGS="$(grep -E '^(rsync: |rsync error|rsync warning|file has vanished)' "$STATS_SOURCE" 2>/dev/null | head -n 50 || true)"
+
 # -----------------------
 # Result handling
+# Exit 24 = "nogle filer forsvandt før de kunne overføres" (fx browser-/database-filer
+# der ændres mens backuppen kører). Selve backuppen er gennemført → succes med advarsel.
 # -----------------------
-if [ "$rsync_exit" -eq 0 ]; then
-    echo "--- SUCCESS ---"
+if [ "$rsync_exit" -eq 0 ] || [ "$rsync_exit" -eq 24 ]; then
+    if [ "$rsync_exit" -eq 24 ]; then
+        STATUS_LABEL="SUCCESS (ADVARSEL: nogle filer forsvandt under kopiering, rsync kode 24)"
+        echo "--- SUCCESS (med advarsel: rsync kode 24, filer forsvandt undervejs) ---"
+    else
+        STATUS_LABEL="SUCCESS"
+        echo "--- SUCCESS ---"
+    fi
 
     # v6 FIX: Brug en mere robust grep der matcher rsync's stats-output uanset whitespace-format.
     # rsync kan outputte tal med komma-separatorer (fx "49,196,532,484"), så vi bruger
@@ -386,17 +453,23 @@ if [ "$rsync_exit" -eq 0 ]; then
 
         {
             echo "--- BACKUP STATUS $DATE ---"
-            echo "Status: SUCCESS"
+            echo "Status: $STATUS_LABEL"
+            echo "rsync exit kode: $rsync_exit"
             echo "Starttidspunkt: $START_TIME"
             echo "Sluttidspunkt: $END_TIME"
             echo "Filer kopieret: $FILE_COUNT"
             echo "Samlet størrelse: $TOTAL_SIZE"
-            echo "NFS log: $LOG_FILE_NFS"
-            echo "Append/CP til NFS succes: $append_success"
+            echo "USB log: $LOG_FILE_NFS"
+            echo "Append/CP til USB succes: $append_success"
             echo
             echo "---- LOG UDSNIT (TOP 11 LINJER) ----"
             echo "$LOG_HEAD"
             echo
+            if [ -n "$LOG_WARNINGS" ]; then
+                echo "---- ADVARSLER / FEJL FRA RSYNC ----"
+                echo "$LOG_WARNINGS"
+                echo
+            fi
             echo "---- LOG UDSNIT (STATISTIK + NED) ----"
             echo "$LOG_TAIL"
             echo "---------------------------"
@@ -404,17 +477,23 @@ if [ "$rsync_exit" -eq 0 ]; then
             echo "Warning: Kunne ikke skrive $STATUS_FILE_NFS; skriver lokal status i ${LOG_LOCAL_FILE}.status" >> "$LOG_LOCAL_FILE" 2>/dev/null || true
             {
                 echo "--- BACKUP STATUS $DATE (LOCAL-FALLBACK) ---"
-                echo "Status: SUCCESS"
+                echo "Status: $STATUS_LABEL"
+                echo "rsync exit kode: $rsync_exit"
                 echo "Starttidspunkt: $START_TIME"
                 echo "Sluttidspunkt: $END_TIME"
                 echo "Filer kopieret: $FILE_COUNT"
                 echo "Samlet størrelse: $TOTAL_SIZE"
-                echo "NFS log: $LOG_FILE_NFS"
-                echo "Append/CP til NFS succes: $append_success"
+                echo "USB log: $LOG_FILE_NFS"
+                echo "Append/CP til USB succes: $append_success"
                 echo
                 echo "---- LOG UDSNIT (TOP 11 LINJER) ----"
                 echo "$LOG_HEAD"
                 echo
+                if [ -n "$LOG_WARNINGS" ]; then
+                    echo "---- ADVARSLER / FEJL FRA RSYNC ----"
+                    echo "$LOG_WARNINGS"
+                    echo
+                fi
                 echo "---- LOG UDSNIT (STATISTIK + NED) ----"
                 echo "$LOG_TAIL"
                 echo "---------------------------"
@@ -439,13 +518,18 @@ else
         echo "Starttidspunkt: $START_TIME"
         echo "Sluttidspunkt: $END_TIME"
         echo "rsync exit kode: $rsync_exit"
-        echo "NFS log (intended): $LOG_FILE_NFS"
-        echo "Append/CP til NFS succes: $append_success"
+        echo "USB log (tilsigtet): $LOG_FILE_NFS"
+        echo "Append/CP til USB succes: $append_success"
         echo "Local log (beholdes hvis append fejlede): $LOG_LOCAL_FILE"
         echo
         echo "---- LOG UDSNIT (TOP 11 LINJER) ----"
         echo "$LOG_HEAD"
         echo
+        if [ -n "$LOG_WARNINGS" ]; then
+            echo "---- ADVARSLER / FEJL FRA RSYNC ----"
+            echo "$LOG_WARNINGS"
+            echo
+        fi
         echo "---- LOG UDSNIT (STATISTIK + NED) ----"
         echo "$LOG_TAIL"
         echo "---------------------------"
@@ -457,12 +541,17 @@ else
             echo "Starttidspunkt: $START_TIME"
             echo "Sluttidspunkt: $END_TIME"
             echo "rsync exit kode: $rsync_exit"
-            echo "Append/CP til NFS succes: $append_success"
+            echo "Append/CP til USB succes: $append_success"
             echo "Local log (beholdes hvis append fejlede): $LOG_LOCAL_FILE"
             echo
             echo "---- LOG UDSNIT (TOP 11 LINJER) ----"
             echo "$LOG_HEAD"
             echo
+            if [ -n "$LOG_WARNINGS" ]; then
+                echo "---- ADVARSLER / FEJL FRA RSYNC ----"
+                echo "$LOG_WARNINGS"
+                echo
+            fi
             echo "---- LOG UDSNIT (STATISTIK + NED) ----"
             echo "$LOG_TAIL"
             echo "---------------------------"
